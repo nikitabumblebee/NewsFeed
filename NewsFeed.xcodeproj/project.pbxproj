@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5E4FE1B72F167B150074E816 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4FE1B62F167B150074E816 /* Realm */; };
-		5E4FE1B92F167B150074E816 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4FE1B82F167B150074E816 /* RealmSwift */; };
 		5E4FE1BC2F167EBE0074E816 /* FeedKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4FE1BB2F167EBE0074E816 /* FeedKit */; };
 		5E4FE1BE2F167EBE0074E816 /* XMLKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4FE1BD2F167EBE0074E816 /* XMLKit */; };
 /* End PBXBuildFile section */
@@ -44,7 +43,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E4FE1BC2F167EBE0074E816 /* FeedKit in Frameworks */,
-				5E4FE1B92F167B150074E816 /* RealmSwift in Frameworks */,
 				5E4FE1B72F167B150074E816 /* Realm in Frameworks */,
 				5E4FE1BE2F167EBE0074E816 /* XMLKit in Frameworks */,
 			);
@@ -90,7 +88,6 @@
 			name = NewsFeed;
 			packageProductDependencies = (
 				5E4FE1B62F167B150074E816 /* Realm */,
-				5E4FE1B82F167B150074E816 /* RealmSwift */,
 				5E4FE1BB2F167EBE0074E816 /* FeedKit */,
 				5E4FE1BD2F167EBE0074E816 /* XMLKit */,
 			);
@@ -401,11 +398,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5E4FE1B52F167B150074E816 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
-		};
-		5E4FE1B82F167B150074E816 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5E4FE1B52F167B150074E816 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
 		};
 		5E4FE1BB2F167EBE0074E816 /* FeedKit */ = {
 			isa = XCSwiftPackageProductDependency;

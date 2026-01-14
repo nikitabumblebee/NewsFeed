@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainTabBarController" customModule="NewsFeed" customModuleProvider="target">
+            <connections>
+                <outlet property="backgroundView" destination="d4p-ge-prn" id="w0J-ud-gsb"/>
+                <outlet property="controllerContainerView" destination="OnQ-cp-gZu" id="s5w-HC-7QC"/>
+                <outlet property="tabBar" destination="2tM-Cv-wOx" id="8MW-sm-OLK"/>
+                <outlet property="tabBarStackView" destination="hGW-wl-VAX" id="bXY-42-tTR"/>
+                <outlet property="tabBarView" destination="tTx-EE-dbT" id="BOj-iK-5Qp"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d4p-ge-prn">
+                    <rect key="frame" x="0.0" y="733" width="393" height="119"/>
+                    <color key="backgroundColor" name="Gray6"/>
+                </view>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="hGW-wl-VAX">
+                    <rect key="frame" x="0.0" y="733" width="393" height="51"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tTx-EE-dbT">
+                            <rect key="frame" x="0.0" y="0.0" width="393" height="51"/>
+                            <subviews>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BOJ-vm-92D">
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="1"/>
+                                    <color key="backgroundColor" name="Gray5"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="1" id="7R6-jo-GNW"/>
+                                    </constraints>
+                                </view>
+                                <stackView opaque="NO" contentMode="scaleToFill" placeholderIntrinsicWidth="414" placeholderIntrinsicHeight="50" translatesAutoresizingMaskIntoConstraints="NO" id="2tM-Cv-wOx" customClass="TabBar" customModule="NewsFeed" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="1" width="393" height="50"/>
+                                </stackView>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstItem="BOJ-vm-92D" firstAttribute="top" secondItem="tTx-EE-dbT" secondAttribute="top" id="Bkl-Mv-0n8"/>
+                                <constraint firstItem="BOJ-vm-92D" firstAttribute="leading" secondItem="tTx-EE-dbT" secondAttribute="leading" id="Jeg-D7-fxZ"/>
+                                <constraint firstAttribute="bottom" secondItem="2tM-Cv-wOx" secondAttribute="bottom" id="JpN-ZU-tGL"/>
+                                <constraint firstAttribute="trailing" secondItem="BOJ-vm-92D" secondAttribute="trailing" id="MQt-31-QLN"/>
+                                <constraint firstAttribute="trailing" secondItem="2tM-Cv-wOx" secondAttribute="trailing" id="ZAI-bW-xVK"/>
+                                <constraint firstItem="2tM-Cv-wOx" firstAttribute="leading" secondItem="tTx-EE-dbT" secondAttribute="leading" id="aZM-qC-IfC"/>
+                                <constraint firstItem="2tM-Cv-wOx" firstAttribute="top" secondItem="BOJ-vm-92D" secondAttribute="bottom" id="yUK-9R-tIv"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                </stackView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OnQ-cp-gZu">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="d4p-ge-prn" secondAttribute="bottom" id="28g-fm-AdV"/>
+                <constraint firstAttribute="bottom" secondItem="OnQ-cp-gZu" secondAttribute="bottom" id="2El-zb-GLN"/>
+                <constraint firstItem="OnQ-cp-gZu" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="6cI-5s-QU6"/>
+                <constraint firstItem="d4p-ge-prn" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="EIZ-tK-Btq"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="hGW-wl-VAX" secondAttribute="bottom" id="FjX-7b-lkf"/>
+                <constraint firstItem="hGW-wl-VAX" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="HxW-co-jKa"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="hGW-wl-VAX" secondAttribute="trailing" id="dss-1I-A8w"/>
+                <constraint firstItem="OnQ-cp-gZu" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="nZB-bO-hzS"/>
+                <constraint firstAttribute="trailing" secondItem="OnQ-cp-gZu" secondAttribute="trailing" id="p0D-RJ-MNZ"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="d4p-ge-prn" secondAttribute="trailing" id="rtJ-Ma-5Br"/>
+                <constraint firstItem="hGW-wl-VAX" firstAttribute="top" secondItem="d4p-ge-prn" secondAttribute="top" id="vpG-0V-Kyq"/>
+            </constraints>
+            <point key="canvasLocation" x="138" y="154"/>
+        </view>
+    </objects>
+    <resources>
+        <namedColor name="Gray5">
+            <color red="0.87843137979507446" green="0.87843137979507446" blue="0.87843137979507446" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="Gray6">
+            <color red="0.9490196704864502" green="0.9490196704864502" blue="0.9490196704864502" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>
