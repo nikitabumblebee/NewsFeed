@@ -9,6 +9,8 @@ import UIKit
 
 class NewsDetailViewController: BaseViewController {
 
+    override var shouldShowTabBar: Bool { false }
+    
     let viewModel: NewsViewModel
     
     init(viewModel: NewsViewModel) {
@@ -22,6 +24,12 @@ class NewsDetailViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .cyan
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
 }

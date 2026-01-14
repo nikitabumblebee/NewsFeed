@@ -14,7 +14,7 @@ final class FeedViewModel: ObservableObject {
     private var news = [News]()
     private var cancellables = Set<AnyCancellable>()
     
-    @Published private(set) var newsModels: [(SectionType, [AnyHashable])] = []
+    @Published private(set) var newsModels: [News] = []
     
     func clearModels() {
         news.removeAll()
@@ -22,6 +22,27 @@ final class FeedViewModel: ObservableObject {
     
     func buildViewModels(from newNews: [News]) {
         news.append(contentsOf: newNews)
+//        let adapted = NewsModelsAdapter().adapt(news: news)
         
+//        let newGroupedNotifications = adapted.viewModels
+//        adaptedNotifications.formUnion(newGroupedNotifications)
+//        var sortedNotificationModels: [(SectionType, [News])] = []
+//
+//        let notificationsArray = Array(adaptedNotifications)
+//        for section in SectionType.allCases {
+//            let rangedNotifications = notificationsArray.filter {
+//                let viewModelDate = ($0 as? News)?.date ?? Date()
+//                return section.dateRange.contains(viewModelDate.eraseNanoseconds())
+//            }
+//
+//            if !rangedNotifications.isEmpty {
+//                let sortedRangedNotifications = rangedNotifications.sorted {
+//                    ($0 as? News)?.date ?? Date() > ($1 as? News)?.date ?? Date()
+//                }.compactMap { $0 as? News }
+//                sortedNotificationModels.append((section, sortedRangedNotifications))
+//            }
+//        }
+
+        newsModels = newNews
     }
 }

@@ -23,4 +23,13 @@ extension Date {
     nonisolated func changeDays(by days: Int) -> Date {
         Calendar.current.date(byAdding: .day, value: days, to: self) ?? Date()
     }
+    
+    nonisolated func eraseNanoseconds() -> Date {
+        let zeroNanoseconds = Calendar.current.date(bySetting: .nanosecond, value: 0, of: self) ?? Date()
+        return Calendar.current.date(byAdding: .nanosecond, value: -1, to: zeroNanoseconds) ?? Date()
+    }
+    
+    nonisolated func getLongDateTime() -> String {
+        DateFormatter.string(from: self, format: .dateFormat("d MMM yy 'at' HH:mm"))
+    }
 }

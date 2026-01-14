@@ -23,6 +23,7 @@ class FeedTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        newsImage.image = nil
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -31,5 +32,11 @@ class FeedTableViewCell: UITableViewCell {
     
     func setup(viewModel: NewsViewModel) {
         self.viewModel = viewModel
+        titleLabel.text = viewModel.news.title
+        sourceTitleLable.text = "Source: \(viewModel.news.source ?? ""). Date: \(viewModel.news.date.getLongDateTime())"
+        guard let image = viewModel.news.image, let url = URL(string: image) else { return }
+        Task {
+            await newsImage.loadImage(from: url)
+        }
     }
 }

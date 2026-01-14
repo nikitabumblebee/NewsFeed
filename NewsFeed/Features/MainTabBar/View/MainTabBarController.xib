@@ -24,10 +24,6 @@
             <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OnQ-cp-gZu">
-                    <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d4p-ge-prn">
                     <rect key="frame" x="0.0" y="733" width="393" height="119"/>
                     <color key="backgroundColor" name="Gray6"/>
@@ -62,15 +58,19 @@
                         </view>
                     </subviews>
                 </stackView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OnQ-cp-gZu" userLabel="Controller Containter View">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="733"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </view>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="d4p-ge-prn" secondAttribute="bottom" id="28g-fm-AdV"/>
-                <constraint firstAttribute="bottom" secondItem="OnQ-cp-gZu" secondAttribute="bottom" id="2El-zb-GLN"/>
                 <constraint firstItem="OnQ-cp-gZu" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="6cI-5s-QU6"/>
                 <constraint firstItem="d4p-ge-prn" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="EIZ-tK-Btq"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="hGW-wl-VAX" secondAttribute="bottom" id="FjX-7b-lkf"/>
                 <constraint firstItem="hGW-wl-VAX" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="HxW-co-jKa"/>
+                <constraint firstItem="OnQ-cp-gZu" firstAttribute="bottom" secondItem="d4p-ge-prn" secondAttribute="top" id="JwJ-GV-Wqr"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="hGW-wl-VAX" secondAttribute="trailing" id="dss-1I-A8w"/>
                 <constraint firstItem="OnQ-cp-gZu" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="nZB-bO-hzS"/>
                 <constraint firstAttribute="trailing" secondItem="OnQ-cp-gZu" secondAttribute="trailing" id="p0D-RJ-MNZ"/>

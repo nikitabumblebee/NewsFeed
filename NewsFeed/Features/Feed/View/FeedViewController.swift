@@ -61,11 +61,13 @@ class FeedViewController: BaseViewController {
     
     @IBOutlet private var tableView: UITableView!
     
+    override var shouldShowTabBar: Bool { true }
+    
     private let headerViewReuseIdentifier: String = String(describing: SectionHeaderView.self)
     private let pagingLimit: Int = 50
 
-    typealias DataSource = UITableViewDiffableDataSource<SectionType, NewsViewModel>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<SectionType, NewsViewModel>
+    typealias DataSource = UITableViewDiffableDataSource<Int, News>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, News>
 
     private lazy var dataSource = makeDataSource()
 
@@ -89,6 +91,7 @@ class FeedViewController: BaseViewController {
 
         navigationItem.title = "Feed"
         setupTableView()
+        setupSubscriptions()
     }
     
     private func setupTableView() {
@@ -97,6 +100,34 @@ class FeedViewController: BaseViewController {
         tableView.backgroundColor = .backgroundPrimary
         tableView.refreshControl = refresher
         FeedTableViewCell.registerNib(for: tableView)
+    }
+    
+    func setupSubscriptions() {
+        currentStateSubject
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] currentState in
+//                self?.tableView.tableFooterView = currentState == .fetching ? self?.footerActivityIndicator : nil
+            }
+            .store(in: &cancellables)
+
+        viewModel.$newsModels
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newsModels in
+                print("🚫 \(newsModels.count)")
+                self?.applySnapshot(newsModels)
+            }
+            .store(in: &cancellables)
+        feedParserService.initialNewsLoaded
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self, $0 else { return }
+                loadPagedData(fromBeginning: true)
+            }
+            .store(in: &cancellables)
+    }
+    
+    @objc override func updateData() {
+        loadPagedData(fromBeginning: true)
     }
 }
 
@@ -128,21 +159,17 @@ extension FeedViewController {
 
 extension FeedViewController {
     private func makeDataSource() -> DataSource {
-        DataSource(tableView: tableView) { [weak self] tableView, _, viewModelItem -> UITableViewCell? in
-            if let viewModel = viewModelItem as? NewsViewModel {
-                let cell = FeedTableViewCell.dequeue(tableView)
-                cell.setup(viewModel: viewModel)
-            }
-            return nil
+        DataSource(tableView: tableView) { tableView, _, viewModelItem -> UITableViewCell? in
+            let cell = FeedTableViewCell.dequeue(tableView)
+            cell.setup(viewModel: NewsViewModel(news: viewModelItem))
+            return cell
         }
     }
     
-    private func applySnapshot(_ notificationModels: [(SectionType, [NewsViewModel])]) {
+    private func applySnapshot(_ notificationModels: [News]) {
         var snapshot = Snapshot()
-        notificationModels.forEach {
-            snapshot.appendSections([$0.0])
-            snapshot.appendItems($0.1, toSection: $0.0)
-        }
+        snapshot.appendSections([0])
+        snapshot.appendItems(notificationModels, toSection: 0)
 
         dataSource.applySnapshotUsingReloadData(snapshot) { [weak self] in
             self?.currentStateSubject.value = .none
@@ -156,41 +183,37 @@ extension FeedViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat { 44.0 }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let baseViewModel = viewModel.newsModels[indexPath.section].1[indexPath.row]
-        if let viewModel = baseViewModel as? NewsViewModel {
-            let viewController = NewsDetailViewController(viewModel: viewModel)
-            Navigator.shared.push(viewController: viewController, navigationController: navigationController)
-        } else {
-            return
-        }
+        let viewModel = viewModel.newsModels[indexPath.row]
+        let viewController = NewsDetailViewController(viewModel: NewsViewModel(news: viewModel))
+        Navigator.shared.push(viewController: viewController)
     }
 
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard section < viewModel.newsModels.count else { return nil }
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        guard section < viewModel.newsModels.count else { return nil }
+//
+//        let sectionType = viewModel.newsModels[section]
+//        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier:
+//            headerViewReuseIdentifier) as? SectionHeaderView
+//        view?.titleLabel.text = sectionType.title
+//        view?.separatorView.isHidden = section == 0
+//
+//        return view
+//    }
 
-        let sectionType = viewModel.newsModels[section].0
-        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier:
-            headerViewReuseIdentifier) as? SectionHeaderView
-        view?.titleLabel.text = sectionType.title
-        view?.separatorView.isHidden = section == 0
+//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        guard currentStateSubject.value == .none else { return }
+//        let bottomY = scrollView.contentOffset.y + scrollView.bounds.height
+//
+//        if bottomY > scrollView.contentSize.height {
+//            loadPagedData(fromBeginning: false)
+//        }
+//    }
 
-        return view
-    }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard currentStateSubject.value == .none else { return }
-        let bottomY = scrollView.contentOffset.y + scrollView.bounds.height
-
-        if bottomY > scrollView.contentSize.height {
-            loadPagedData(fromBeginning: false)
-        }
-    }
-
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard currentStateSubject.value == .none else { return }
-        guard indexPath.section == viewModel.newsModels.count - 1 else { return }
-        guard indexPath.row == viewModel.newsModels[indexPath.section].1.count - 1 else { return }
-
-        loadPagedData(fromBeginning: false)
-    }
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        guard currentStateSubject.value == .none else { return }
+////        guard indexPath.section == viewModel.newsModels.count - 1 else { return }
+//        guard indexPath.row == viewModel.newsModels.count - 1 else { return }
+//
+//        loadPagedData(fromBeginning: false)
+//    }
 }
