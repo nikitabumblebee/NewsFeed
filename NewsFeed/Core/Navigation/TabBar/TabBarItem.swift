@@ -32,18 +32,26 @@ class TabBarItem: UIButton {
 
 class ImageTabBarItem: TabBarItem {
     @IBOutlet private var iconImageView: UIImageView!
+    @IBOutlet private var bottomTitleLabel: UILabel!
 
-    nonisolated override func awakeFromNib() {
+    override nonisolated func awakeFromNib() {
         super.awakeFromNib()
-        Task { @MainActor in
+        MainActor.assumeIsolated {
             backgroundColor = .clear
             iconImageView.tintColor = unselectedTintColor
+            bottomTitleLabel.textColor = unselectedTintColor
         }
     }
 
     var iconName: String = "" {
         didSet {
-            iconImageView.image = UIImage(named: iconName)
+            iconImageView.image = UIImage(systemName: iconName)
+        }
+    }
+    
+    var title: String = "" {
+        didSet {
+            bottomTitleLabel.text = title
         }
     }
 
@@ -52,5 +60,6 @@ class ImageTabBarItem: TabBarItem {
 
     override func setSelected(_ selected: Bool) {
         iconImageView.tintColor = selected ? selectedTintColor : unselectedTintColor
+        bottomTitleLabel.textColor = selected ? selectedTintColor : unselectedTintColor
     }
 }

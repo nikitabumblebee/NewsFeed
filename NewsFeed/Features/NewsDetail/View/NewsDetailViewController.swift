@@ -1,5 +1,5 @@
 //
-//  SettingsViewController.swift
+//  NewsDetailViewController.swift
 //  NewsFeed
 //
 //  Created by Nikita Shmelev on 14.01.2026.
@@ -7,22 +7,21 @@
 
 import UIKit
 
-class SettingsViewController: BaseViewController {
+class NewsDetailViewController: BaseViewController {
 
-    let viewModel: SettingsViewModel
+    let viewModel: NewsViewModel
     
-    init(viewModel: SettingsViewModel) {
+    init(viewModel: NewsViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
-    @MainActor required init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        navigationItem.title = "Settings"
     }
+
 }

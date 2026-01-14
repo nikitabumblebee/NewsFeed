@@ -51,7 +51,8 @@ final class MainTabBarController: BaseViewController {
     private func configureFeedTabItem() {
         let createTabItem = ImageTabBarItem.loadFromNib()
         createTabItem.type = .feed
-        createTabItem.iconName = "icon-button-create"
+        createTabItem.iconName = "newspaper"
+        createTabItem.title = "Feed"
 
         let viewModel = FeedViewModel()
         let viewController = BaseNavigationViewController(rootViewController: FeedViewController(viewModel: viewModel))
@@ -61,7 +62,8 @@ final class MainTabBarController: BaseViewController {
     private func configureSettingsTabItem() {
         let createTabItem = ImageTabBarItem.loadFromNib()
         createTabItem.type = .settings
-        createTabItem.iconName = "icon-button-create"
+        createTabItem.iconName = "gear"
+        createTabItem.title = "Settings"
         
         let viewModel = SettingsViewModel()
         let viewController = BaseNavigationViewController(rootViewController: SettingsViewController(viewModel: viewModel))
