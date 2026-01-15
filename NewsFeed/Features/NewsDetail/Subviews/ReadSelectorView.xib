@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="ReadSelectorView" customModule="NewsFeed" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="139" height="37"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="MuB-PL-G6Y">
+                    <rect key="frame" x="5.6666666666666714" y="3" width="128" height="32"/>
+                    <segments>
+                        <segment title="Short"/>
+                        <segment title="Expand"/>
+                    </segments>
+                    <connections>
+                        <action selector="onValueChange:" destination="iN0-l3-epB" eventType="valueChanged" id="l0X-Y3-VZG"/>
+                    </connections>
+                </segmentedControl>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="MuB-PL-G6Y" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="JLd-Q0-7JP"/>
+                <constraint firstItem="MuB-PL-G6Y" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="deZ-vN-JeR"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="segmentedControl" destination="MuB-PL-G6Y" id="OrD-kz-l6v"/>
+            </connections>
+            <point key="canvasLocation" x="-57.251908396946561" y="-134.1549295774648"/>
+        </view>
+    </objects>
+</document>
