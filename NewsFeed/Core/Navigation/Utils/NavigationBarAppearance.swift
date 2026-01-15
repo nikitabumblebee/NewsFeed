@@ -56,7 +56,12 @@ struct NavigationBarAppearance {
         navigationBarAppearance.shadowColor = .clear
         navigationBarAppearance.backgroundColor = .clear
 
-        return NavigationBarAppearance(standard: navigationBarAppearance, scroll: navigationBarAppearance.copy(), compact: navigationBarAppearance.copy(), tintColor: .white)
+        return NavigationBarAppearance(
+            standard: navigationBarAppearance,
+            scroll: navigationBarAppearance.copy(),
+            compact: navigationBarAppearance.copy(),
+            tintColor: .white
+        )
     }
 
     private static func createDarkStyle() -> NavigationBarAppearance {

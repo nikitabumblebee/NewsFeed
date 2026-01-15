@@ -19,9 +19,7 @@ extension DateFormatter {
         dateStyle: Style = .none,
         timeStyle: Style = .none,
         format: DateFormat
-    )
-        -> DateFormatter
-    {
+    ) -> DateFormatter {
         dateFormatter.locale = locale
         dateFormatter.timeZone = timeZone
         dateFormatter.dateStyle = dateStyle
@@ -42,9 +40,7 @@ extension DateFormatter {
         dateStyle: Style = .none,
         timeStyle: Style = .none,
         format: DateFormat
-    )
-        -> String
-    {
+    ) -> String {
         get(with: locale, timeZone: timeZone, dateStyle: dateStyle, timeStyle: timeStyle, format: format).string(from: date)
     }
 }

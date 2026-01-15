@@ -9,4 +9,4 @@ opt_in_rules:
   - force_try
   - force_unwrapping
 
-line_length: 120
+line_length: 200
