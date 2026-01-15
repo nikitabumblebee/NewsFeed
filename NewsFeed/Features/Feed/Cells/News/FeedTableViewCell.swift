@@ -12,6 +12,7 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet private var newsImage: UIImageView!
     @IBOutlet private var titleLabel: UILabel!
     @IBOutlet private var sourceTitleLable: UILabel!
+    @IBOutlet private var readView: UIView!
 
     private(set) var viewModel: NewsViewModel?
 
@@ -30,6 +31,7 @@ class FeedTableViewCell: UITableViewCell {
         super.prepareForReuse()
         newsImage.image = nil
         contentView.hideSkeleton()
+        readView.isHiddenInStackView = true
     }
 
     func setup(viewModel: NewsViewModel, state: ContentLoadState) {
@@ -41,9 +43,11 @@ class FeedTableViewCell: UITableViewCell {
         } else if contentView.sk.isSkeletonActive {
             contentView.hideSkeleton()
         }
+        readView.isHiddenInStackView = !viewModel.news.isViewed
         guard let image = viewModel.news.image, let url = URL(string: image) else { return }
         Task {
-            await newsImage.loadImage(from: url)
+            newsImage.image = try? await ImageCache.shared.image(for: url)
+//            await newsImage.loadImage(from: url)
         }
     }
 }

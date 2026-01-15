@@ -12,6 +12,7 @@ class NewsDetailViewController: BaseViewController {
     @IBOutlet private var newsImageView: UIImageView!
     @IBOutlet private var newsTitleLabel: UILabel!
     @IBOutlet private var newsBodyLabel: UILabel!
+    @IBOutlet private var readView: UIView!
 
     override var shouldShowTabBar: Bool { false }
 
@@ -42,11 +43,14 @@ class NewsDetailViewController: BaseViewController {
     private func setupUI() {
         if let image = viewModel.news.image, let url = URL(string: image) {
             Task {
-                await newsImageView.loadImage(from: url)
+                newsImageView.image = try? await ImageCache.shared.image(for: url)
+//                await newsImageView.loadImage(from: url)
             }
         }
+        newsImageView.setCornerRadius(18)
         newsTitleLabel.text = viewModel.news.title
         newsBodyLabel.text = viewModel.news.description
+        readView.isHiddenInStackView = !viewModel.news.isViewed
     }
 
     private func setupTitleView() {
@@ -60,6 +64,7 @@ class NewsDetailViewController: BaseViewController {
                     newsBodyLabel.isHiddenInStackView = true
                 case .extended:
                     newsBodyLabel.isHiddenInStackView = false
+                    setNewsAsViewedIfNeeded()
                 }
             }
             .store(in: &cancellables)
@@ -69,5 +74,10 @@ class NewsDetailViewController: BaseViewController {
             readSelectorView.heightAnchor.constraint(equalToConstant: 32),
         ])
         navigationItem.titleView = readSelectorView
+    }
+
+    private func setNewsAsViewedIfNeeded() {
+        readView.isHiddenInStackView = false
+        viewModel.setNewsAsViewedIfNeeded()
     }
 }

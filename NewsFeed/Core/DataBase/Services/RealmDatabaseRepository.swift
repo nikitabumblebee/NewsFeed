@@ -8,14 +8,12 @@
 import Foundation
 import RealmSwift
 
-class RealmDatabaseRepository: DatabaseRepository {
-    typealias Entity = Object
-
-    static let shared = RealmDatabaseRepository()
+class RealmDatabaseRepository<EntityType: Object>: DatabaseRepository {
+    typealias Entity = EntityType
 
     private let realm: Realm
 
-    private init(configuration: Realm.Configuration = .defaultConfiguration) {
+    init(configuration: Realm.Configuration = .defaultConfiguration) {
         do {
             realm = try Realm(configuration: configuration)
         } catch {
@@ -40,10 +38,18 @@ class RealmDatabaseRepository: DatabaseRepository {
         realm.object(ofType: Entity.self, forPrimaryKey: id)
     }
 
-    @MainActor func delete(by id: String) async throws {
+    @MainActor func delete(by id: String) throws {
         guard let object = realm.object(ofType: Entity.self, forPrimaryKey: id) else { return }
         try realm.write {
             realm.delete(object)
+        }
+    }
+
+    @MainActor func update(by id: String, updateBlock: (Entity) throws -> Void) throws {
+        guard let entity = realm.object(ofType: Entity.self, forPrimaryKey: id) else { return }
+
+        try realm.write {
+            try updateBlock(entity)
         }
     }
 }

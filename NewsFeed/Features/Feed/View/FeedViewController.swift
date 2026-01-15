@@ -102,6 +102,11 @@ class FeedViewController: BaseViewController {
         FeedTableViewCell.registerNib(for: tableView)
     }
 
+    func scrollToTop() {
+        guard !viewModel.newsModels.isEmpty else { return }
+        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+    }
+
     func setupSubscriptions() {
         currentStateSubject
             .receive(on: DispatchQueue.main)
@@ -117,16 +122,15 @@ class FeedViewController: BaseViewController {
                 self?.applySnapshot(newsModels)
             }
             .store(in: &cancellables)
-        feedParserService.initialNewsLoaded
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                guard let self, $0 else { return }
-                viewModel.changeViewState(to: .loaded)
-                print("🟡")
-                tableView.reloadData()
-                loadPagedData(fromBeginning: true)
-            }
-            .store(in: &cancellables)
+//        feedParserService.initialNewsLoaded
+//            .receive(on: DispatchQueue.main)
+//            .sink { [weak self] in
+//                guard let self, $0 else { return }
+//                viewModel.changeViewState(to: .loaded)
+//                tableView.reloadData()
+//                loadPagedData(fromBeginning: true)
+//            }
+//            .store(in: &cancellables)
     }
 
     @objc override func updateData() {

@@ -17,6 +17,7 @@ class NewsDB: Object {
     @Persisted var image: String?
     @Persisted var date: Date
     @Persisted var source: String?
+    @Persisted var resource: String?
     @Persisted var isViewed: Bool
 
     var link: URL? {

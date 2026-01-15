@@ -15,20 +15,25 @@ class FeedParserService {
 
     private let dataBase: any DatabaseRepository
     private var cancellables: Set<AnyCancellable> = []
-    private var news: [News] = []
-    private let initialNewsLoadedSubject: CurrentValueSubject<Bool, Never> = .init(false)
-    var initialNewsLoaded: AnyPublisher<Bool, Never> {
-        initialNewsLoadedSubject.eraseToAnyPublisher()
+    private var currentNewsSubject: CurrentValueSubject<[News]?, Never> = .init(nil)
+    var currentNewsPublisher: AnyPublisher<[News]?, Never> {
+        currentNewsSubject.eraseToAnyPublisher()
     }
 
+//    private var news: [News] = []
+//    private let initialNewsLoadedSubject: CurrentValueSubject<Bool, Never> = .init(false)
+//    var initialNewsLoaded: AnyPublisher<Bool, Never> {
+//        initialNewsLoadedSubject.eraseToAnyPublisher()
+//    }
+
     private init() {
-        dataBase = RealmDatabaseRepository.shared
+        dataBase = NewsDatabaseService.shared
         loadNewsFromDifferentSources()
     }
 
     private func loadNewsFromDifferentSources() {
         Task {
-            let news = await withTaskGroup(of: [News].self, returning: [News].self) { [weak self] group in
+            var news = await withTaskGroup(of: [News].self, returning: [News].self) { [weak self] group in
                 guard let self else { return [] }
                 for item in NewsSources.allCases {
                     group.addTask {
@@ -43,9 +48,31 @@ class FeedParserService {
                 return newsList
             }.sorted(by: { $0.date > $1.date })
             print("🔥 \(news.count)")
-            self.news.append(contentsOf: news)
-            try? await Task.sleep(nanoseconds: 5_000_000_000)
-            initialNewsLoadedSubject.send(true)
+            var newsToUpdate: [News] = []
+            for item in news {
+                if let realmDataBase = dataBase as? NewsDatabaseService {
+                    if let existingItem = try? realmDataBase.get(by: item.id) {
+                        if existingItem.isViewed {
+                            newsToUpdate.append(item)
+                        }
+                        print("✅ \(existingItem.id); \(existingItem.isViewed)")
+                    } else {
+                        print("🥶")
+                        let newsToSafe = item.toNewsDB()
+                        try? await realmDataBase.save(newsToSafe)
+                    }
+                }
+            }
+            news = news.map { news in
+                var updatedNews = news
+                if newsToUpdate.contains(where: { $0.id == news.id }) {
+                    updatedNews.isViewed = true
+                }
+                return updatedNews
+            }
+            self.currentNewsSubject.send(news)
+//            self.news.append(contentsOf: news)
+//            initialNewsLoadedSubject.send(true)
         }
     }
 
@@ -68,10 +95,9 @@ class FeedParserService {
                             image: item.enclosure?.attributes?.url,
                             date: date,
                             source: item.author,
+                            resource: urlString,
                             isViewed: false
                         )
-//                        print("🟢 \(rssNews.id); \(rssNews.title)")
-                        // TODO: Add DB synchronization
                         news.append(rssNews)
                     }
                 }
@@ -91,8 +117,20 @@ class FeedParserService {
                 promise(.success([]))
                 return
             }
-            promise(.success(news))
+            promise(.success(currentNewsSubject.value ?? [] /* news */ ))
         }
         .eraseToAnyPublisher()
+    }
+
+    func markNewsAsRead(_ news: News) {
+        var currentNews = currentNewsSubject.value
+        currentNews = currentNews?.map { item in
+            var updatedItem = item
+            if item.id == news.id {
+                updatedItem.isViewed = true
+            }
+            return updatedItem
+        }
+        currentNewsSubject.send(currentNews)
     }
 }

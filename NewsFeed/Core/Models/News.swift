@@ -15,5 +15,20 @@ nonisolated struct News: Hashable {
     let image: String?
     let date: Date
     let source: String?
-    let isViewed: Bool
+    let resource: String?
+    var isViewed: Bool
+
+    @MainActor func toNewsDB() -> NewsDB {
+        let newsDB = NewsDB()
+        newsDB.id = id
+        newsDB.title = title
+        newsDB.newsDescription = description
+        newsDB.linkString = link?.absoluteString
+        newsDB.image = image
+        newsDB.date = date
+        newsDB.source = source
+        newsDB.resource = resource
+        newsDB.isViewed = isViewed
+        return newsDB
+    }
 }
