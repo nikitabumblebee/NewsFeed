@@ -16,54 +16,53 @@ class FeedViewController: BaseViewController {
         case navigating
     }
 
-    nonisolated enum SectionType: CaseIterable, Hashable {
-        case day
-        case week
-        case month
-        case other
-
-        var title: String {
-            switch self {
-            case .day:
-                "Today's news"
-            case .week:
-                "Week's news"
-            case .month:
-                "Month's news"
-            case .other:
-                "Past news"
-            }
-        }
-
-        var dateRange: ClosedRange<Date> {
-            let now = Date()
-            switch self {
-            case .day:
-                return now.startOfDay() ... now
-            case .week:
-                return now.changeDays(by: -7).startOfDay() ... now.changeDays(by: -1).endOfDay()
-            case .month:
-                return now.changeDays(by: -30).startOfDay() ... now.changeDays(by: -8).endOfDay()
-            case .other:
-                return Date(timeIntervalSince1970: 0) ... now.changeDays(by: -31).endOfDay()
-            }
-        }
-
-        static func == (lhs: SectionType, rhs: SectionType) -> Bool {
-            switch (lhs, rhs) {
-            case (.day, .day), (.week, .week), (.month, .month), (.other, .other):
-                true
-            default:
-                false
-            }
-        }
-    }
+//    nonisolated enum SectionType: CaseIterable, Hashable {
+//        case day
+//        case week
+//        case month
+//        case other
+//
+//        var title: String {
+//            switch self {
+//            case .day:
+//                "Today's news"
+//            case .week:
+//                "Week's news"
+//            case .month:
+//                "Month's news"
+//            case .other:
+//                "Past news"
+//            }
+//        }
+//
+//        var dateRange: ClosedRange<Date> {
+//            let now = Date()
+//            switch self {
+//            case .day:
+//                return now.startOfDay() ... now
+//            case .week:
+//                return now.changeDays(by: -7).startOfDay() ... now.changeDays(by: -1).endOfDay()
+//            case .month:
+//                return now.changeDays(by: -30).startOfDay() ... now.changeDays(by: -8).endOfDay()
+//            case .other:
+//                return Date(timeIntervalSince1970: 0) ... now.changeDays(by: -31).endOfDay()
+//            }
+//        }
+//
+//        static func == (lhs: SectionType, rhs: SectionType) -> Bool {
+//            switch (lhs, rhs) {
+//            case (.day, .day), (.week, .week), (.month, .month), (.other, .other):
+//                true
+//            default:
+//                false
+//            }
+//        }
+//    }
 
     @IBOutlet private var tableView: UITableView!
 
     override var shouldShowTabBar: Bool { true }
 
-    private let headerViewReuseIdentifier: String = .init(describing: SectionHeaderView.self)
     private let pagingLimit: Int = 50
 
     typealias DataSource = UITableViewDiffableDataSource<Int, News>
@@ -122,6 +121,9 @@ class FeedViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 guard let self, $0 else { return }
+                viewModel.changeViewState(to: .loaded)
+                print("🟡")
+                tableView.reloadData()
                 loadPagedData(fromBeginning: true)
             }
             .store(in: &cancellables)
@@ -160,9 +162,11 @@ extension FeedViewController {
 
 extension FeedViewController {
     private func makeDataSource() -> DataSource {
-        DataSource(tableView: tableView) { tableView, _, viewModelItem -> UITableViewCell? in
+        DataSource(tableView: tableView) { [weak self] tableView, _, viewModelItem -> UITableViewCell? in
+            guard let self else { return nil }
             let cell = FeedTableViewCell.dequeue(tableView)
-            cell.setup(viewModel: NewsViewModel(news: viewModelItem))
+            print("‼️ \(viewModel.contentLoadState)")
+            cell.setup(viewModel: NewsViewModel(news: viewModelItem), state: viewModel.contentLoadState)
             return cell
         }
     }
@@ -188,33 +192,4 @@ extension FeedViewController: UITableViewDelegate {
         let viewController = NewsDetailViewController(viewModel: NewsViewModel(news: viewModel))
         Navigator.shared.push(viewController: viewController)
     }
-
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        guard section < viewModel.newsModels.count else { return nil }
-//
-//        let sectionType = viewModel.newsModels[section]
-//        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier:
-//            headerViewReuseIdentifier) as? SectionHeaderView
-//        view?.titleLabel.text = sectionType.title
-//        view?.separatorView.isHidden = section == 0
-//
-//        return view
-//    }
-
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        guard currentStateSubject.value == .none else { return }
-//        let bottomY = scrollView.contentOffset.y + scrollView.bounds.height
-//
-//        if bottomY > scrollView.contentSize.height {
-//            loadPagedData(fromBeginning: false)
-//        }
-//    }
-
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        guard currentStateSubject.value == .none else { return }
-    ////        guard indexPath.section == viewModel.newsModels.count - 1 else { return }
-//        guard indexPath.row == viewModel.newsModels.count - 1 else { return }
-//
-//        loadPagedData(fromBeginning: false)
-//    }
 }

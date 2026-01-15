@@ -13,6 +13,7 @@ internal import XMLKit
 class FeedParserService {
     static let shared = FeedParserService()
 
+    private let dataBase: any DatabaseRepository
     private var cancellables: Set<AnyCancellable> = []
     private var news: [News] = []
     private let initialNewsLoadedSubject: CurrentValueSubject<Bool, Never> = .init(false)
@@ -21,20 +22,34 @@ class FeedParserService {
     }
 
     private init() {
+        dataBase = RealmDatabaseRepository.shared
+        loadNewsFromDifferentSources()
+    }
+
+    private func loadNewsFromDifferentSources() {
         Task {
-            let vedomostiUrl = "https://www.vedomosti.ru/rss/news.xml"
-            async let newsVedomosti = parceFeed(from: vedomostiUrl)
-//            self.news.append(contentsOf: newsVedomosti)
-            let rbcUrl = "https://rssexport.rbc.ru/rbcnews/news/30/full.rss"
-            async let newsRbc = await parceFeed(from: rbcUrl)
-//            self.news.append(contentsOf: newsRbc)
-            let news = await (newsRbc + newsVedomosti)
+            let news = await withTaskGroup(of: [News].self, returning: [News].self) { [weak self] group in
+                guard let self else { return [] }
+                for item in NewsSources.allCases {
+                    group.addTask {
+                        let news = await self.parceFeed(from: item.rawValue)
+                        return news
+                    }
+                }
+                var newsList: [News] = []
+                for await news in group {
+                    newsList.append(contentsOf: news)
+                }
+                return newsList
+            }.sorted(by: { $0.date > $1.date })
+            print("🔥 \(news.count)")
             self.news.append(contentsOf: news)
+            try? await Task.sleep(nanoseconds: 5_000_000_000)
             initialNewsLoadedSubject.send(true)
         }
     }
 
-    func parceFeed(from urlString: String) async -> [News] {
+    private nonisolated func parceFeed(from urlString: String) async -> [News] {
         guard let url = URL(string: urlString) else { return [] }
         do {
             var news: [News] = []
@@ -46,7 +61,7 @@ class FeedParserService {
                 feed.channel?.items?.forEach { item in
                     if let link = item.link, let date = item.pubDate {
                         let rssNews = News(
-                            //                            id: UUID(),
+                            id: link,
                             title: item.title ?? "",
                             description: item.description ?? "",
                             link: URL(string: link),
@@ -55,13 +70,14 @@ class FeedParserService {
                             source: item.author,
                             isViewed: false
                         )
+//                        print("🟢 \(rssNews.id); \(rssNews.title)")
+                        // TODO: Add DB synchronization
                         news.append(rssNews)
                     }
                 }
             case let .json(feed):
                 break
             }
-            print("🔥 \(news.count)")
             return news
         } catch {
             print("Error")

@@ -8,58 +8,58 @@
 import Foundation
 
 struct NewsModelsAdapter {
-    func adapt(news: [News]) -> (viewModels: [News], removedNotifications: [News]) {
-        let dayDateRange = FeedViewController.SectionType.day.dateRange
-        let weekDateRange = FeedViewController.SectionType.week.dateRange
-        let monthDateRange = FeedViewController.SectionType.month.dateRange
-
-        let groupedByDateRangesNotifications = Dictionary(grouping: news) { news -> FeedViewController.SectionType in
-            let sectionType: FeedViewController.SectionType
-            let fixedNanosecondsDate = news.date.eraseNanoseconds()
-            if dayDateRange.contains(fixedNanosecondsDate) {
-                sectionType = .day
-            } else if weekDateRange.contains(fixedNanosecondsDate) {
-                sectionType = .week
-            } else if monthDateRange.contains(fixedNanosecondsDate) {
-                sectionType = .month
-            } else {
-                sectionType = .other
-            }
-
-            return sectionType
-        }
-
-        var notificationViewModels: [News] = []
-
-        var removedNotifications: [News] = []
-
-        for (groupKey, groupNotifications) in groupedByDateRangesNotifications {
-            let processingResult = groupNotifications
-                .sorted { $0.date > $1.date }
-                .removedDuplicatesIfNeeded(key: groupKey)
-            if processingResult.removedNotifications.isEmpty == false {
-                removedNotifications.append(contentsOf: processingResult.removedNotifications)
-            }
-//            let groupingCount = groupKey.type == .missedCall ? 1 : 2
-            for notification in processingResult.notifications {
-                // let viewModel = NotificationModel(notification: $0)
-                notificationViewModels.append(notification /* viewModel */ )
-            }
-        }
-
-        return (notificationViewModels, removedNotifications)
-
-//        let transformedNews: [FeedViewController.SectionType: [NewsViewModel]] = groupedByDateRangesNotifications.mapValues { news in
-//            return news.map { NewsViewModel(news: $0) }
+//    func adapt(news: [News]) -> (viewModels: [News], removedNotifications: [News]) {
+//        let dayDateRange = FeedViewController.SectionType.day.dateRange
+//        let weekDateRange = FeedViewController.SectionType.week.dateRange
+//        let monthDateRange = FeedViewController.SectionType.month.dateRange
+//
+//        let groupedByDateRangesNotifications = Dictionary(grouping: news) { news -> FeedViewController.SectionType in
+//            let sectionType: FeedViewController.SectionType
+//            let fixedNanosecondsDate = news.date.eraseNanoseconds()
+//            if dayDateRange.contains(fixedNanosecondsDate) {
+//                sectionType = .day
+//            } else if weekDateRange.contains(fixedNanosecondsDate) {
+//                sectionType = .week
+//            } else if monthDateRange.contains(fixedNanosecondsDate) {
+//                sectionType = .month
+//            } else {
+//                sectionType = .other
+//            }
+//
+//            return sectionType
 //        }
-//        return transformedNews
-    }
+//
+//        var notificationViewModels: [News] = []
+//
+//        var removedNotifications: [News] = []
+//
+//        for (groupKey, groupNotifications) in groupedByDateRangesNotifications {
+//            let processingResult = groupNotifications
+//                .sorted { $0.date > $1.date }
+//                .removedDuplicatesIfNeeded(key: groupKey)
+//            if processingResult.removedNotifications.isEmpty == false {
+//                removedNotifications.append(contentsOf: processingResult.removedNotifications)
+//            }
+    ////            let groupingCount = groupKey.type == .missedCall ? 1 : 2
+//            for notification in processingResult.notifications {
+//                // let viewModel = NotificationModel(notification: $0)
+//                notificationViewModels.append(notification /* viewModel */ )
+//            }
+//        }
+//
+//        return (notificationViewModels, removedNotifications)
+//
+    ////        let transformedNews: [FeedViewController.SectionType: [NewsViewModel]] = groupedByDateRangesNotifications.mapValues { news in
+    ////            return news.map { NewsViewModel(news: $0) }
+    ////        }
+    ////        return transformedNews
+//    }
 }
 
 private extension [News] {
-    func removedDuplicatesIfNeeded(key _: FeedViewController.SectionType) -> (notifications: [News], removedNotifications: [News], canGroup: Bool) {
-        var needRemoveDuplicates = true
-        var canGroup = true
+//    func removedDuplicatesIfNeeded(key _: FeedViewController.SectionType) -> (notifications: [News], removedNotifications: [News], canGroup: Bool) {
+//        var needRemoveDuplicates = true
+//        var canGroup = true
 
 //        switch key.type {
 //        case .callRequestAccept, .newPendingCallRequest:
@@ -68,9 +68,9 @@ private extension [News] {
 //        default:
 //            break
 //        }
-        let removed = removedDuplicates()
-        return needRemoveDuplicates ? (removed.0, removed.1, canGroup) : (self, [], canGroup)
-    }
+//        let removed = removedDuplicates()
+//        return needRemoveDuplicates ? (removed.0, removed.1, canGroup) : (self, [], canGroup)
+//    }
 
     private func removedDuplicates() -> ([News], [News]) {
         var uniqueNotifications: [News] = []

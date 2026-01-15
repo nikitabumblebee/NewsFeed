@@ -8,7 +8,7 @@
 import Foundation
 
 nonisolated struct News: Hashable {
-//    let id: UUID
+    let id: String
     let title: String
     let description: String
     let link: URL?

@@ -24,32 +24,40 @@
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j3Q-E1-2RP">
                     <rect key="frame" x="0.0" y="118" width="393" height="666"/>
                     <subviews>
-                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="gQE-8u-j3W">
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="gQE-8u-j3W">
                             <rect key="frame" x="16" y="12" width="361" height="231.33333333333334"/>
                             <subviews>
-                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="eTX-Di-qii">
-                                    <rect key="frame" x="72.333333333333329" y="0.0" width="216.33333333333337" height="162.33333333333334"/>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a9l-lL-ove">
+                                    <rect key="frame" x="0.0" y="0.0" width="361" height="162.33333333333334"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="eTX-Di-qii">
+                                            <rect key="frame" x="72.333333333333329" y="0.0" width="216.33333333333337" height="162.33333333333334"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" secondItem="eTX-Di-qii" secondAttribute="height" multiplier="4:3" id="1bx-dz-lZs"/>
+                                            </constraints>
+                                        </imageView>
+                                    </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="width" secondItem="eTX-Di-qii" secondAttribute="height" multiplier="4:3" id="1bx-dz-lZs"/>
+                                        <constraint firstItem="eTX-Di-qii" firstAttribute="width" secondItem="a9l-lL-ove" secondAttribute="width" multiplier="0.6" id="VrN-3t-8Pl"/>
+                                        <constraint firstAttribute="bottom" secondItem="eTX-Di-qii" secondAttribute="bottom" id="fPZ-Re-sQY"/>
+                                        <constraint firstItem="eTX-Di-qii" firstAttribute="centerX" secondItem="a9l-lL-ove" secondAttribute="centerX" id="kak-5d-zIS"/>
+                                        <constraint firstItem="eTX-Di-qii" firstAttribute="top" secondItem="a9l-lL-ove" secondAttribute="top" id="pue-db-dIT"/>
                                     </constraints>
-                                </imageView>
+                                </view>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A9B-Ls-2eY">
-                                    <rect key="frame" x="11.666666666666657" y="170.33333333333331" width="337.66666666666674" height="61"/>
+                                    <rect key="frame" x="0.0" y="170.33333333333331" width="361" height="61"/>
                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PYA-cf-L81">
-                                    <rect key="frame" x="-731" y="231.33333333333331" width="1823.0000000000002" height="0.0"/>
+                                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PYA-cf-L81">
+                                    <rect key="frame" x="0.0" y="231.33333333333331" width="361" height="0.0"/>
                                     <string key="text">Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label Label</string>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
-                            <constraints>
-                                <constraint firstItem="eTX-Di-qii" firstAttribute="width" secondItem="gQE-8u-j3W" secondAttribute="width" multiplier="0.6" id="Dep-J2-Dvd"/>
-                            </constraints>
                         </stackView>
                     </subviews>
                     <constraints>
