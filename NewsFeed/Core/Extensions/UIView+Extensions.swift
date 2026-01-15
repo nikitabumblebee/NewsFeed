@@ -67,7 +67,7 @@ extension UIView {
         bottomAnchor.constraint(equalTo: parentView.bottomAnchor, constant: -bottomInset).isActive = true
         topAnchor.constraint(equalTo: parentView.topAnchor, constant: topInset).isActive = true
     }
-    
+
     var isHiddenInStackView: Bool {
         get {
             isHidden
@@ -78,7 +78,7 @@ extension UIView {
             }
         }
     }
-    
+
     func setRoundedCorners() {
         setCornerRadius(bounds.size.height / 2)
     }

@@ -31,7 +31,7 @@ public extension UITableViewCell {
         registerNib(for: tableView, nibName: defaultNibName, reuseIdentifier: identifier)
     }
 
-    static func registerNib(for tableView: UITableView, nibName: String, reuseIdentifier: String) {
+    static func registerNib(for tableView: UITableView, nibName: String, reuseIdentifier _: String) {
         tableView.register(UINib(nibName: nibName, bundle: Bundle(for: self)), forCellReuseIdentifier: identifier)
     }
 

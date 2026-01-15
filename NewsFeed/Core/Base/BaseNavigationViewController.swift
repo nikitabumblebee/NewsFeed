@@ -35,7 +35,7 @@ final class BaseNavigationViewController: UINavigationController {
 // MARK: UINavigationControllerDelegate
 
 extension BaseNavigationViewController: UINavigationControllerDelegate {
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+    func navigationController(_ navigationController: UINavigationController, didShow _: UIViewController, animated _: Bool) {
         let viewControllersCountGreaterThanOne = viewControllers.count > 1
         navigationController.interactivePopGestureRecognizer?.delegate = viewControllersCountGreaterThanOne ? self : nil
         navigationController.interactivePopGestureRecognizer?.isEnabled = viewControllersCountGreaterThanOne
@@ -45,11 +45,11 @@ extension BaseNavigationViewController: UINavigationControllerDelegate {
 // MARK: UIGestureRecognizerDelegate
 
 extension BaseNavigationViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizerShouldBegin(_: UIGestureRecognizer) -> Bool {
         viewControllers.count > 1
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+    func gestureRecognizer(_: UIGestureRecognizer, shouldReceive _: UITouch) -> Bool {
         guard presentedViewController == nil else { return false }
         return viewControllers.count > 1
     }

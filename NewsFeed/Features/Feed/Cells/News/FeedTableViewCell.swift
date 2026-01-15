@@ -13,14 +13,12 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet private var sourceTitleLable: UILabel!
 
     private(set) var viewModel: NewsViewModel?
-    
+
     override nonisolated func awakeFromNib() {
         super.awakeFromNib()
-        MainActor.assumeIsolated {
-            
-        }
+        MainActor.assumeIsolated {}
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
         newsImage.image = nil
@@ -29,7 +27,7 @@ class FeedTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-    
+
     func setup(viewModel: NewsViewModel) {
         self.viewModel = viewModel
         titleLabel.text = viewModel.news.title

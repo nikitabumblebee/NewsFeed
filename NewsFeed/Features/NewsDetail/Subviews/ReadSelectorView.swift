@@ -5,12 +5,12 @@
 //  Created by Nikita Shmelev on 14.01.2026.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 class ReadSelectorView: UIView {
     @IBOutlet private var segmentedControl: UISegmentedControl!
-    
+
     private let readSelectionChangeSubject: CurrentValueSubject<ReadSelectorViewType, Never> = .init(ReadSelectorViewType(rawValue: UserDefaults.standard.selectedNewsPresentationType) ?? .short)
     var readSelectionChangePublisher: AnyPublisher<ReadSelectorViewType, Never> {
         readSelectionChangeSubject.eraseToAnyPublisher()

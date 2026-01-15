@@ -25,11 +25,11 @@ final class Navigator: NSObject {
     var modalTransitionEvent: PassthroughSubject<ModalTransitionEvent, Never> = .init()
 
     var navigationController: UINavigationController? {
-        UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.rootViewController as? UINavigationController
+        UIApplication.shared.windows.filter(\.isKeyWindow).first?.rootViewController as? UINavigationController
     }
 
     var topViewController: UIViewController? {
-        let keyWindow = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
+        let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
         if var topController = keyWindow?.rootViewController {
             while let presentedViewController = topController.presentedViewController {
                 topController = presentedViewController
@@ -40,10 +40,11 @@ final class Navigator: NSObject {
     }
 
     var tabBarController: MainTabBarController? {
-        let keyWindow = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
+        let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
         guard var topController = keyWindow?.rootViewController else { return nil }
         if let navigation = topController as? UINavigationController,
-           let tabBarController = navigation.viewControllers.first as? MainTabBarController {
+           let tabBarController = navigation.viewControllers.first as? MainTabBarController
+        {
             return tabBarController
         }
         if let tabBarController = topController as? MainTabBarController {
@@ -123,7 +124,7 @@ extension Navigator {
 //        if modalPresentationStyle == .custom, viewController is ActionSheetController {
 //            viewController.transitioningDelegate = self
 //        } else {
-            viewController.modalTransitionStyle = modalTransitionStyle
+        viewController.modalTransitionStyle = modalTransitionStyle
 //        }
 
         let presenterVC = presentingViewController ?? navigationController
@@ -191,7 +192,7 @@ extension Navigator {
 
 // MARK: UIViewControllerTransitioningDelegate
 
-//extension Navigator: UIViewControllerTransitioningDelegate {
+// extension Navigator: UIViewControllerTransitioningDelegate {
 //    func animationController(
 //        forPresented presented: UIViewController,
 //        presenting: UIViewController,
@@ -204,4 +205,4 @@ extension Navigator {
 //    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 //        ActionSheetDismissTransition()
 //    }
-//}
+// }

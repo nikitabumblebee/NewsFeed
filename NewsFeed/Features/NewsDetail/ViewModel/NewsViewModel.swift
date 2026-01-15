@@ -11,13 +11,12 @@ nonisolated struct NewsViewModel: Sendable, Hashable {
     let news: News
 }
 
-//extension NewsViewModel: Hashable {
+// extension NewsViewModel: Hashable {
 //    func hash(into hasher: inout Hasher) {
 //        hasher.combine(news.id)
 //    }
-//    
+//
 //    static func == (lhs: NewsViewModel, rhs: NewsViewModel) -> Bool {
 //        lhs.news.id == rhs.news.id
 //    }
-//}
-
+// }

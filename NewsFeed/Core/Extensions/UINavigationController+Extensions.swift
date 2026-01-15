@@ -38,7 +38,8 @@ extension UINavigationController {
         animated: Bool,
         completion: @escaping () -> Void
     )
-        -> [UIViewController]? {
+        -> [UIViewController]?
+    {
         let viewController = popToViewController(viewController, animated: animated)
         if let coordinator = transitionCoordinator, animated {
             coordinator.animate(alongsideTransition: nil) { _ in

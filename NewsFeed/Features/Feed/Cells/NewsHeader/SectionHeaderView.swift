@@ -33,7 +33,7 @@ final class SectionHeaderView: UITableViewHeaderFooterView {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -42,7 +42,7 @@ final class SectionHeaderView: UITableViewHeaderFooterView {
         NSLayoutConstraint.activate([
             titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 4.0),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16.0),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16.0)
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16.0),
         ])
 
         contentView.addSubview(separatorView)
@@ -50,7 +50,7 @@ final class SectionHeaderView: UITableViewHeaderFooterView {
             separatorView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0.0),
             separatorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0.0),
             separatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0.0),
-            separatorView.heightAnchor.constraint(equalToConstant: 1.0)
+            separatorView.heightAnchor.constraint(equalToConstant: 1.0),
         ])
     }
 }

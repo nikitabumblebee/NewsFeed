@@ -1,0 +1,12 @@
+# .swiftlint.yml
+disabled_rules:
+  - todo
+  - file_length
+
+opt_in_rules:
+  - empty_count
+  - force_cast
+  - force_try
+  - force_unwrapping
+
+line_length: 120

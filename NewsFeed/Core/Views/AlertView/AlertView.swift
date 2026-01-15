@@ -40,7 +40,8 @@ class AlertView: XibView {
         buttonTitle: String? = nil,
         action: (() -> Void)? = nil
     )
-        -> AlertView {
+        -> AlertView
+    {
         showAlert(
             title: title ?? "",
             message: message,
@@ -76,9 +77,10 @@ class AlertView: XibView {
         action: (() -> Void)? = nil,
         blurredBackground: Bool = false,
         duration: TimeInterval? = 2,
-        withHapticFeedback: Bool = true,
+        withHapticFeedback: Bool = true
     )
-        -> AlertView {
+        -> AlertView
+    {
         let alert = AlertView(title: title, message: message, buttonTitle: buttonTitle, action: action, duration: duration)
         alert.show(blurredBackground)
         if withHapticFeedback { HapticFeedbackGenerator.playResultFeedback(.error) }
@@ -99,8 +101,8 @@ class AlertView: XibView {
         self.title = title
         self.message = message
         self.buttonTitle = buttonTitle
-        self.buttonAction = action
-        self.timerDuration = duration
+        buttonAction = action
+        timerDuration = duration
 
         super.init(frame: frame)
 
@@ -108,7 +110,7 @@ class AlertView: XibView {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -119,7 +121,7 @@ class AlertView: XibView {
     // MARK: - Actions
 
     func show(_ blurredBackground: Bool = false) {
-        guard let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first else {
+        guard let window = UIApplication.shared.windows.filter(\.isKeyWindow).first else {
             return
         }
 

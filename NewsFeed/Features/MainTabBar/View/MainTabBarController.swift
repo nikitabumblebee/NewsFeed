@@ -10,7 +10,7 @@ import UIKit
 final class MainTabBarController: BaseViewController {
     static let safeAreaViewId = "safeAreaView"
     static let backgroundView = "tabBarBackgroundView"
-    
+
     @IBOutlet var controllerContainerView: UIView!
     @IBOutlet var backgroundView: UIView!
 
@@ -35,7 +35,7 @@ final class MainTabBarController: BaseViewController {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
     }
-    
+
     private func setupUI() {
         configureTabs()
 
@@ -64,7 +64,7 @@ final class MainTabBarController: BaseViewController {
         createTabItem.type = .settings
         createTabItem.iconName = "gear"
         createTabItem.title = "Settings"
-        
+
         let viewModel = SettingsViewModel()
         let viewController = BaseNavigationViewController(rootViewController: SettingsViewController(viewModel: viewModel))
         tabBar.addTabItem(createTabItem, viewController: viewController)
@@ -77,7 +77,7 @@ final class MainTabBarController: BaseViewController {
     func goToSettings() {
         tabBar.selectItem(at: TabBarItemType.settings.rawValue)
     }
-    
+
     func getCurrentViewController() -> UINavigationController? {
         tabBar.getViewController(at: currentIndex) as? UINavigationController
     }
@@ -98,7 +98,7 @@ extension MainTabBarController: TabBarDelegate {
         ((viewController as? UINavigationController)?.topViewController as? TabDelegate)?.tabWillAppear(tabBarItem)
     }
 
-    func tabBar(tabBarItem: TabBarItem, didDeselectTabAtIndex: Int, viewController: UIViewController) {
+    func tabBar(tabBarItem _: TabBarItem, didDeselectTabAtIndex _: Int, viewController: UIViewController) {
         viewController.willMove(toParent: nil)
         viewController.removeFromParent()
         viewController.view.removeFromSuperview()

@@ -78,7 +78,7 @@ struct NavigationBarAppearance {
     private static func getTextAttributes(titleBarColor: UIColor) -> [NSAttributedString.Key: Any] {
         [
             .foregroundColor: titleBarColor,
-            .font: UIFont.systemFont(ofSize: 17.0, weight: .semibold)
+            .font: UIFont.systemFont(ofSize: 17.0, weight: .semibold),
         ]
     }
 }

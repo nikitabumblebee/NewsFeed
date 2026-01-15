@@ -15,6 +15,6 @@ protocol TabDelegate {
 }
 
 extension TabDelegate {
-    func tabWillAppear(_ tab: TabBarItem) {}
+    func tabWillAppear(_: TabBarItem) {}
     func tabWillDisappear() {}
 }

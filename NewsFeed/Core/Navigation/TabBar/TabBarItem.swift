@@ -25,7 +25,7 @@ class TabBarItem: UIButton {
     var type: TabBarItemType = .unknown
     var presentationContext: PresentationContext = .current
 
-    func setSelected(_ selected: Bool) {}
+    func setSelected(_: Bool) {}
 }
 
 // MARK: - ImageTabBarItem
@@ -48,7 +48,7 @@ class ImageTabBarItem: TabBarItem {
             iconImageView.image = UIImage(systemName: iconName)
         }
     }
-    
+
     var title: String = "" {
         didSet {
             bottomTitleLabel.text = title

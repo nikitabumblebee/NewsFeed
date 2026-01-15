@@ -5,8 +5,8 @@
 //  Created by Nikita Shmelev on 14.01.2026.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 class BaseViewController: UIViewController {
     @IBOutlet var scrollView: UIScrollView?
@@ -24,7 +24,7 @@ class BaseViewController: UIViewController {
             navigationItem.hidesBackButton = shouldHideBackButton
         }
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -44,6 +44,7 @@ class BaseViewController: UIViewController {
 
     var dataCancellables = Set<AnyCancellable>()
 
+    // swiftlint:disable identifier_name
     func loadData<T>(_ f: AnyPublisher<T, Never>, handler: @escaping (T) -> Void) {
         f.receive(on: DispatchQueue.main).sink { result in
             handler(result)
@@ -54,7 +55,7 @@ class BaseViewController: UIViewController {
         f.receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { state in
                 switch state {
-                case .failure(let error):
+                case let .failure(error):
                     AlertView.showError(with: error.localizedDescription)
                 default:
                     break
@@ -62,7 +63,9 @@ class BaseViewController: UIViewController {
             }, receiveValue: { _ in })
             .store(in: &cancellables)
     }
-    
+
+    // swiftlint:enable identifier_name
+
     func setupRefresher() {
         refresher = UIRefreshControl()
         refresher?.tintColor = .gray4
@@ -80,7 +83,7 @@ class BaseViewController: UIViewController {
         guard let refresher else { return }
         view.addSubview(refresher)
     }
-    
+
     @objc func updateData() {
         // clean up all data cancellables
         dataCancellables = Set<AnyCancellable>()

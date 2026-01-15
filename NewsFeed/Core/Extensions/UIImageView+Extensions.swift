@@ -11,8 +11,8 @@ import UIKit
 extension UIImageView {
     func loadImage(from url: URL?, placeholder: UIImage? = nil) async {
         image = placeholder
-        guard let url = url else { return }
-        
+        guard let url else { return }
+
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let uiImage = UIImage(data: data) else { return }

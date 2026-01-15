@@ -76,13 +76,13 @@ class TabBar: UIStackView {
     }
 
     func popToRootCurrentView() {
-        viewControllers.forEach {
-            let navigation = $0 as? UINavigationController ?? $0.navigationController
+        for viewController in viewControllers {
+            let navigation = viewController as? UINavigationController ?? viewController.navigationController
             navigation?.popToRootViewController(animated: false)
         }
     }
 
-    func selectItem(at index: Int, skipRootReturn: Bool = false, from source: String? = nil) {
+    func selectItem(at index: Int, skipRootReturn: Bool = false, from _: String? = nil) {
         guard let tabBarItem = TabBarItemType(rawValue: index) else { return }
         guard index != currentItemIndex else {
             // first we do actions with the current screen, for example, if we were on the home page and pressed home
@@ -161,9 +161,9 @@ protocol TabBarDelegate: AnyObject {
 }
 
 extension TabBarDelegate {
-    func shouldReplaceSelection(at index: Int, tabBarItem: TabBarItem) -> Bool { false }
+    func shouldReplaceSelection(at _: Int, tabBarItem _: TabBarItem) -> Bool { false }
 
-    func replaceSelection(at index: Int, viewController: UIViewController) {}
+    func replaceSelection(at _: Int, viewController _: UIViewController) {}
 }
 
 // MARK: - Private methods

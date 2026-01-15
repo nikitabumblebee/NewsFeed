@@ -41,14 +41,14 @@ struct NewsModelsAdapter {
                 removedNotifications.append(contentsOf: processingResult.removedNotifications)
             }
 //            let groupingCount = groupKey.type == .missedCall ? 1 : 2
-            processingResult.notifications.forEach {
-                //let viewModel = NotificationModel(notification: $0)
-                notificationViewModels.append($0/*viewModel*/)
+            for notification in processingResult.notifications {
+                // let viewModel = NotificationModel(notification: $0)
+                notificationViewModels.append(notification /* viewModel */ )
             }
         }
 
         return (notificationViewModels, removedNotifications)
-        
+
 //        let transformedNews: [FeedViewController.SectionType: [NewsViewModel]] = groupedByDateRangesNotifications.mapValues { news in
 //            return news.map { NewsViewModel(news: $0) }
 //        }
@@ -57,7 +57,7 @@ struct NewsModelsAdapter {
 }
 
 private extension [News] {
-    func removedDuplicatesIfNeeded(key: FeedViewController.SectionType) -> (notifications: [News], removedNotifications: [News], canGroup: Bool) {
+    func removedDuplicatesIfNeeded(key _: FeedViewController.SectionType) -> (notifications: [News], removedNotifications: [News], canGroup: Bool) {
         var needRemoveDuplicates = true
         var canGroup = true
 
@@ -85,10 +85,9 @@ private extension [News] {
 //            }) {
 //                uniqueNotifications.append(notification)
 //            } else {
-                removedNotifications.append(notification)
+            removedNotifications.append(notification)
 //            }
         }
         return (uniqueNotifications, removedNotifications)
     }
 }
-

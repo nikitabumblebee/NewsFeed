@@ -74,6 +74,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5E4FE1B02F1676060074E816 /* Build configuration list for PBXNativeTarget "NewsFeed" */;
 			buildPhases = (
+				5E4FE4A72F18D4FD0074E816 /* Swift Format */,
 				5E4FE1992F1676040074E816 /* Sources */,
 				5E4FE19A2F1676040074E816 /* Frameworks */,
 				5E4FE19B2F1676040074E816 /* Resources */,
@@ -122,6 +123,8 @@
 			packageReferences = (
 				5E4FE1B52F167B150074E816 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				5E4FE1BA2F167EBE0074E816 /* XCRemoteSwiftPackageReference "FeedKit" */,
+				5E4FE4A82F18D9070074E816 /* XCRemoteSwiftPackageReference "SwiftLint" */,
+				5E4FE4A92F18D91B0074E816 /* XCRemoteSwiftPackageReference "SwiftFormat" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5E4FE19E2F1676040074E816 /* Products */;
@@ -143,6 +146,28 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		5E4FE4A72F18D4FD0074E816 /* Swift Format */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swift Format";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$HOME/.mint/bin:/opt/homebrew/bin:/usr/local/bin:$PATH\"\n\necho \"🚀 Starting code quality tools...\"\n\n# SwiftFormat\necho \"📝 Running SwiftFormat...\"\nmint run swiftformat \"$SRCROOT/NewsFeed\" --swiftversion 6.0\n\n# SwiftLint\necho \"🔍 Running SwiftLint...\"\nmint run swiftlint lint \"$SRCROOT/NewsFeed\"\n\necho \"✅ All tools completed successfully!\"\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		5E4FE1992F1676040074E816 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -162,6 +187,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MNK559P24A;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewsFeed/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -199,6 +225,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MNK559P24A;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewsFeed/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -389,6 +416,22 @@
 			requirement = {
 				kind = exactVersion;
 				version = 10.1.3;
+			};
+		};
+		5E4FE4A82F18D9070074E816 /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/SwiftLint";
+			requirement = {
+				kind = exactVersion;
+				version = 0.63.0;
+			};
+		};
+		5E4FE4A92F18D91B0074E816 /* XCRemoteSwiftPackageReference "SwiftFormat" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nicklockwood/SwiftFormat.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.58.7;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

@@ -12,7 +12,7 @@ extension DateFormatter {
         let dateFormatter = DateFormatter()
         return dateFormatter
     }()
-    
+
     nonisolated static func get(
         with locale: Locale = Locale.current,
         timeZone: TimeZone = .current,
@@ -20,15 +20,16 @@ extension DateFormatter {
         timeStyle: Style = .none,
         format: DateFormat
     )
-        -> DateFormatter {
+        -> DateFormatter
+    {
         dateFormatter.locale = locale
         dateFormatter.timeZone = timeZone
         dateFormatter.dateStyle = dateStyle
         dateFormatter.timeStyle = timeStyle
         switch format {
-        case .localizedFromTemplate(let template):
+        case let .localizedFromTemplate(template):
             dateFormatter.setLocalizedDateFormatFromTemplate(template)
-        case .dateFormat(let template):
+        case let .dateFormat(template):
             dateFormatter.dateFormat = template
         }
         return dateFormatter
@@ -42,7 +43,8 @@ extension DateFormatter {
         timeStyle: Style = .none,
         format: DateFormat
     )
-        -> String {
+        -> String
+    {
         get(with: locale, timeZone: timeZone, dateStyle: dateStyle, timeStyle: timeStyle, format: format).string(from: date)
     }
 }
@@ -51,4 +53,3 @@ enum DateFormat {
     case localizedFromTemplate(String)
     case dateFormat(String)
 }
-

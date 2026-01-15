@@ -5,21 +5,21 @@
 //  Created by Nikita Shmelev on 14.01.2026.
 //
 
-import Foundation
 import Combine
 import FeedKit
+import Foundation
 internal import XMLKit
 
 class FeedParserService {
     static let shared = FeedParserService()
-    
+
     private var cancellables: Set<AnyCancellable> = []
     private var news: [News] = []
     private let initialNewsLoadedSubject: CurrentValueSubject<Bool, Never> = .init(false)
     var initialNewsLoaded: AnyPublisher<Bool, Never> {
         initialNewsLoadedSubject.eraseToAnyPublisher()
     }
-    
+
     private init() {
         Task {
             let vedomostiUrl = "https://www.vedomosti.ru/rss/news.xml"
@@ -41,13 +41,12 @@ class FeedParserService {
             let feed = try await Feed(url: url)
             switch feed {
             case let .atom(feed):
-                let a = feed
+                break
             case let .rss(feed):
-//                let a = try feed.toXMLString(formatted: true)
-                feed.channel?.items?.forEach({ item in
+                feed.channel?.items?.forEach { item in
                     if let link = item.link, let date = item.pubDate {
                         let rssNews = News(
-//                            id: UUID(),
+                            //                            id: UUID(),
                             title: item.title ?? "",
                             description: item.description ?? "",
                             link: URL(string: link),
@@ -58,9 +57,9 @@ class FeedParserService {
                         )
                         news.append(rssNews)
                     }
-                })
+                }
             case let .json(feed):
-                let a = try feed.toJSONString(formatted: true)
+                break
             }
             print("🔥 \(news.count)")
             return news
@@ -69,8 +68,8 @@ class FeedParserService {
             return []
         }
     }
-    
-    func fetchFeed(fromBeginning: Bool, limit: Int) -> AnyPublisher<[News], Never> {
+
+    func fetchFeed(fromBeginning _: Bool, limit _: Int) -> AnyPublisher<[News], Never> {
         Future<[News], Never> { [weak self] promise in
             guard let self else {
                 promise(.success([]))
