@@ -32,19 +32,14 @@ final class FeedViewModel: ObservableObject {
         initialNewsLoadedSubject.eraseToAnyPublisher()
     }
 
+    private let hideRefresherSubject = PassthroughSubject<Void, Never>()
+    var hideRefresherPublisher: AnyPublisher<Void, Never> {
+        hideRefresherSubject.eraseToAnyPublisher()
+    }
+
     init(newsStorage: NewsStorage) {
         self.newsStorage = newsStorage
         subscribeToNews()
-    }
-
-    func changeViewState(to newState: ContentLoadState) {
-        contentLoadState = newState
-        switch newState {
-        case .loaded, .noData:
-            clearModels()
-        case .loading:
-            break
-        }
     }
 
     func clearModels() {
@@ -54,6 +49,12 @@ final class FeedViewModel: ObservableObject {
     func buildViewModels(from newNews: [any NewsProtocol]) {
         guard contentLoadState != .loading else { return }
         newsModels.append(contentsOf: newNews)
+    }
+
+    func parseNewNews() {
+        Task {
+            await FeedParserService.shared.parseNewNews()
+        }
     }
 
     private func subscribeToNews() {
@@ -80,5 +81,20 @@ final class FeedViewModel: ObservableObject {
                 newsModels[changedNewsIndex] = updatedNews
             }
             .store(in: &cancellables)
+
+        newsStorage.uploadNewNewsPublisher
+            .sink { [weak self] uploadedNews in
+                guard let self, !uploadedNews.isEmpty else {
+                    self?.hideRefresherSubject.send(())
+                    return
+                }
+                newsModels.insert(contentsOf: uploadedNews, at: 0)
+                hideRefresherSubject.send(())
+            }
+            .store(in: &cancellables)
+    }
+
+    private func changeViewState(to newState: ContentLoadState) {
+        contentLoadState = newState
     }
 }

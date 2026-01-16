@@ -10,16 +10,13 @@ import Foundation
 class NewsViewModel: Sendable {
     private let databaseService = NewsDatabaseService.shared
     private let newsStorage = NewsStorage.shared
-    let news: NewsProtocol
+    let news: any NewsProtocol
 
-    init(news: NewsProtocol) {
+    init(news: any NewsProtocol) {
         self.news = news
     }
 
     func setNewsAsViewedIfNeeded() {
-        try? databaseService.update(by: news.id, updateBlock: { newsDB in
-            newsDB.isViewed = true
-        })
         newsStorage.markNewsAsRead(news)
     }
 }

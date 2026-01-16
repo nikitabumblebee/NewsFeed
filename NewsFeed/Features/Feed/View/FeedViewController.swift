@@ -18,6 +18,8 @@ class FeedViewController: BaseViewController {
 
     @IBOutlet private var tableView: UITableView!
 
+    private lazy var refreshControl = UIRefreshControl()
+
     override var shouldShowTabBar: Bool { true }
 
     private let pagingLimit: Int = 50
@@ -56,10 +58,10 @@ class FeedViewController: BaseViewController {
         tableView.dataSource = dataSource
         tableView.delegate = self
         tableView.backgroundColor = .backgroundPrimary
-        tableView.refreshControl = refresher
+        tableView.refreshControl = refreshControl // refresher
         FeedTableViewCell.registerNib(for: tableView)
 
-//        refresher?.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
 
     func scrollToTop() {
@@ -82,6 +84,13 @@ class FeedViewController: BaseViewController {
                 loadPagedData(fromBeginning: true)
             }
             .store(in: &cancellables)
+
+        viewModel.hideRefresherPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.refreshControl.endRefreshing()
+            }
+            .store(in: &cancellables)
     }
 
     @objc override func updateData() {
@@ -89,9 +98,9 @@ class FeedViewController: BaseViewController {
         loadPagedData(fromBeginning: true)
     }
 
-//    @objc private func refreshData(_: UIRefreshControl) {
-//        print("🤡")
-//    }
+    @objc private func refreshData(_: UIRefreshControl) {
+        viewModel.parseNewNews()
+    }
 }
 
 // MARK: - Data
@@ -130,10 +139,10 @@ extension FeedViewController {
         }
     }
 
-    private func applySnapshot(_ notificationModels: [any NewsProtocol]) {
+    private func applySnapshot(_ newsModels: [any NewsProtocol]) {
         var snapshot = Snapshot()
         snapshot.appendSections([0])
-        snapshot.appendItems(notificationModels.compactMap { $0 as? BaseNews }, toSection: 0)
+        snapshot.appendItems(newsModels.compactMap { $0 as? BaseNews }, toSection: 0)
 
         dataSource.applySnapshotUsingReloadData(snapshot) { [weak self] in
             self?.currentStateSubject.value = .none

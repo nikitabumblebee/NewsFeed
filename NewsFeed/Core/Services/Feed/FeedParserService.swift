@@ -29,47 +29,48 @@ class FeedParserService {
 
     private init() {
         dataBase = NewsDatabaseService.shared
-        loadNewsFromDifferentSources()
+        Task {
+            await loadNewsFromDifferentSources()
+        }
     }
 
-    private func loadNewsFromDifferentSources() {
-        Task {
-            let news = await withTaskGroup(of: [any NewsProtocol].self, returning: [any NewsProtocol].self) { [weak self] group in
-                guard let self else { return [] }
-                for item in NewsSources.allCases {
-                    group.addTask {
-                        let news = await self.parceFeed(from: item.rawValue)
-                        return news
-                    }
-                }
-                var newsList: [any NewsProtocol] = []
-                for await news in group {
-                    newsList.append(contentsOf: news)
-                }
-                return newsList
-            }.sorted(by: { $0.date > $1.date })
-            print("🔥 \(news.count)")
-            var loadedNews: [any NewsProtocol] = []
-            for item in news {
-                if let realmDataBase = dataBase as? NewsDatabaseService {
-                    if let existingItem = try? realmDataBase.get(by: item.id) {
-                        var updatedItem: any NewsProtocol = item
-                        if existingItem.isViewed {
-                            updatedItem.isViewed = true
-                        }
-                        print("✅ \(existingItem.id); \(existingItem.isViewed)")
-                        loadedNews.append(item)
-                        updateDabaseObjectIfNeeded(for: existingItem, with: item)
-                    } else {
-                        print("🥶")
-                        loadedNews.append(item)
-                        let newsToSafe = item.toNewsDB()
-                        try? await realmDataBase.save(newsToSafe)
-                    }
+    func parseNewNews() async {
+        await loadNewsFromDifferentSources()
+    }
+
+    private func loadNewsFromDifferentSources() async {
+        let news = await withTaskGroup(of: [any NewsProtocol].self, returning: [any NewsProtocol].self) { [weak self] group in
+            guard let self else { return [] }
+            for item in NewsSources.allCases {
+                group.addTask {
+                    let news = await self.parceFeed(from: item.rawValue)
+                    return news
                 }
             }
-            newsStorage.addNews(loadedNews)
+            var newsList: [any NewsProtocol] = []
+            for await news in group {
+                newsList.append(contentsOf: news)
+            }
+            return newsList
+        }.sorted(by: { $0.date > $1.date })
+        var loadedNews: [any NewsProtocol] = []
+        for item in news {
+            if let realmDataBase = dataBase as? NewsDatabaseService {
+                if let existingItem = try? realmDataBase.get(by: item.id) {
+                    var updatedItem: any NewsProtocol = item
+                    if existingItem.isViewed {
+                        updatedItem.isViewed = true
+                    }
+                    loadedNews.append(item)
+                    updateDabaseObjectIfNeeded(for: existingItem, with: item)
+                } else {
+                    loadedNews.append(item)
+                    let newsToSafe = item.toNewsDB()
+                    try? await realmDataBase.save(newsToSafe)
+                }
+            }
         }
+        newsStorage.addNews(loadedNews)
     }
 
     private func parceFeed(from urlString: String) async -> [any NewsProtocol] {
@@ -132,7 +133,6 @@ class FeedParserService {
             updateParameters.append(.resource(newObject.resource))
         }
         guard !updateParameters.isEmpty else { return }
-        print("🧠 \(existedObject.id); \(updateParameters)")
         try? realmDataBase.update(by: existedObject.id) { newsDB in
             for parameter in updateParameters {
                 switch parameter {

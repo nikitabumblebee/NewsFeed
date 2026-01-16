@@ -53,7 +53,7 @@ class ImageCache {
     }
 
     private func saveToDisk(image: UIImage, key: String) throws {
-        let data = image.jpegData(compressionQuality: 0.8) ?? image.pngData()!
+        guard let data = image.jpegData(compressionQuality: 0.8) ?? image.pngData() else { throw ImageCacheError.invalidImage }
         let fileURL = diskURL.appendingPathComponent(key.sha256())
         try data.write(to: fileURL)
     }
@@ -61,7 +61,8 @@ class ImageCache {
     private func loadFromDisk(key: String) throws -> UIImage {
         let fileURL = diskURL.appendingPathComponent(key.sha256())
         let data = try Data(contentsOf: fileURL)
-        return UIImage(data: data)!
+        guard let image = UIImage(data: data) else { throw ImageCacheError.invalidImage }
+        return image
     }
 }
 

@@ -15,6 +15,7 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet private var readView: UIView!
 
     private(set) var viewModel: NewsViewModel?
+    private var currentImageUUID: UUID?
 
     override nonisolated func awakeFromNib() {
         super.awakeFromNib()
@@ -29,12 +30,15 @@ class FeedTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        newsImage.image = nil
         contentView.hideSkeleton()
+        newsImage.image = nil
+        currentImageUUID = nil
         readView.isHiddenInStackView = true
     }
 
     func setup(viewModel: NewsViewModel, state: ContentLoadState) {
+        currentImageUUID = UUID()
+        let thisUUID = currentImageUUID
         self.viewModel = viewModel
         titleLabel.text = viewModel.news.title
         sourceTitleLable.text = "Source: \(viewModel.news.source ?? ""). Date: \(viewModel.news.date.getLongDateTime())"
@@ -51,7 +55,7 @@ class FeedTableViewCell: UITableViewCell {
         }
         guard let image = viewModel.news.image, let url = URL(string: image) else { return }
         Task {
-            guard let cachedImage = try? await ImageCache.shared.image(for: url) else {
+            guard let cachedImage = try? await ImageCache.shared.image(for: url), thisUUID == currentImageUUID else {
                 newsImage.image = UIImage(systemName: "photo")
                 return
             }
