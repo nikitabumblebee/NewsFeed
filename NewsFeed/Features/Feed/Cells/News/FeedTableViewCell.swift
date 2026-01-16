@@ -31,6 +31,7 @@ class FeedTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         contentView.hideSkeleton()
+        newsImage.contentMode = .scaleAspectFit
         newsImage.image = nil
         currentImageUUID = nil
         readView.isHiddenInStackView = true
@@ -59,6 +60,7 @@ class FeedTableViewCell: UITableViewCell {
                 newsImage.image = UIImage(systemName: "photo")
                 return
             }
+            print("🔵 \(image)")
             newsImage.contentMode = .scaleAspectFill
             newsImage.image = cachedImage
         }

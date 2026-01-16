@@ -58,7 +58,7 @@ class FeedViewController: BaseViewController {
         tableView.dataSource = dataSource
         tableView.delegate = self
         tableView.backgroundColor = .backgroundPrimary
-        tableView.refreshControl = refreshControl // refresher
+        tableView.refreshControl = refreshControl
         FeedTableViewCell.registerNib(for: tableView)
 
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
@@ -110,8 +110,6 @@ extension FeedViewController {
         currentStateSubject.value = .fetching
         loadData(newsStorage.fetchNews(fromBeginning: fromBeginning, limit: pagingLimit)) { [weak self] result in
             guard let self else { return }
-
-//            hideRefresher()
 
             if result.isEmpty, !fromBeginning {
                 currentStateSubject.value = .fetchedAll
