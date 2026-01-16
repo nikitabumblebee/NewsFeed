@@ -9,15 +9,14 @@ import Combine
 import Foundation
 
 final class SettingsViewModel {
-    private enum Constants {
-        static let defaultTimerDuration: Int = 300
-    }
-
-    private var reloadTimerDuration: Int = Constants.defaultTimerDuration
+    private(set) var reloadTimerDuration: Int = AppConstants.defaultTimerDuration
     private(set) var selectedSource: NewsSource?
 
     private var model: SettingsModel
     private let imageCache: ImageCache
+    private let initialTimerValue: Int = UserDefaults.standard.refreshNewsTimerDuration == 0
+        ? AppConstants.defaultTimerDuration
+        : UserDefaults.standard.refreshNewsTimerDuration
 
     private let sourcesListSubject = CurrentValueSubject<[NewsSource], Never>([])
     var sourcesListPublisher: AnyPublisher<[NewsSource], Never> {
@@ -29,6 +28,15 @@ final class SettingsViewModel {
         cacheResetSuccessSubject.eraseToAnyPublisher()
     }
 
+    private let sliderValueSubject = CurrentValueSubject<Int, Never>(
+        UserDefaults.standard.refreshNewsTimerDuration == 0
+            ? AppConstants.defaultTimerDuration
+            : UserDefaults.standard.refreshNewsTimerDuration
+    )
+    var sliderValuePublisher: AnyPublisher<Int, Never> {
+        sliderValueSubject.eraseToAnyPublisher()
+    }
+
     private(set) var sources: [NewsSource] = []
 
     init(imageCache: ImageCache) {
@@ -38,9 +46,10 @@ final class SettingsViewModel {
                 NewsSource(name: "Vedomosti", url: "https://www.vedomosti.ru/rss/news.xml", show: true),
             ],
             appTheme: .system,
-            refreshInterval: Constants.defaultTimerDuration
+            refreshInterval: initialTimerValue
         )
         self.imageCache = imageCache
+        reloadTimerDuration = initialTimerValue
         sources = model.sources
         sourcesListSubject.send(model.sources)
     }
@@ -71,7 +80,9 @@ final class SettingsViewModel {
     }
 
     func changeRefreshTimerDuration(_ duration: Int) {
+        reloadTimerDuration = duration
         model.refreshInterval = duration
+        UserDefaults.standard.refreshNewsTimerDuration = duration
     }
 
     func selectSource(_ source: NewsSource?) {

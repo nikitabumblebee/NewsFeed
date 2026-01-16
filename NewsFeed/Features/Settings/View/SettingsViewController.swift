@@ -9,6 +9,7 @@ import Combine
 import UIKit
 
 class SettingsViewController: BaseViewController {
+    @IBOutlet private var refreshLabel: UILabel!
     @IBOutlet private var refreshSlider: UISlider!
     @IBOutlet private var themeSegmentedControl: UISegmentedControl!
     @IBOutlet private var resetCacheButton: UIButton!
@@ -44,6 +45,11 @@ class SettingsViewController: BaseViewController {
         setupSubscriptions()
     }
 
+    @IBAction private func onChangeSliderValue(_ sender: UISlider) {
+        refreshLabel.text = "Refresh Interval (minutes): \(Int(sender.value))"
+        viewModel.changeRefreshTimerDuration(Int(sender.value))
+    }
+
     @IBAction private func onAddNewSource(_: Any) {
         print("🟢")
     }
@@ -66,6 +72,8 @@ class SettingsViewController: BaseViewController {
             themeSegmentedControl.insertSegment(withTitle: theme.element.rawValue, at: theme.offset, animated: false)
         }
         themeSegmentedControl.selectedSegmentIndex = 0
+        refreshSlider.value = Float(viewModel.reloadTimerDuration)
+        refreshLabel.text = "Refresh Interval (minutes): \(viewModel.reloadTimerDuration)"
     }
 
     private func setupTableView() {

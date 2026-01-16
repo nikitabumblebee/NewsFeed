@@ -54,6 +54,11 @@ class FeedViewController: BaseViewController {
         setupSubscriptions()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        viewModel.handleRefreshTimer()
+    }
+
     private func setupTableView() {
         tableView.dataSource = dataSource
         tableView.delegate = self
@@ -89,6 +94,14 @@ class FeedViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.refreshControl.endRefreshing()
+            }
+            .store(in: &cancellables)
+
+        viewModel.refreshTimerSignalPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.refreshControl.beginRefreshing()
+                self?.viewModel.parseNewNews()
             }
             .store(in: &cancellables)
     }

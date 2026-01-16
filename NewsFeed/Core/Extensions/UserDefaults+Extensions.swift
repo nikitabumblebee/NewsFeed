@@ -8,12 +8,12 @@
 import Foundation
 
 extension UserDefaults {
-    @objc var selectedNewsPresentationType: Int {
+    @objc var refreshNewsTimerDuration: Int {
         get {
-            integer(forKey: "selectedCounselorChatType")
+            integer(forKey: "refreshNewsTimerDuration")
         }
         set {
-            set(newValue, forKey: "selectedCounselorChatType")
+            set(newValue, forKey: "refreshNewsTimerDuration")
         }
     }
 }

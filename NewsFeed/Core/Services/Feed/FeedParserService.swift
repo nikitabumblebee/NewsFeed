@@ -29,6 +29,7 @@ class FeedParserService {
 
     private init() {
         dataBase = NewsDatabaseService.shared
+
         Task {
             await loadNewsFromDifferentSources()
         }
@@ -37,6 +38,8 @@ class FeedParserService {
     func parseNewNews() async {
         await loadNewsFromDifferentSources()
     }
+
+    func addNewsSourceToParse(_: NewsSource) {}
 
     private func loadNewsFromDifferentSources() async {
         let news = await withTaskGroup(of: [any NewsProtocol].self, returning: [any NewsProtocol].self) { [weak self] group in

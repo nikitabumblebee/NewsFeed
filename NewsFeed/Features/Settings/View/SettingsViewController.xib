@@ -14,6 +14,7 @@
             <connections>
                 <outlet property="addSourceButton" destination="0Ta-k6-34g" id="AeO-xI-agi"/>
                 <outlet property="deleteSourceButton" destination="IU9-M7-U0J" id="VQB-5Q-uSX"/>
+                <outlet property="refreshLabel" destination="oQW-td-A2L" id="rpP-Ln-Zl1"/>
                 <outlet property="refreshSlider" destination="6la-QX-3OQ" id="tOR-DW-hgA"/>
                 <outlet property="resetCacheButton" destination="LFc-tW-wHE" id="0jy-0e-tb3"/>
                 <outlet property="tableView" destination="C8D-ZY-NWo" id="M4Y-ut-TwP"/>
@@ -44,6 +45,9 @@
                                         <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="5" minValue="1" maxValue="30" translatesAutoresizingMaskIntoConstraints="NO" id="6la-QX-3OQ">
                                             <rect key="frame" x="0.0" y="32.333333333333343" width="361" height="34"/>
                                             <color key="tintColor" name="Accent"/>
+                                            <connections>
+                                                <action selector="onChangeSliderValue:" destination="-1" eventType="valueChanged" id="HNr-i6-H4P"/>
+                                            </connections>
                                         </slider>
                                     </subviews>
                                     <constraints>
