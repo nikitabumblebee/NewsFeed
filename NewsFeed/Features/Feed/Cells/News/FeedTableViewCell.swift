@@ -44,10 +44,19 @@ class FeedTableViewCell: UITableViewCell {
             contentView.hideSkeleton()
         }
         readView.isHiddenInStackView = !viewModel.news.isViewed
+        newsImage.tintColor = .accent
+        newsImage.contentMode = .scaleAspectFit
+        if state != .loading {
+            newsImage.image = UIImage(systemName: "photo")
+        }
         guard let image = viewModel.news.image, let url = URL(string: image) else { return }
         Task {
-            newsImage.image = try? await ImageCache.shared.image(for: url)
-//            await newsImage.loadImage(from: url)
+            guard let cachedImage = try? await ImageCache.shared.image(for: url) else {
+                newsImage.image = UIImage(systemName: "photo")
+                return
+            }
+            newsImage.contentMode = .scaleAspectFill
+            newsImage.image = cachedImage
         }
     }
 }

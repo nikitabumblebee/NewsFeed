@@ -9,10 +9,10 @@ import Foundation
 
 class NewsViewModel: Sendable {
     private let databaseService = NewsDatabaseService.shared
-    private let parserService = FeedParserService.shared
-    let news: News
+    private let newsStorage = NewsStorage.shared
+    let news: NewsProtocol
 
-    init(news: News) {
+    init(news: NewsProtocol) {
         self.news = news
     }
 
@@ -20,7 +20,7 @@ class NewsViewModel: Sendable {
         try? databaseService.update(by: news.id, updateBlock: { newsDB in
             newsDB.isViewed = true
         })
-        parserService.markNewsAsRead(news)
+        newsStorage.markNewsAsRead(news)
     }
 }
 

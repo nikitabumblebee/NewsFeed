@@ -16,68 +16,26 @@ class FeedViewController: BaseViewController {
         case navigating
     }
 
-//    nonisolated enum SectionType: CaseIterable, Hashable {
-//        case day
-//        case week
-//        case month
-//        case other
-//
-//        var title: String {
-//            switch self {
-//            case .day:
-//                "Today's news"
-//            case .week:
-//                "Week's news"
-//            case .month:
-//                "Month's news"
-//            case .other:
-//                "Past news"
-//            }
-//        }
-//
-//        var dateRange: ClosedRange<Date> {
-//            let now = Date()
-//            switch self {
-//            case .day:
-//                return now.startOfDay() ... now
-//            case .week:
-//                return now.changeDays(by: -7).startOfDay() ... now.changeDays(by: -1).endOfDay()
-//            case .month:
-//                return now.changeDays(by: -30).startOfDay() ... now.changeDays(by: -8).endOfDay()
-//            case .other:
-//                return Date(timeIntervalSince1970: 0) ... now.changeDays(by: -31).endOfDay()
-//            }
-//        }
-//
-//        static func == (lhs: SectionType, rhs: SectionType) -> Bool {
-//            switch (lhs, rhs) {
-//            case (.day, .day), (.week, .week), (.month, .month), (.other, .other):
-//                true
-//            default:
-//                false
-//            }
-//        }
-//    }
-
     @IBOutlet private var tableView: UITableView!
 
     override var shouldShowTabBar: Bool { true }
 
     private let pagingLimit: Int = 50
 
-    typealias DataSource = UITableViewDiffableDataSource<Int, News>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, News>
+    typealias DataSource = UITableViewDiffableDataSource<Int, BaseNews>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, BaseNews>
 
     private lazy var dataSource = makeDataSource()
 
     private var currentStateSubject = CurrentValueSubject<State, Never>(.none)
 
-    private let feedParserService: FeedParserService = .shared
+    private let newsStorage: NewsStorage
 
     let viewModel: FeedViewModel
 
-    init(viewModel: FeedViewModel) {
+    init(viewModel: FeedViewModel, newsStorage: NewsStorage) {
         self.viewModel = viewModel
+        self.newsStorage = newsStorage
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -122,15 +80,6 @@ class FeedViewController: BaseViewController {
                 self?.applySnapshot(newsModels)
             }
             .store(in: &cancellables)
-//        feedParserService.initialNewsLoaded
-//            .receive(on: DispatchQueue.main)
-//            .sink { [weak self] in
-//                guard let self, $0 else { return }
-//                viewModel.changeViewState(to: .loaded)
-//                tableView.reloadData()
-//                loadPagedData(fromBeginning: true)
-//            }
-//            .store(in: &cancellables)
     }
 
     @objc override func updateData() {
@@ -143,7 +92,7 @@ class FeedViewController: BaseViewController {
 extension FeedViewController {
     private func loadPagedData(fromBeginning: Bool) {
         currentStateSubject.value = .fetching
-        loadData(feedParserService.fetchFeed(fromBeginning: fromBeginning, limit: pagingLimit)) { [weak self] result in
+        loadData(newsStorage.fetchNews(fromBeginning: fromBeginning, limit: pagingLimit)) { [weak self] result in
             guard let self else { return }
 
             hideRefresher()
@@ -175,10 +124,10 @@ extension FeedViewController {
         }
     }
 
-    private func applySnapshot(_ notificationModels: [News]) {
+    private func applySnapshot(_ notificationModels: [any NewsProtocol]) {
         var snapshot = Snapshot()
         snapshot.appendSections([0])
-        snapshot.appendItems(notificationModels, toSection: 0)
+        snapshot.appendItems(notificationModels.compactMap { $0 as? BaseNews }, toSection: 0)
 
         dataSource.applySnapshotUsingReloadData(snapshot) { [weak self] in
             self?.currentStateSubject.value = .none

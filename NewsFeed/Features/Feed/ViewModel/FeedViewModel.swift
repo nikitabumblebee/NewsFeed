@@ -9,28 +9,28 @@ import Combine
 import Foundation
 
 final class FeedViewModel: ObservableObject {
-    private let feedParserService: FeedParserService
-    private var news = [News]()
+    private let newsStorage: NewsStorage
+    private var news = [any NewsProtocol]()
     private var cancellables = Set<AnyCancellable>()
 
-    @Published private(set) var newsModels: [News] = [
-        News(id: "123", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        News(id: "234", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        News(id: "345", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        News(id: "456", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        News(id: "567", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        News(id: "678", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        News(id: "789", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        News(id: "890", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        News(id: "901", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        News(id: "012", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+    @Published private(set) var newsModels: [any NewsProtocol] = [
+        BaseNews(id: "123", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "234", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "345", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "456", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "567", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "678", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "789", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "890", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "901", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "012", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
     ]
 
     private(set) var contentLoadState: ContentLoadState = .loading
 
-    init(feedParserService: FeedParserService) {
-        self.feedParserService = feedParserService
-        subscribeToParser()
+    init(newsStorage: NewsStorage) {
+        self.newsStorage = newsStorage
+        subscribeToNews()
     }
 
     func changeViewState(to newState: ContentLoadState) {
@@ -47,14 +47,14 @@ final class FeedViewModel: ObservableObject {
         news.removeAll()
     }
 
-    func buildViewModels(from newNews: [News]) {
+    func buildViewModels(from newNews: [any NewsProtocol]) {
         guard contentLoadState != .loading else { return }
-        news.append(contentsOf: newNews)
+        news.append(contentsOf: newNews.compactMap { $0 as? BaseNews })
         newsModels = newNews
     }
 
-    private func subscribeToParser() {
-        feedParserService.currentNewsPublisher
+    private func subscribeToNews() {
+        newsStorage.currentNewsPublisher
             .sink { [weak self] news in
                 guard let self, let news else { return }
                 changeViewState(to: news.isEmpty ? .noData : .loaded)

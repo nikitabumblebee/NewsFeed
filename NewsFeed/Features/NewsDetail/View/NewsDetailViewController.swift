@@ -41,10 +41,15 @@ class NewsDetailViewController: BaseViewController {
     }
 
     private func setupUI() {
+        newsImageView.tintColor = .accent
+        newsImageView.contentMode = .scaleAspectFit
+        newsImageView.image = UIImage(systemName: "photo")
         if let image = viewModel.news.image, let url = URL(string: image) {
             Task {
-                newsImageView.image = try? await ImageCache.shared.image(for: url)
-//                await newsImageView.loadImage(from: url)
+                if let cachedImage = try? await ImageCache.shared.image(for: url) {
+                    newsImageView.contentMode = .scaleAspectFill
+                    newsImageView.image = cachedImage
+                }
             }
         }
         newsImageView.setCornerRadius(18)
