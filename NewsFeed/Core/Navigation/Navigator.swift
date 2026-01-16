@@ -94,12 +94,6 @@ final class Navigator: NSObject {
 // MARK: - MVC navigation
 
 extension Navigator {
-//    func presentAsCard(_ vc: UIViewController, _ size: CardPresentationViewController.Size = .contentHeight, _ settings: CardPresentationSettings = .default) {
-//        let cardViewController = CardPresentationViewController(size: size, settings: settings)
-//        cardViewController.setContentViewController(vc)
-//        Navigator.shared.present(viewController: cardViewController, presentingViewController: nil)
-//    }
-
     /// если передаем navigationController пустым, то открывается от основного контроллера без таб бара
     func push(
         viewController: UIViewController,
@@ -140,27 +134,6 @@ extension Navigator {
         present(viewController: viewController, presentingViewController: presenterVC, modalPresentationStyle: .fullScreen)
     }
 
-//    func showLoaderViewController(disableUserInteraction: Bool = true) {
-//        let loaderView = LoaderIndicatorViewController()
-//        loaderView.modalTransitionStyle = .crossDissolve
-//        loaderView.modalPresentationStyle = .overFullScreen
-//        tabBarController?.view.isUserInteractionEnabled = !disableUserInteraction
-//        tabBarController?.present(loaderView, animated: true)
-//    }
-
-//    func hideLoaderViewController(completionHandler: (() -> Void)? = nil) {
-//        let loaderViewController = topViewController as? LoaderIndicatorViewController
-//        guard let loaderViewController else {
-//            tabBarController?.view.isUserInteractionEnabled = true
-//            completionHandler?()
-//            return
-//        }
-//        loaderViewController.dismiss(animated: false) { [weak self] in
-//            self?.tabBarController?.view.isUserInteractionEnabled = true
-//            completionHandler?()
-//        }
-//    }
-
     func popViewController(navigationController: UINavigationController? = nil, animated: Bool = true, completion: @escaping () -> Void = {}) {
         let navigationController = navigationController ?? self.navigationController
         navigationController?.popViewController(animated: animated, completion: completion)
@@ -171,7 +144,12 @@ extension Navigator {
         navigationController?.popToRootViewController(animated: animated)
     }
 
-    func popToViewController(_ viewController: UIViewController, navigationController: UINavigationController? = nil, animated: Bool = true, completion: @escaping () -> Void = {}) {
+    func popToViewController(
+        _ viewController: UIViewController,
+        navigationController: UINavigationController? = nil,
+        animated: Bool = true,
+        completion: @escaping () -> Void = {}
+    ) {
         let navigationController = navigationController ?? self.navigationController
         navigationController?.popToViewController(viewController, animated: animated, completion: completion)
     }
@@ -189,20 +167,3 @@ extension Navigator {
         dismiss(presentingBy: navigationController, animated: animated, completion: completion)
     }
 }
-
-// MARK: UIViewControllerTransitioningDelegate
-
-// extension Navigator: UIViewControllerTransitioningDelegate {
-//    func animationController(
-//        forPresented presented: UIViewController,
-//        presenting: UIViewController,
-//        source: UIViewController
-//    )
-//        -> UIViewControllerAnimatedTransitioning? {
-//        ActionSheetPresentTransition()
-//    }
-//
-//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        ActionSheetDismissTransition()
-//    }
-// }

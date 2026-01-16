@@ -7,16 +7,26 @@
 
 import Foundation
 
-nonisolated struct NewsViewModel: Sendable, Hashable {
-    let news: News
+class NewsViewModel: Sendable {
+    private let databaseService = NewsDatabaseService.shared
+    private let newsStorage = NewsStorage.shared
+    let news: any NewsProtocol
+
+    init(news: any NewsProtocol) {
+        self.news = news
+    }
+
+    func setNewsAsViewedIfNeeded() {
+        newsStorage.markNewsAsRead(news)
+    }
 }
 
-// extension NewsViewModel: Hashable {
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(news.id)
-//    }
-//
-//    static func == (lhs: NewsViewModel, rhs: NewsViewModel) -> Bool {
-//        lhs.news.id == rhs.news.id
-//    }
-// }
+extension NewsViewModel: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(news.id)
+    }
+
+    static func == (lhs: NewsViewModel, rhs: NewsViewModel) -> Bool {
+        lhs.news.id == rhs.news.id
+    }
+}

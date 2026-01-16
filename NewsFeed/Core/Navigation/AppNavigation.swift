@@ -15,55 +15,6 @@ final class AppNavigation {
         self.sceneDelegate = sceneDelegate
     }
 
-//    func presentUserCheckScreen() {
-//        let viewController = UserCheckViewController(viewModel: UserCheckDefaultViewModel())
-//        viewController.navigator = self
-//        setRootViewController(viewController, animated: false)
-//    }
-
-//    func presentScreen(
-//        for profile: Profile?,
-//        presentCousellor: Bool = false
-//    ) {
-//        guard let profile,
-//              profile.nickname != nil
-//        else {
-//            setScene(.onboarding(fullOnboarding: !UserDefaults.standard.hasSeenOnboarding)) {
-//                UniversalLinks.shared.handleExistingLink(isColdStart: true)
-//            }
-//            return
-//        }
-//
-//        let registrationConfig = StaticRepository.shared.data.registrationConfig
-//        let scene: Scene
-//
-//        var steps = [RegistrationFlowItem]()
-//        if registrationConfig?.goals == true, profile.goals?.isEmpty == true {
-//            steps.append(.goals)
-//        }
-//        if registrationConfig?.schedule == true, profile.aiCounselorSchedule?.isEmpty == true {
-//            steps.append(.schedule)
-//        }
-//        if User.me.hasSeenCongratulationsScreen == false {
-//            steps.append(.congratulation)
-//        }
-//
-//        if !steps.isEmpty {
-//            scene = .registration(type: nil, steps: steps)
-//        } else {
-//            scene = presentCousellor ? .counsellor : .main
-//        }
-//        setScene(scene) {
-//            UniversalLinks.shared.handleExistingLink(isColdStart: true)
-//        }
-//    }
-
-//    func setScene(_ scene: Scene, completionHandler: (() -> Void)? = nil) {
-//        setRootViewController(scene.controller) {
-//            completionHandler?()
-//        }
-//    }
-
     func setRootViewController(
         _ viewController: UIViewController,
         animated: Bool = true,

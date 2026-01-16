@@ -11,7 +11,7 @@ import UIKit
 class ReadSelectorView: UIView {
     @IBOutlet private var segmentedControl: UISegmentedControl!
 
-    private let readSelectionChangeSubject: CurrentValueSubject<ReadSelectorViewType, Never> = .init(ReadSelectorViewType(rawValue: UserDefaults.standard.selectedNewsPresentationType) ?? .short)
+    private let readSelectionChangeSubject: CurrentValueSubject<ReadSelectorViewType, Never> = .init(.short)
     var readSelectionChangePublisher: AnyPublisher<ReadSelectorViewType, Never> {
         readSelectionChangeSubject.eraseToAnyPublisher()
     }
@@ -19,13 +19,12 @@ class ReadSelectorView: UIView {
     override nonisolated func awakeFromNib() {
         super.awakeFromNib()
         MainActor.assumeIsolated {
-            segmentedControl.selectedSegmentIndex = UserDefaults.standard.selectedNewsPresentationType
+            segmentedControl.selectedSegmentIndex = 0
         }
     }
 
     @IBAction func onValueChange(_ sender: UISegmentedControl) {
         let readSelectorViewType = ReadSelectorViewType(rawValue: sender.selectedSegmentIndex) ?? .short
-        UserDefaults.standard.selectedNewsPresentationType = readSelectorViewType.rawValue
         readSelectionChangeSubject.send(readSelectorViewType)
     }
 }

@@ -9,40 +9,92 @@ import Combine
 import Foundation
 
 final class FeedViewModel: ObservableObject {
-    typealias SectionType = FeedViewController.SectionType
-
-    private var news = [News]()
+    private let newsStorage: NewsStorage
     private var cancellables = Set<AnyCancellable>()
 
-    @Published private(set) var newsModels: [News] = []
+    @Published private(set) var newsModels: [any NewsProtocol] = [
+        BaseNews(id: "123", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "234", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "345", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "456", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "567", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "678", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "789", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "890", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "901", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+        BaseNews(id: "012", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
+    ]
 
-    func clearModels() {
-        news.removeAll()
+    private(set) var contentLoadState: ContentLoadState = .loading
+
+    private let initialNewsLoadedSubject = CurrentValueSubject<Bool, Never>(false)
+    var initialNewsLoadedPublisher: AnyPublisher<Bool, Never> {
+        initialNewsLoadedSubject.eraseToAnyPublisher()
     }
 
-    func buildViewModels(from newNews: [News]) {
-        news.append(contentsOf: newNews)
-//        let adapted = NewsModelsAdapter().adapt(news: news)
+    private let hideRefresherSubject = PassthroughSubject<Void, Never>()
+    var hideRefresherPublisher: AnyPublisher<Void, Never> {
+        hideRefresherSubject.eraseToAnyPublisher()
+    }
 
-//        let newGroupedNotifications = adapted.viewModels
-//        adaptedNotifications.formUnion(newGroupedNotifications)
-//        var sortedNotificationModels: [(SectionType, [News])] = []
-//
-//        let notificationsArray = Array(adaptedNotifications)
-//        for section in SectionType.allCases {
-//            let rangedNotifications = notificationsArray.filter {
-//                let viewModelDate = ($0 as? News)?.date ?? Date()
-//                return section.dateRange.contains(viewModelDate.eraseNanoseconds())
-//            }
-//
-//            if !rangedNotifications.isEmpty {
-//                let sortedRangedNotifications = rangedNotifications.sorted {
-//                    ($0 as? News)?.date ?? Date() > ($1 as? News)?.date ?? Date()
-//                }.compactMap { $0 as? News }
-//                sortedNotificationModels.append((section, sortedRangedNotifications))
-//            }
-//        }
+    init(newsStorage: NewsStorage) {
+        self.newsStorage = newsStorage
+        subscribeToNews()
+    }
 
-        newsModels = newNews
+    func clearModels() {
+        newsModels.removeAll()
+    }
+
+    func buildViewModels(from newNews: [any NewsProtocol]) {
+        guard contentLoadState != .loading else { return }
+        newsModels.append(contentsOf: newNews)
+    }
+
+    func parseNewNews() {
+        Task {
+            await FeedParserService.shared.parseNewNews()
+        }
+    }
+
+    private func subscribeToNews() {
+        newsStorage.initialNewsLoadedPublisher
+            .removeDuplicates()
+            .sink { [weak self] in
+                guard let self, $0 else { return }
+                changeViewState(to: newsStorage.news.isEmpty ? .noData : .loaded)
+                initialNewsLoadedSubject.send($0)
+            }
+            .store(in: &cancellables)
+
+        newsStorage.currentNewsPublisher
+            .sink { [weak self] news in
+                guard let self, let news else { return }
+                changeViewState(to: news.isEmpty ? .noData : .loaded)
+                newsModels = news
+            }
+            .store(in: &cancellables)
+
+        newsStorage.updateNewsPublisher
+            .sink { [weak self] updatedNews in
+                guard let self, let changedNewsIndex = newsModels.firstIndex(where: { $0.id == updatedNews.id }) else { return }
+                newsModels[changedNewsIndex] = updatedNews
+            }
+            .store(in: &cancellables)
+
+        newsStorage.uploadNewNewsPublisher
+            .sink { [weak self] uploadedNews in
+                guard let self, !uploadedNews.isEmpty else {
+                    self?.hideRefresherSubject.send(())
+                    return
+                }
+                newsModels.insert(contentsOf: uploadedNews, at: 0)
+                hideRefresherSubject.send(())
+            }
+            .store(in: &cancellables)
+    }
+
+    private func changeViewState(to newState: ContentLoadState) {
+        contentLoadState = newState
     }
 }

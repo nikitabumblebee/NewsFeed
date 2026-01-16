@@ -16,69 +16,28 @@ class FeedViewController: BaseViewController {
         case navigating
     }
 
-    nonisolated enum SectionType: CaseIterable, Hashable {
-        case day
-        case week
-        case month
-        case other
-
-        var title: String {
-            switch self {
-            case .day:
-                "Today's news"
-            case .week:
-                "Week's news"
-            case .month:
-                "Month's news"
-            case .other:
-                "Past news"
-            }
-        }
-
-        var dateRange: ClosedRange<Date> {
-            let now = Date()
-            switch self {
-            case .day:
-                return now.startOfDay() ... now
-            case .week:
-                return now.changeDays(by: -7).startOfDay() ... now.changeDays(by: -1).endOfDay()
-            case .month:
-                return now.changeDays(by: -30).startOfDay() ... now.changeDays(by: -8).endOfDay()
-            case .other:
-                return Date(timeIntervalSince1970: 0) ... now.changeDays(by: -31).endOfDay()
-            }
-        }
-
-        static func == (lhs: SectionType, rhs: SectionType) -> Bool {
-            switch (lhs, rhs) {
-            case (.day, .day), (.week, .week), (.month, .month), (.other, .other):
-                true
-            default:
-                false
-            }
-        }
-    }
-
     @IBOutlet private var tableView: UITableView!
+
+    private lazy var refreshControl = UIRefreshControl()
 
     override var shouldShowTabBar: Bool { true }
 
-    private let headerViewReuseIdentifier: String = .init(describing: SectionHeaderView.self)
     private let pagingLimit: Int = 50
 
-    typealias DataSource = UITableViewDiffableDataSource<Int, News>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, News>
+    typealias DataSource = UITableViewDiffableDataSource<Int, BaseNews>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, BaseNews>
 
     private lazy var dataSource = makeDataSource()
 
     private var currentStateSubject = CurrentValueSubject<State, Never>(.none)
 
-    private let feedParserService: FeedParserService = .shared
+    private let newsStorage: NewsStorage
 
     let viewModel: FeedViewModel
 
-    init(viewModel: FeedViewModel) {
+    init(viewModel: FeedViewModel, newsStorage: NewsStorage) {
         self.viewModel = viewModel
+        self.newsStorage = newsStorage
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -99,36 +58,48 @@ class FeedViewController: BaseViewController {
         tableView.dataSource = dataSource
         tableView.delegate = self
         tableView.backgroundColor = .backgroundPrimary
-        tableView.refreshControl = refresher
+        tableView.refreshControl = refreshControl // refresher
         FeedTableViewCell.registerNib(for: tableView)
+
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+    }
+
+    func scrollToTop() {
+        guard !viewModel.newsModels.isEmpty else { return }
+        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }
 
     func setupSubscriptions() {
-        currentStateSubject
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-//                self?.tableView.tableFooterView = currentState == .fetching ? self?.footerActivityIndicator : nil
-            }
-            .store(in: &cancellables)
-
         viewModel.$newsModels
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newsModels in
-                print("🚫 \(newsModels.count)")
                 self?.applySnapshot(newsModels)
             }
             .store(in: &cancellables)
-        feedParserService.initialNewsLoaded
+
+        viewModel.initialNewsLoadedPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 guard let self, $0 else { return }
                 loadPagedData(fromBeginning: true)
             }
             .store(in: &cancellables)
+
+        viewModel.hideRefresherPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.refreshControl.endRefreshing()
+            }
+            .store(in: &cancellables)
     }
 
     @objc override func updateData() {
+        guard viewModel.contentLoadState != .loading else { return }
         loadPagedData(fromBeginning: true)
+    }
+
+    @objc private func refreshData(_: UIRefreshControl) {
+        viewModel.parseNewNews()
     }
 }
 
@@ -137,10 +108,10 @@ class FeedViewController: BaseViewController {
 extension FeedViewController {
     private func loadPagedData(fromBeginning: Bool) {
         currentStateSubject.value = .fetching
-        loadData(feedParserService.fetchFeed(fromBeginning: fromBeginning, limit: pagingLimit)) { [weak self] result in
+        loadData(newsStorage.fetchNews(fromBeginning: fromBeginning, limit: pagingLimit)) { [weak self] result in
             guard let self else { return }
 
-            hideRefresher()
+//            hideRefresher()
 
             if result.isEmpty, !fromBeginning {
                 currentStateSubject.value = .fetchedAll
@@ -160,17 +131,18 @@ extension FeedViewController {
 
 extension FeedViewController {
     private func makeDataSource() -> DataSource {
-        DataSource(tableView: tableView) { tableView, _, viewModelItem -> UITableViewCell? in
+        DataSource(tableView: tableView) { [weak self] tableView, _, viewModelItem -> UITableViewCell? in
+            guard let self else { return nil }
             let cell = FeedTableViewCell.dequeue(tableView)
-            cell.setup(viewModel: NewsViewModel(news: viewModelItem))
+            cell.setup(viewModel: NewsViewModel(news: viewModelItem), state: viewModel.contentLoadState)
             return cell
         }
     }
 
-    private func applySnapshot(_ notificationModels: [News]) {
+    private func applySnapshot(_ newsModels: [any NewsProtocol]) {
         var snapshot = Snapshot()
         snapshot.appendSections([0])
-        snapshot.appendItems(notificationModels, toSection: 0)
+        snapshot.appendItems(newsModels.compactMap { $0 as? BaseNews }, toSection: 0)
 
         dataSource.applySnapshotUsingReloadData(snapshot) { [weak self] in
             self?.currentStateSubject.value = .none
@@ -181,40 +153,18 @@ extension FeedViewController {
 // MARK: UITableViewDelegate
 
 extension FeedViewController: UITableViewDelegate {
-    func tableView(_: UITableView, heightForHeaderInSection _: Int) -> CGFloat { 44.0 }
-
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let viewModel = viewModel.newsModels[indexPath.row]
         let viewController = NewsDetailViewController(viewModel: NewsViewModel(news: viewModel))
         Navigator.shared.push(viewController: viewController)
     }
 
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        guard section < viewModel.newsModels.count else { return nil }
-//
-//        let sectionType = viewModel.newsModels[section]
-//        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier:
-//            headerViewReuseIdentifier) as? SectionHeaderView
-//        view?.titleLabel.text = sectionType.title
-//        view?.separatorView.isHidden = section == 0
-//
-//        return view
-//    }
+    func tableView(_: UITableView, willDisplay _: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard currentStateSubject.value == .none,
+              viewModel.contentLoadState != .loading,
+              indexPath.row == viewModel.newsModels.count - 1
+        else { return }
 
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        guard currentStateSubject.value == .none else { return }
-//        let bottomY = scrollView.contentOffset.y + scrollView.bounds.height
-//
-//        if bottomY > scrollView.contentSize.height {
-//            loadPagedData(fromBeginning: false)
-//        }
-//    }
-
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        guard currentStateSubject.value == .none else { return }
-    ////        guard indexPath.section == viewModel.newsModels.count - 1 else { return }
-//        guard indexPath.row == viewModel.newsModels.count - 1 else { return }
-//
-//        loadPagedData(fromBeginning: false)
-//    }
+        loadPagedData(fromBeginning: false)
+    }
 }

@@ -173,7 +173,7 @@ private extension TabBar {
         guard let navigationController = getViewController(at: TabBarItemType.feed.rawValue) as? BaseNavigationViewController,
               let feedViewController = navigationController.visibleViewController as? FeedViewController
         else { return }
-//        feedViewController.scrollToTop()
+        feedViewController.scrollToTop()
     }
 
     func handleSettingsTabBarRepeatedTap() {

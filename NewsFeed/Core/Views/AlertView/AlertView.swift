@@ -39,9 +39,7 @@ class AlertView: XibView {
         blurredBackground: Bool = false,
         buttonTitle: String? = nil,
         action: (() -> Void)? = nil
-    )
-        -> AlertView
-    {
+    ) -> AlertView {
         showAlert(
             title: title ?? "",
             message: message,
@@ -133,7 +131,9 @@ class AlertView: XibView {
                 blur.effect = UIBlurEffect(style: .systemThinMaterialLight)
                 self.blur = blur
             }
-            window.addSubview(blur!)
+            if let blur {
+                window.addSubview(blur)
+            }
         }
 
         window.addSubview(self)

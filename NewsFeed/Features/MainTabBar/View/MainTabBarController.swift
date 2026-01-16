@@ -54,8 +54,8 @@ final class MainTabBarController: BaseViewController {
         createTabItem.iconName = "newspaper"
         createTabItem.title = "Feed"
 
-        let viewModel = FeedViewModel()
-        let viewController = BaseNavigationViewController(rootViewController: FeedViewController(viewModel: viewModel))
+        let viewModel = FeedViewModel(newsStorage: NewsStorage.shared)
+        let viewController = BaseNavigationViewController(rootViewController: FeedViewController(viewModel: viewModel, newsStorage: NewsStorage.shared))
         tabBar.addTabItem(createTabItem, viewController: viewController)
     }
 

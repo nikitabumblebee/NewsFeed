@@ -26,10 +26,6 @@ final class BaseNavigationViewController: UINavigationController {
         super.viewWillAppear(animated)
         setNavigationBarAppearance(for: currentStyle ?? .opaque)
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
 }
 
 // MARK: UINavigationControllerDelegate
