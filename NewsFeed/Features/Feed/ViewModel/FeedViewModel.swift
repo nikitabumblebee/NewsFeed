@@ -10,7 +10,6 @@ import Foundation
 
 final class FeedViewModel: ObservableObject {
     private let newsStorage: NewsStorage
-    private var news = [any NewsProtocol]()
     private var cancellables = Set<AnyCancellable>()
 
     @Published private(set) var newsModels: [any NewsProtocol] = [
@@ -28,6 +27,11 @@ final class FeedViewModel: ObservableObject {
 
     private(set) var contentLoadState: ContentLoadState = .loading
 
+    private let initialNewsLoadedSubject = CurrentValueSubject<Bool, Never>(false)
+    var initialNewsLoadedPublisher: AnyPublisher<Bool, Never> {
+        initialNewsLoadedSubject.eraseToAnyPublisher()
+    }
+
     init(newsStorage: NewsStorage) {
         self.newsStorage = newsStorage
         subscribeToNews()
@@ -44,21 +48,36 @@ final class FeedViewModel: ObservableObject {
     }
 
     func clearModels() {
-        news.removeAll()
+        newsModels.removeAll()
     }
 
     func buildViewModels(from newNews: [any NewsProtocol]) {
         guard contentLoadState != .loading else { return }
-        news.append(contentsOf: newNews.compactMap { $0 as? BaseNews })
-        newsModels = newNews
+        newsModels.append(contentsOf: newNews)
     }
 
     private func subscribeToNews() {
+        newsStorage.initialNewsLoadedPublisher
+            .removeDuplicates()
+            .sink { [weak self] in
+                guard let self, $0 else { return }
+                changeViewState(to: newsStorage.news.isEmpty ? .noData : .loaded)
+                initialNewsLoadedSubject.send($0)
+            }
+            .store(in: &cancellables)
+
         newsStorage.currentNewsPublisher
             .sink { [weak self] news in
                 guard let self, let news else { return }
                 changeViewState(to: news.isEmpty ? .noData : .loaded)
                 newsModels = news
+            }
+            .store(in: &cancellables)
+
+        newsStorage.updateNewsPublisher
+            .sink { [weak self] updatedNews in
+                guard let self, let changedNewsIndex = newsModels.firstIndex(where: { $0.id == updatedNews.id }) else { return }
+                newsModels[changedNewsIndex] = updatedNews
             }
             .store(in: &cancellables)
     }

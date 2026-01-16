@@ -58,6 +58,8 @@ class FeedViewController: BaseViewController {
         tableView.backgroundColor = .backgroundPrimary
         tableView.refreshControl = refresher
         FeedTableViewCell.registerNib(for: tableView)
+
+//        refresher?.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
 
     func scrollToTop() {
@@ -66,25 +68,30 @@ class FeedViewController: BaseViewController {
     }
 
     func setupSubscriptions() {
-        currentStateSubject
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-//                self?.tableView.tableFooterView = currentState == .fetching ? self?.footerActivityIndicator : nil
-            }
-            .store(in: &cancellables)
-
         viewModel.$newsModels
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newsModels in
-                print("🚫 \(newsModels.count)")
                 self?.applySnapshot(newsModels)
+            }
+            .store(in: &cancellables)
+
+        viewModel.initialNewsLoadedPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self, $0 else { return }
+                loadPagedData(fromBeginning: true)
             }
             .store(in: &cancellables)
     }
 
     @objc override func updateData() {
+        guard viewModel.contentLoadState != .loading else { return }
         loadPagedData(fromBeginning: true)
     }
+
+//    @objc private func refreshData(_: UIRefreshControl) {
+//        print("🤡")
+//    }
 }
 
 // MARK: - Data
@@ -95,7 +102,7 @@ extension FeedViewController {
         loadData(newsStorage.fetchNews(fromBeginning: fromBeginning, limit: pagingLimit)) { [weak self] result in
             guard let self else { return }
 
-            hideRefresher()
+//            hideRefresher()
 
             if result.isEmpty, !fromBeginning {
                 currentStateSubject.value = .fetchedAll
@@ -118,7 +125,6 @@ extension FeedViewController {
         DataSource(tableView: tableView) { [weak self] tableView, _, viewModelItem -> UITableViewCell? in
             guard let self else { return nil }
             let cell = FeedTableViewCell.dequeue(tableView)
-            print("‼️ \(viewModel.contentLoadState)")
             cell.setup(viewModel: NewsViewModel(news: viewModelItem), state: viewModel.contentLoadState)
             return cell
         }
@@ -138,11 +144,18 @@ extension FeedViewController {
 // MARK: UITableViewDelegate
 
 extension FeedViewController: UITableViewDelegate {
-    func tableView(_: UITableView, heightForHeaderInSection _: Int) -> CGFloat { 44.0 }
-
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let viewModel = viewModel.newsModels[indexPath.row]
         let viewController = NewsDetailViewController(viewModel: NewsViewModel(news: viewModel))
         Navigator.shared.push(viewController: viewController)
+    }
+
+    func tableView(_: UITableView, willDisplay _: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard currentStateSubject.value == .none,
+              viewModel.contentLoadState != .loading,
+              indexPath.row == viewModel.newsModels.count - 1
+        else { return }
+
+        loadPagedData(fromBeginning: false)
     }
 }

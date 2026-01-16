@@ -83,11 +83,6 @@ class FeedParserService {
             case let .rss(feed):
                 feed.channel?.items?.forEach { item in
                     if let link = item.link, let date = item.pubDate {
-//                        let image = item.enclosure?.attributes?.type  item.enclosure?.attributes?.url
-                        if let imageType = item.enclosure?.attributes?.type, imageType != "image/jpeg" {
-                            print("")
-                        }
-                        print("💩 \(item.enclosure?.attributes?.type)")
                         let rssNews = BaseNews(
                             id: link,
                             title: item.title ?? "",
