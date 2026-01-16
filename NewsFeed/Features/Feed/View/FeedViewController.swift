@@ -104,6 +104,13 @@ class FeedViewController: BaseViewController {
                 self?.viewModel.parseNewNews()
             }
             .store(in: &cancellables)
+
+        viewModel.applyNewsFilterPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.loadPagedData(fromBeginning: true)
+            }
+            .store(in: &cancellables)
     }
 
     @objc override func updateData() {

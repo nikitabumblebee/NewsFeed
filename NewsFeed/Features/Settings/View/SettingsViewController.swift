@@ -21,8 +21,8 @@ class SettingsViewController: BaseViewController {
 
     private var isSelectedSource: Bool = false
 
-    typealias DataSource = UITableViewDiffableDataSource<Int, NewsSource>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, NewsSource>
+    typealias DataSource = UITableViewDiffableDataSource<Int, NewsResource>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, NewsResource>
 
     private lazy var dataSource = makeDataSource()
 
@@ -120,7 +120,7 @@ extension SettingsViewController {
         }
     }
 
-    private func applySnapshot(_ newsSources: [NewsSource]) {
+    private func applySnapshot(_ newsSources: [NewsResource]) {
         var snapshot = Snapshot()
         snapshot.appendSections([0])
         snapshot.appendItems(newsSources, toSection: 0)

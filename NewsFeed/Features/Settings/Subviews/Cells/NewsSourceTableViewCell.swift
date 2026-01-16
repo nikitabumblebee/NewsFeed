@@ -37,7 +37,7 @@ class NewsSourceTableViewCell: UITableViewCell {
         urlLabel.textColor = sender.isOn ? .textPrimary : .textPrimary.withAlphaComponent(0.6)
     }
 
-    func setup(newsSource: NewsSource) {
+    func setup(newsSource: NewsResource) {
         titleLabel.text = newsSource.name
         urlLabel.text = newsSource.url
         useResourceSwitcher.isOn = newsSource.show

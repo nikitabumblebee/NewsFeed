@@ -65,7 +65,7 @@ final class MainTabBarController: BaseViewController {
         createTabItem.iconName = "gear"
         createTabItem.title = "Settings"
 
-        let viewModel = SettingsViewModel(imageCache: ImageCache.shared)
+        let viewModel = SettingsViewModel(imageCache: ImageCache.shared, newsStorage: NewsStorage.shared)
         let viewController = BaseNavigationViewController(rootViewController: SettingsViewController(viewModel: viewModel))
         tabBar.addTabItem(createTabItem, viewController: viewController)
     }

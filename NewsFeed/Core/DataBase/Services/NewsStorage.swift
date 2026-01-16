@@ -11,15 +11,12 @@ import Foundation
 final class NewsStorage {
     static let shared = NewsStorage()
 
-    private(set) var news: [any NewsProtocol] = []
+    private(set) var filteredNews: [any NewsProtocol] = []
+    private var news: [any NewsProtocol] = []
+    private var newsResourcesFiltered: [NewsResource] = []
     private let database: any DatabaseRepository
     private var firstNews: (any NewsProtocol)?
     private var lastNews: (any NewsProtocol)?
-
-    private let currentNewsSubject = CurrentValueSubject<[any NewsProtocol]?, Never>(nil)
-    var currentNewsPublisher: AnyPublisher<[any NewsProtocol]?, Never> {
-        currentNewsSubject.eraseToAnyPublisher()
-    }
 
     private let initialNewsLoadedSubject = CurrentValueSubject<Bool, Never>(false)
     var initialNewsLoadedPublisher: AnyPublisher<Bool, Never> {
@@ -36,9 +33,25 @@ final class NewsStorage {
         uploadNewNewsSubject.eraseToAnyPublisher()
     }
 
+    private let applyFilteredNewsSubject = PassthroughSubject<Void, Never>()
+    var applyFilteredNewsPublisher: AnyPublisher<Void, Never> {
+        applyFilteredNewsSubject.eraseToAnyPublisher()
+    }
+
     private init() {
         database = NewsDatabaseService.shared
+        let resourcesFromStorage = UserDefaults.standard.newsResources
+        if let resourcesFromStorage {
+            newsResourcesFiltered = resourcesFromStorage.filter(\.show)
+        } else {
+            newsResourcesFiltered = AppConstants.defaultNewsResources
+        }
         loadSavedNews()
+    }
+
+    func applyResourcesFilter(_ sources: [NewsResource]) {
+        newsResourcesFiltered = sources.filter(\.show)
+        applyFilteredNewsSubject.send()
     }
 
     func addNews(_ news: [any NewsProtocol]) {
@@ -69,15 +82,16 @@ final class NewsStorage {
                 return
             }
             var loadedNews: [any NewsProtocol] = []
+            let filteredNews = news.filter { news in self.newsResourcesFiltered.contains(where: { news.resource == $0.url }) }
             if fromBeginning {
-                loadedNews = Array(news.prefix(limit))
+                loadedNews = Array(filteredNews.prefix(limit))
                 lastNews = loadedNews.last
-            } else if let lastNewsIndex = news.firstIndex(where: { $0.id == lastNews?.id }), news.count - 1 > Int(lastNewsIndex) {
+            } else if let lastNewsIndex = filteredNews.firstIndex(where: { $0.id == lastNews?.id }), filteredNews.count - 1 > Int(lastNewsIndex) {
                 let intLastIndex = Int(lastNewsIndex) + 1
-                let newsSlice: ArraySlice<any NewsProtocol> = if news.count > intLastIndex + limit {
-                    news[intLastIndex ... (intLastIndex + limit)]
+                let newsSlice: ArraySlice<any NewsProtocol> = if filteredNews.count > intLastIndex + limit {
+                    filteredNews[intLastIndex ... (intLastIndex + limit)]
                 } else {
-                    news[intLastIndex ... news.count - 1]
+                    filteredNews[intLastIndex ... filteredNews.count - 1]
                 }
                 loadedNews = Array(newsSlice)
                 lastNews = loadedNews.last

@@ -39,14 +39,22 @@ class FeedParserService {
         await loadNewsFromDifferentSources()
     }
 
-    func addNewsSourceToParse(_: NewsSource) {}
+    func addNewsSourceToParse(_: NewsResource) {}
 
     private func loadNewsFromDifferentSources() async {
         let news = await withTaskGroup(of: [any NewsProtocol].self, returning: [any NewsProtocol].self) { [weak self] group in
             guard let self else { return [] }
-            for item in NewsSources.allCases {
+            let newsResourcesFromUserDefaults: [NewsResource]? = UserDefaults.standard.newsResources
+            let urls: [String] = if let newsResourcesFromUserDefaults {
+                newsResourcesFromUserDefaults.compactMap(\.url).isEmpty
+                    ? AppConstants.defaultNewsResources.compactMap(\.url)
+                    : newsResourcesFromUserDefaults.compactMap(\.url)
+            } else {
+                AppConstants.defaultNewsResources.map(\.url)
+            }
+            for item in urls {
                 group.addTask {
-                    let news = await self.parceFeed(from: item.rawValue)
+                    let news = await self.parceFeed(from: item)
                     return news
                 }
             }

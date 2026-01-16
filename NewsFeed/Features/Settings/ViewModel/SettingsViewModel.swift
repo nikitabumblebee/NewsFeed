@@ -10,16 +10,17 @@ import Foundation
 
 final class SettingsViewModel {
     private(set) var reloadTimerDuration: Int = AppConstants.defaultTimerDuration
-    private(set) var selectedSource: NewsSource?
+    private(set) var selectedSource: NewsResource?
 
     private var model: SettingsModel
     private let imageCache: ImageCache
+    private let newsStorage: NewsStorage
     private let initialTimerValue: Int = UserDefaults.standard.refreshNewsTimerDuration == 0
         ? AppConstants.defaultTimerDuration
         : UserDefaults.standard.refreshNewsTimerDuration
 
-    private let sourcesListSubject = CurrentValueSubject<[NewsSource], Never>([])
-    var sourcesListPublisher: AnyPublisher<[NewsSource], Never> {
+    private let sourcesListSubject = CurrentValueSubject<[NewsResource], Never>([])
+    var sourcesListPublisher: AnyPublisher<[NewsResource], Never> {
         sourcesListSubject.eraseToAnyPublisher()
     }
 
@@ -37,18 +38,17 @@ final class SettingsViewModel {
         sliderValueSubject.eraseToAnyPublisher()
     }
 
-    private(set) var sources: [NewsSource] = []
+    private(set) var sources: [NewsResource] = []
 
-    init(imageCache: ImageCache) {
+    init(imageCache: ImageCache, newsStorage: NewsStorage) {
+        let initialNewsResources: [NewsResource] = UserDefaults.standard.newsResources ?? AppConstants.defaultNewsResources
         model = SettingsModel(
-            sources: [
-                NewsSource(name: "Rbc", url: "https://rssexport.rbc.ru/rbcnews/news/30/full.rss", show: true),
-                NewsSource(name: "Vedomosti", url: "https://www.vedomosti.ru/rss/news.xml", show: true),
-            ],
+            sources: initialNewsResources,
             appTheme: .system,
             refreshInterval: initialTimerValue
         )
         self.imageCache = imageCache
+        self.newsStorage = newsStorage
         reloadTimerDuration = initialTimerValue
         sources = model.sources
         sourcesListSubject.send(model.sources)
@@ -59,24 +59,28 @@ final class SettingsViewModel {
         cacheResetSuccessSubject.send(())
     }
 
-    func addSource(_ source: NewsSource) {
+    func addSource(_ source: NewsResource) {
         model.addSource(source)
         sources = model.sources
         sourcesListSubject.send(model.sources)
     }
 
-    func deleteSource(_ source: NewsSource) {
+    func deleteSource(_ source: NewsResource) {
         model.deleteSource(source)
         sources = model.sources
         sourcesListSubject.send(model.sources)
     }
 
-    func disableSource(_ source: NewsSource) {
+    func disableSource(_ source: NewsResource) {
         model.disableSource(source)
+        UserDefaults.standard.newsResources = model.sources
+        newsStorage.applyResourcesFilter(model.sources)
     }
 
-    func enableSource(_ source: NewsSource) {
+    func enableSource(_ source: NewsResource) {
         model.enableSource(source)
+        UserDefaults.standard.newsResources = model.sources
+        newsStorage.applyResourcesFilter(model.sources)
     }
 
     func changeRefreshTimerDuration(_ duration: Int) {
@@ -85,7 +89,7 @@ final class SettingsViewModel {
         UserDefaults.standard.refreshNewsTimerDuration = duration
     }
 
-    func selectSource(_ source: NewsSource?) {
+    func selectSource(_ source: NewsResource?) {
         selectedSource = source
     }
 
