@@ -14,8 +14,6 @@ class NewsDetailViewController: BaseViewController {
     @IBOutlet private var newsBodyLabel: UILabel!
     @IBOutlet private var readView: UIView!
 
-    override var shouldShowTabBar: Bool { false }
-
     let viewModel: NewsDetailViewModel
 
     init(viewModel: NewsDetailViewModel) {

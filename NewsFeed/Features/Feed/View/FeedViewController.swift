@@ -9,20 +9,13 @@ import Combine
 import UIKit
 
 final class FeedViewController: BaseViewController {
-    enum State {
+    private enum State {
         case none
         case fetching
         case fetchedAll
-        case navigating
     }
 
     @IBOutlet private var tableView: UITableView!
-
-    private lazy var refreshControl = UIRefreshControl()
-
-    override var shouldShowTabBar: Bool { true }
-
-    private let pagingLimit: Int = 50
 
     typealias DataSource = UITableViewDiffableDataSource<Int, BaseNews>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Int, BaseNews>
@@ -59,6 +52,7 @@ final class FeedViewController: BaseViewController {
         super.viewDidLoad()
 
         navigationItem.title = "Feed"
+        setupRefresher()
         setupTableView()
         setupSubscriptions()
     }
@@ -72,10 +66,8 @@ final class FeedViewController: BaseViewController {
         tableView.dataSource = dataSource
         tableView.delegate = self
         tableView.backgroundColor = .backgroundPrimary
-        tableView.refreshControl = refreshControl
+        tableView.refreshControl = refresher
         FeedTableViewCell.registerNib(for: tableView)
-
-        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
 
     override func scrollToTop() {
@@ -103,14 +95,14 @@ final class FeedViewController: BaseViewController {
         viewModel.hideRefresherPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.refreshControl.endRefreshing()
+                self?.hideRefresher()
             }
             .store(in: &cancellables)
 
         viewModel.refreshTimerSignalPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.refreshControl.beginRefreshing()
+                self?.refresher?.beginRefreshing()
                 self?.viewModel.parseNewNews()
             }
             .store(in: &cancellables)
@@ -133,10 +125,6 @@ final class FeedViewController: BaseViewController {
 
     @objc override func updateData() {
         guard viewModel.contentLoadState != .loading else { return }
-        loadPagedData(fromBeginning: true)
-    }
-
-    @objc private func refreshData(_: UIRefreshControl) {
         viewModel.parseNewNews()
     }
 }
@@ -146,7 +134,7 @@ final class FeedViewController: BaseViewController {
 extension FeedViewController {
     private func loadPagedData(fromBeginning: Bool) {
         currentStateSubject.value = .fetching
-        loadData(newsStorage.fetchNews(fromBeginning: fromBeginning, limit: pagingLimit)) { [weak self] result in
+        loadData(newsStorage.fetchNews(fromBeginning: fromBeginning, limit: FeedConstants.pagingLimit)) { [weak self] result in
             guard let self else { return }
 
             if result.isEmpty, !fromBeginning {

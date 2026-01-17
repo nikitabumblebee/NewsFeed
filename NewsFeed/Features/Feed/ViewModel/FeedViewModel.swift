@@ -49,7 +49,7 @@ final class FeedViewModel: ObservableObject {
             UserDefaults.standard.refreshNewsTimerDuration = FeedConstants.defaultTimerDuration
         }
         let refreshNewsTimerDuration = UserDefaults.standard.refreshNewsTimerDuration
-        model = .init(news: FeedConstants.initialNewsForLoad, refreshNewsTimerDuration: refreshNewsTimerDuration * 60)
+        model = .init(news: FeedConstants.initialNewsForLoad, refreshNewsTimerDuration: refreshNewsTimerDuration * FeedConstants.secondsConstant)
         self.newsStorage = newsStorage
         self.feedParser = feedParser
         newsModels = model.news
@@ -72,13 +72,26 @@ final class FeedViewModel: ObservableObject {
         }
     }
 
+    func handleRefreshTimer() {
+        refreshTimer?.invalidate()
+        model.changeRefreshNewsTimerDuration(UserDefaults.standard.refreshNewsTimerDuration * FeedConstants.secondsConstant)
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: Double(model.refreshNewsTimerDuration), repeats: false, block: { [weak self] _ in
+            guard let self else { return }
+            Task {
+                await MainActor.run {
+                    self.refreshTimerSignalSubject.send(())
+                }
+            }
+        })
+    }
+
     private func subscribeToNews() {
         newsStorage.initialNewsLoadedPublisher
             .removeDuplicates()
             .sink { [weak self] in
                 guard let self, $0 else { return }
                 handleRefreshTimer()
-                changeViewState(to: newsStorage.filteredNews.isEmpty ? .noData : .loaded)
+                contentLoadState = newsStorage.filteredNews.isEmpty ? .noData : .loaded
                 initialNewsLoadedSubject.send($0)
             }
             .store(in: &cancellables)
@@ -114,22 +127,5 @@ final class FeedViewModel: ObservableObject {
                 reloadCurrentNewsSubject.send()
             }
             .store(in: &cancellables)
-    }
-
-    private func changeViewState(to newState: ContentLoadState) {
-        contentLoadState = newState
-    }
-
-    func handleRefreshTimer() {
-        refreshTimer?.invalidate()
-        model.changeRefreshNewsTimerDuration(UserDefaults.standard.refreshNewsTimerDuration * 60)
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: Double(model.refreshNewsTimerDuration), repeats: false, block: { [weak self] _ in
-            guard let self else { return }
-            Task {
-                await MainActor.run {
-                    self.refreshTimerSignalSubject.send(())
-                }
-            }
-        })
     }
 }
