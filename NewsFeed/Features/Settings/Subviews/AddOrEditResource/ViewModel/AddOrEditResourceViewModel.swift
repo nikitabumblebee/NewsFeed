@@ -44,8 +44,7 @@ class AddOrEditResourceViewModel: Observable {
     }
 
     func save() {
-        // TODO: Save changes
         print("Saving resource with name: \(name) and url: \(url)")
-        resource = NewsResource(name: name, url: url, show: enableResource)
+        resource = NewsResource(name: name.trimmingCharacters(in: .whitespacesAndNewlines), url: url.trimmingCharacters(in: .whitespacesAndNewlines), show: enableResource)
     }
 }

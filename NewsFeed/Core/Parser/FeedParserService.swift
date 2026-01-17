@@ -39,8 +39,6 @@ class FeedParserService {
         await loadNewsFromDifferentSources()
     }
 
-    func addNewsSourceToParse(_: NewsResource) {}
-
     private func loadNewsFromDifferentSources() async {
         let news = await withTaskGroup(of: [any NewsProtocol].self, returning: [any NewsProtocol].self) { [weak self] group in
             guard let self else { return [] }
