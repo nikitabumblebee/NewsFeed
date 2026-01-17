@@ -129,7 +129,7 @@ final class NewsStorage {
             link: newsDB.link,
             image: newsDB.image,
             date: newsDB.date,
-            source: newsDB.source,
+            author: newsDB.author,
             resource: newsDB.resource,
             isViewed: newsDB.isViewed
         )

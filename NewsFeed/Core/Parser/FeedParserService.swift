@@ -102,7 +102,7 @@ class FeedParserService {
                             link: URL(string: link),
                             image: item.enclosure?.attributes?.url,
                             date: date,
-                            source: item.author ?? feed.channel?.description,
+                            author: item.author ?? feed.channel?.description,
                             resource: urlString,
                             isViewed: false
                         )
@@ -137,8 +137,8 @@ class FeedParserService {
         if existedObject.date != newObject.date {
             updateParameters.append(.date(newObject.date))
         }
-        if existedObject.source != newObject.source {
-            updateParameters.append(.source(newObject.source))
+        if existedObject.author != newObject.author {
+            updateParameters.append(.source(newObject.author))
         }
         if existedObject.resource != newObject.resource {
             updateParameters.append(.resource(newObject.resource))
@@ -158,7 +158,7 @@ class FeedParserService {
                 case let .date(date):
                     newsDB.date = date
                 case let .source(source):
-                    newsDB.source = source
+                    newsDB.author = source
                 case let .resource(resource):
                     newsDB.resource = resource
                 }

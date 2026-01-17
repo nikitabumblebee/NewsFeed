@@ -8,12 +8,12 @@
 import Foundation
 
 class NewsDetailViewModel: Sendable {
-    private let databaseService = NewsDatabaseService.shared
-    private let newsStorage = NewsStorage.shared
+    private let newsStorage: NewsStorage
     let news: any NewsProtocol
 
-    init(news: any NewsProtocol) {
+    init(news: any NewsProtocol, newsStorage: NewsStorage) {
         self.news = news
+        self.newsStorage = newsStorage
     }
 
     func setNewsAsViewedIfNeeded() {

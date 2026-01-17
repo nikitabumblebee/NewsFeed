@@ -41,7 +41,7 @@ class FeedTableViewCell: UITableViewCell {
         currentImageUUID = UUID()
         let thisUUID = currentImageUUID
         titleLabel.text = news.title
-        sourceTitleLable.text = "Source: \(news.source ?? ""). Date: \(news.date.getLongDateTime())"
+        sourceTitleLable.text = "Source: \(news.author ?? ""). Date: \(news.date.getLongDateTime())"
         if state == .loading {
             contentView.showAnimatedGradientSkeleton()
         } else if contentView.sk.isSkeletonActive {

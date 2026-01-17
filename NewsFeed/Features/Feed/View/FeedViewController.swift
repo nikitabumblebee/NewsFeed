@@ -191,7 +191,7 @@ extension FeedViewController {
 extension FeedViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let viewModel = viewModel.newsModels[indexPath.row]
-        let viewController = NewsDetailViewController(viewModel: NewsDetailViewModel(news: viewModel))
+        let viewController = NewsDetailViewController(viewModel: NewsDetailViewModel(news: viewModel, newsStorage: newsStorage))
         navigator.push(viewController: viewController)
     }
 
