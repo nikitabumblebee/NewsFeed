@@ -12,6 +12,7 @@ class TabBar: UIStackView {
     private var viewControllers = [UIViewController]()
     private var currentItemIndex: Int?
     private var recentItemIndex: Int?
+    private let navigator = Navigator.shared
 
     weak var delegate: TabBarDelegate?
 
@@ -83,7 +84,7 @@ class TabBar: UIStackView {
     }
 
     func selectItem(at index: Int, skipRootReturn: Bool = false, from _: String? = nil) {
-        guard let _ = TabBarItemType(rawValue: index) else { return }
+        guard TabBarItemType(rawValue: index) != nil else { return }
         guard index != currentItemIndex else {
             // first we do actions with the current screen, for example, if we were on the home page and pressed home
             if let navigationViewController = viewControllers[index] as? BaseNavigationViewController {
@@ -96,7 +97,7 @@ class TabBar: UIStackView {
             if !skipRootReturn {
                 let navigation = viewControllers[index] as? UINavigationController ?? viewControllers[index].navigationController
                 navigation?.popToRootViewController(animated: true)
-                Navigator.shared.popToRoot()
+                navigator.popToRoot()
             }
 
             return
@@ -132,7 +133,7 @@ class TabBar: UIStackView {
     private func deselectItem(at currentIndex: Int, selectedIndex: Int, popToRoot: Bool = false, senderType: TabBarItem.PresentationContext) {
         if popToRoot {
             if let navigationController = viewControllers[selectedIndex] as? UINavigationController {
-                Navigator.shared.popToRoot(navigationController: navigationController)
+                navigator.popToRoot(navigationController: navigationController)
             }
         }
         let deselectedTabItem = tabItems[currentIndex]

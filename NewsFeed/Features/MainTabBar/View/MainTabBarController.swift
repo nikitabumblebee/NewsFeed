@@ -59,8 +59,12 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
         createTabItem.iconName = "newspaper"
         createTabItem.title = "Feed"
 
-        let viewModel = FeedViewModel(newsStorage: NewsStorage.shared)
-        let viewController = BaseNavigationViewController(rootViewController: FeedViewController(viewModel: viewModel, newsStorage: NewsStorage.shared))
+        let viewModel = FeedViewModel(newsStorage: NewsStorage.shared, feedParser: FeedParserService.shared)
+        let viewController = BaseNavigationViewController(rootViewController: FeedViewController(
+            viewModel: viewModel,
+            newsStorage: NewsStorage.shared,
+            navigator: Navigator.shared
+        ))
         tabBar.addTabItem(createTabItem, viewController: viewController)
     }
 
@@ -71,7 +75,7 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
         createTabItem.title = "Settings"
 
         let viewModel = SettingsViewModel(imageCache: ImageCache.shared, newsStorage: NewsStorage.shared, parserService: FeedParserService.shared)
-        let viewController = BaseNavigationViewController(rootViewController: SettingsViewController(viewModel: viewModel))
+        let viewController = BaseNavigationViewController(rootViewController: SettingsViewController(viewModel: viewModel, navigator: Navigator.shared))
         tabBar.addTabItem(createTabItem, viewController: viewController)
     }
 

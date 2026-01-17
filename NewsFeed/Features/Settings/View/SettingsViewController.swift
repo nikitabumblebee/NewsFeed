@@ -16,6 +16,8 @@ final class SettingsViewController: BaseViewController {
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var addSourceButton: UIButton!
 
+    private let navigator: Navigator
+
     let viewModel: SettingsViewModel
 
     typealias DataSource = UITableViewDiffableDataSource<Int, NewsResource>
@@ -23,8 +25,9 @@ final class SettingsViewController: BaseViewController {
 
     private lazy var dataSource = makeDataSource()
 
-    init(viewModel: SettingsViewModel) {
+    init(viewModel: SettingsViewModel, navigator: Navigator) {
         self.viewModel = viewModel
+        self.navigator = navigator
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -49,20 +52,20 @@ final class SettingsViewController: BaseViewController {
 
     @IBAction private func onAddNewSource(_: Any) {
         let addOrEditViewModel = AddOrEditResourceViewModel(resource: nil)
-        let viewController = AddOrEditResourceViewController(viewModel: addOrEditViewModel)
+        let viewController = AddOrEditResourceViewController(viewModel: addOrEditViewModel, navigator: navigator)
         viewController.onSave = { [weak self] resource in
             guard let self, let resource else { return }
             viewModel.addResource(resource)
         }
-        Navigator.shared.push(viewController: viewController, navigationController: nil)
+        navigator.push(viewController: viewController, navigationController: nil)
     }
 
     @IBAction private func onResetImagesCache(_: Any) {
         let controller = UIAlertController.confirmationAlert(title: "Are you sure to clear images cache?") { [weak self] in
             self?.viewModel.resetImagesCache()
         }
-        let topNavigationController = Navigator.shared.topNavigationController
-        Navigator.shared.present(viewController: controller, presentingViewController: topNavigationController)
+        let topNavigationController = navigator.topNavigationController
+        navigator.present(viewController: controller, presentingViewController: topNavigationController)
     }
 
     private func setupUI() {
@@ -92,10 +95,11 @@ final class SettingsViewController: BaseViewController {
             .store(in: &cancellables)
         viewModel.cacheResetSuccessPublisher
             .receive(on: DispatchQueue.main)
-            .sink {
+            .sink { [weak self] in
+                guard let self else { return }
                 let controller = UIAlertController.informationAlert(title: "Images cache was successfully reset!", message: "", actionInfo: {})
-                let topNavigationController = Navigator.shared.topNavigationController
-                Navigator.shared.present(viewController: controller, presentingViewController: topNavigationController)
+                let topNavigationController = navigator.topNavigationController
+                navigator.present(viewController: controller, presentingViewController: topNavigationController)
             }
             .store(in: &cancellables)
     }
@@ -135,12 +139,12 @@ extension SettingsViewController: UITableViewDelegate {
         let edit = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, completion in
             guard let self else { return }
             let addOrEditResourceViewModel = AddOrEditResourceViewModel(resource: viewModel.resources[indexPath.row])
-            let viewController = AddOrEditResourceViewController(viewModel: addOrEditResourceViewModel)
+            let viewController = AddOrEditResourceViewController(viewModel: addOrEditResourceViewModel, navigator: navigator)
             viewController.onSave = { [weak self] updateResource in
                 guard let self, let updateResource else { return }
                 viewModel.editResource(resource: viewModel.resources[indexPath.row], to: updateResource)
             }
-            Navigator.shared.push(viewController: viewController, navigationController: nil)
+            navigator.push(viewController: viewController, navigationController: nil)
             completion(true)
         }
         edit.backgroundColor = .accent
@@ -152,8 +156,8 @@ extension SettingsViewController: UITableViewDelegate {
                 guard let self else { return }
                 viewModel.deleteResource(viewModel.resources[indexPath.row])
             })
-            let topNavigationController = Navigator.shared.topNavigationController
-            Navigator.shared.present(viewController: alertController, presentingViewController: topNavigationController)
+            let topNavigationController = navigator.topNavigationController
+            navigator.present(viewController: alertController, presentingViewController: topNavigationController)
             completion(true)
         }
 

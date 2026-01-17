@@ -15,12 +15,15 @@ class AddOrEditResourceViewController: BaseViewController {
     @IBOutlet private var urlTextField: UITextField!
     @IBOutlet private var saveButton: UIButton!
 
+    private let navigator: Navigator
+
     let viewModel: AddOrEditResourceViewModel
 
     var onSave: ((NewsResource?) -> Void)?
 
-    init(viewModel: AddOrEditResourceViewModel) {
+    init(viewModel: AddOrEditResourceViewModel, navigator: Navigator) {
         self.viewModel = viewModel
+        self.navigator = navigator
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -67,7 +70,7 @@ class AddOrEditResourceViewController: BaseViewController {
     @IBAction private func tapOnSaveButton(_: Any) {
         viewModel.save()
         onSave?(viewModel.resource)
-        Navigator.shared.popViewController()
+        navigator.popViewController()
     }
 
     @objc private func tapOnView(_: UITapGestureRecognizer) {

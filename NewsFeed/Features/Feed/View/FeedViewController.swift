@@ -32,12 +32,18 @@ final class FeedViewController: BaseViewController {
     private var currentStateSubject = CurrentValueSubject<State, Never>(.none)
 
     private let newsStorage: NewsStorage
+    private let navigator: Navigator
 
     let viewModel: FeedViewModel
 
-    init(viewModel: FeedViewModel, newsStorage: NewsStorage) {
+    init(
+        viewModel: FeedViewModel,
+        newsStorage: NewsStorage,
+        navigator: Navigator
+    ) {
         self.viewModel = viewModel
         self.newsStorage = newsStorage
+        self.navigator = navigator
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -174,7 +180,7 @@ extension FeedViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let viewModel = viewModel.newsModels[indexPath.row]
         let viewController = NewsDetailViewController(viewModel: NewsViewModel(news: viewModel))
-        Navigator.shared.push(viewController: viewController)
+        navigator.push(viewController: viewController)
     }
 
     func tableView(_: UITableView, willDisplay _: UITableViewCell, forRowAt indexPath: IndexPath) {

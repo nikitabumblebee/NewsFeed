@@ -68,9 +68,9 @@ final class Navigator: NSObject {
     }
 
     var presentedController: UIViewController? {
-        Navigator.shared.navigationController?.presentedViewController ??
-            Navigator.shared.tabBarController?.basePresentedViewController ??
-            Navigator.shared.navigationController?.topViewController?.presentedViewController
+        navigationController?.presentedViewController ??
+            tabBarController?.basePresentedViewController ??
+            navigationController?.topViewController?.presentedViewController
     }
 
     var hasPresentedController: Bool {
@@ -85,7 +85,7 @@ final class Navigator: NSObject {
     }
 
     var isMainTabBarControllerVisible: Bool {
-        Navigator.shared.tabBarController?.rootView?.window != nil
+        tabBarController?.rootView?.window != nil
     }
 }
 

@@ -10,6 +10,7 @@ import Foundation
 
 final class FeedViewModel: ObservableObject {
     private let newsStorage: NewsStorage
+    private let feedParser: FeedParserService
     private var cancellables = Set<AnyCancellable>()
 
     @Published private(set) var newsModels: [any NewsProtocol] = [
@@ -48,8 +49,9 @@ final class FeedViewModel: ObservableObject {
         applyNewsFilterSubject.eraseToAnyPublisher()
     }
 
-    init(newsStorage: NewsStorage) {
+    init(newsStorage: NewsStorage, feedParser: FeedParserService) {
         self.newsStorage = newsStorage
+        self.feedParser = feedParser
         subscribeToNews()
     }
 
@@ -65,7 +67,7 @@ final class FeedViewModel: ObservableObject {
     func parseNewNews() {
         handleRefreshTimer()
         Task {
-            await FeedParserService.shared.parseNewNews()
+            await feedParser.parseNewNews()
         }
     }
 
