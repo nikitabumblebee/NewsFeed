@@ -11,9 +11,10 @@ import Foundation
 final class NewsStorage {
     static let shared = NewsStorage()
 
+    private(set) var allNewsResources: [NewsResource]
     private(set) var filteredNews: [any NewsProtocol] = []
     private var news: [any NewsProtocol] = []
-    private var newsResourcesFiltered: [NewsResource] = []
+    private var newsResourcesFiltered: [NewsResource]
     private let database: any DatabaseRepository
     private var firstNews: (any NewsProtocol)?
     private var lastNews: (any NewsProtocol)?
@@ -42,9 +43,11 @@ final class NewsStorage {
         database = NewsDatabaseService.shared
         let resourcesFromStorage = UserDefaults.standard.newsResources
         if let resourcesFromStorage {
+            allNewsResources = resourcesFromStorage
             newsResourcesFiltered = resourcesFromStorage.filter(\.show)
         } else {
-            newsResourcesFiltered = AppConstants.defaultNewsResources
+            allNewsResources = NewsConstants.defaultNewsResources
+            newsResourcesFiltered = NewsConstants.defaultNewsResources
         }
         loadSavedNews()
     }

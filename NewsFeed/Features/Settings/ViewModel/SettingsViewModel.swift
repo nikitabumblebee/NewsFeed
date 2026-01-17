@@ -9,14 +9,14 @@ import Combine
 import Foundation
 
 final class SettingsViewModel {
-    private(set) var reloadTimerDuration: Int = AppConstants.defaultTimerDuration
+    private(set) var reloadTimerDuration: Int = SettingsConstants.defaultTimerDuration
 
     private var model: SettingsModel
     private let imageCache: ImageCache
     private let newsStorage: NewsStorage
     private let parserService: FeedParserService
     private let initialTimerValue: Int = UserDefaults.standard.refreshNewsTimerDuration == 0
-        ? AppConstants.defaultTimerDuration
+        ? SettingsConstants.defaultTimerDuration
         : UserDefaults.standard.refreshNewsTimerDuration
 
     private let sourcesListSubject = CurrentValueSubject<[NewsResource], Never>([])
@@ -31,7 +31,7 @@ final class SettingsViewModel {
 
     private let sliderValueSubject = CurrentValueSubject<Int, Never>(
         UserDefaults.standard.refreshNewsTimerDuration == 0
-            ? AppConstants.defaultTimerDuration
+            ? SettingsConstants.defaultTimerDuration
             : UserDefaults.standard.refreshNewsTimerDuration
     )
     var sliderValuePublisher: AnyPublisher<Int, Never> {
@@ -45,7 +45,7 @@ final class SettingsViewModel {
         newsStorage: NewsStorage,
         parserService: FeedParserService
     ) {
-        let initialNewsResources: [NewsResource] = UserDefaults.standard.newsResources ?? AppConstants.defaultNewsResources
+        let initialNewsResources: [NewsResource] = newsStorage.allNewsResources
         model = SettingsModel(
             resources: initialNewsResources,
             appTheme: .system,

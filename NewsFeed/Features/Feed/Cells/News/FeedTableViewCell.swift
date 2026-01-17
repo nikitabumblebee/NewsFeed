@@ -14,7 +14,7 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet private var sourceTitleLable: UILabel!
     @IBOutlet private var readView: UIView!
 
-    private(set) var viewModel: NewsViewModel?
+    private(set) var news: (any NewsProtocol)?
     private var currentImageUUID: UUID?
 
     override nonisolated func awakeFromNib() {
@@ -37,24 +37,23 @@ class FeedTableViewCell: UITableViewCell {
         readView.isHiddenInStackView = true
     }
 
-    func setup(viewModel: NewsViewModel, state: ContentLoadState) {
+    func setup(news: any NewsProtocol, state: ContentLoadState) {
         currentImageUUID = UUID()
         let thisUUID = currentImageUUID
-        self.viewModel = viewModel
-        titleLabel.text = viewModel.news.title
-        sourceTitleLable.text = "Source: \(viewModel.news.source ?? ""). Date: \(viewModel.news.date.getLongDateTime())"
+        titleLabel.text = news.title
+        sourceTitleLable.text = "Source: \(news.source ?? ""). Date: \(news.date.getLongDateTime())"
         if state == .loading {
             contentView.showAnimatedGradientSkeleton()
         } else if contentView.sk.isSkeletonActive {
             contentView.hideSkeleton()
         }
-        readView.isHiddenInStackView = !viewModel.news.isViewed
+        readView.isHiddenInStackView = !news.isViewed
         newsImage.tintColor = .accent
         newsImage.contentMode = .scaleAspectFit
         if state != .loading {
             newsImage.image = UIImage(systemName: "photo")
         }
-        guard let image = viewModel.news.image, let url = URL(string: image) else { return }
+        guard let image = news.image, let url = URL(string: image) else { return }
         Task {
             guard let cachedImage = try? await ImageCache.shared.image(for: url), thisUUID == currentImageUUID else {
                 newsImage.image = UIImage(systemName: "photo")

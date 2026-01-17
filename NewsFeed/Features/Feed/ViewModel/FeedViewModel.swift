@@ -11,20 +11,10 @@ import Foundation
 final class FeedViewModel: ObservableObject {
     private let newsStorage: NewsStorage
     private let feedParser: FeedParserService
+    private var model: FeedModel
     private var cancellables = Set<AnyCancellable>()
 
-    @Published private(set) var newsModels: [any NewsProtocol] = [
-        BaseNews(id: "123", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "234", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "345", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "456", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "567", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "678", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "789", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "890", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "901", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "012", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-    ]
+    @Published private(set) var newsModels: [any NewsProtocol] = []
 
     private(set) var contentLoadState: ContentLoadState = .loading
     private var refreshTimer: Timer?
@@ -50,18 +40,23 @@ final class FeedViewModel: ObservableObject {
     }
 
     init(newsStorage: NewsStorage, feedParser: FeedParserService) {
+        let refreshNewsTimerDuration = UserDefaults.standard.refreshNewsTimerDuration == 0
+            ? FeedConstants.defaultTimerDuration
+            : UserDefaults.standard.refreshNewsTimerDuration
+        model = .init(news: FeedConstants.initialNewsForLoad, refreshNewsTimerDuration: refreshNewsTimerDuration * 60)
         self.newsStorage = newsStorage
         self.feedParser = feedParser
+        newsModels = model.news
         subscribeToNews()
     }
 
     func clearModels() {
-        newsModels.removeAll()
+        newsModels = model.clearNews()
     }
 
     func buildViewModels(from newNews: [any NewsProtocol]) {
         guard contentLoadState != .loading else { return }
-        newsModels.append(contentsOf: newNews)
+        newsModels = model.addNews(newNews)
     }
 
     func parseNewNews() {
@@ -85,7 +80,7 @@ final class FeedViewModel: ObservableObject {
         newsStorage.updateNewsPublisher
             .sink { [weak self] updatedNews in
                 guard let self, let changedNewsIndex = newsModels.firstIndex(where: { $0.id == updatedNews.id }) else { return }
-                newsModels[changedNewsIndex] = updatedNews
+                newsModels = model.changeNews(updatedNews, at: Int(changedNewsIndex))
             }
             .store(in: &cancellables)
 
@@ -95,7 +90,7 @@ final class FeedViewModel: ObservableObject {
                     self?.hideRefresherSubject.send(())
                     return
                 }
-                newsModels.insert(contentsOf: uploadedNews, at: 0)
+                newsModels = model.insertNews(uploadedNews, at: 0)
                 hideRefresherSubject.send(())
             }
             .store(in: &cancellables)
@@ -114,10 +109,8 @@ final class FeedViewModel: ObservableObject {
 
     func handleRefreshTimer() {
         refreshTimer?.invalidate()
-        let refreshNewsTimerDuration = UserDefaults.standard.refreshNewsTimerDuration == 0
-            ? AppConstants.defaultTimerDuration
-            : UserDefaults.standard.refreshNewsTimerDuration
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: Double(refreshNewsTimerDuration * 60), repeats: true, block: { [weak self] _ in
+        model.changeRefreshNewsTimerDuration(UserDefaults.standard.refreshNewsTimerDuration * 60)
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: Double(model.refreshNewsTimerDuration), repeats: false, block: { [weak self] _ in
             guard let self else { return }
             Task {
                 await MainActor.run {

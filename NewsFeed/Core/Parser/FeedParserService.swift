@@ -47,10 +47,10 @@ class FeedParserService {
             let newsResourcesFromUserDefaults: [NewsResource]? = UserDefaults.standard.newsResources
             let urls: [String] = if let newsResourcesFromUserDefaults {
                 newsResourcesFromUserDefaults.compactMap(\.url).isEmpty
-                    ? AppConstants.defaultNewsResources.compactMap(\.url)
+                    ? newsStorage.allNewsResources.compactMap(\.url)
                     : newsResourcesFromUserDefaults.compactMap(\.url)
             } else {
-                AppConstants.defaultNewsResources.map(\.url)
+                newsStorage.allNewsResources.compactMap(\.url)
             }
             for item in urls {
                 group.addTask {

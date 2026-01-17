@@ -158,7 +158,7 @@ extension FeedViewController {
         DataSource(tableView: tableView) { [weak self] tableView, _, viewModelItem -> UITableViewCell? in
             guard let self else { return nil }
             let cell = FeedTableViewCell.dequeue(tableView)
-            cell.setup(viewModel: NewsViewModel(news: viewModelItem), state: viewModel.contentLoadState)
+            cell.setup(news: viewModelItem, state: viewModel.contentLoadState)
             return cell
         }
     }
@@ -179,7 +179,7 @@ extension FeedViewController {
 extension FeedViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let viewModel = viewModel.newsModels[indexPath.row]
-        let viewController = NewsDetailViewController(viewModel: NewsViewModel(news: viewModel))
+        let viewController = NewsDetailViewController(viewModel: NewsDetailViewModel(news: viewModel))
         navigator.push(viewController: viewController)
     }
 
