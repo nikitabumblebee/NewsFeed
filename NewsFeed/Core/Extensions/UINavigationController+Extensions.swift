@@ -33,13 +33,7 @@ extension UINavigationController {
     }
 
     @discardableResult
-    func popToViewController(
-        _ viewController: UIViewController,
-        animated: Bool,
-        completion: @escaping () -> Void
-    )
-        -> [UIViewController]?
-    {
+    func popToViewController(_ viewController: UIViewController, animated: Bool, completion: @escaping () -> Void) -> [UIViewController]? {
         let viewController = popToViewController(viewController, animated: animated)
         if let coordinator = transitionCoordinator, animated {
             coordinator.animate(alongsideTransition: nil) { _ in

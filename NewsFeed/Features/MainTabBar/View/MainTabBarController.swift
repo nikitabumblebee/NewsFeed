@@ -7,7 +7,10 @@
 
 import UIKit
 
-final class MainTabBarController: BaseViewController {
+final class MainTabBarController: BaseViewController, BaseTabBar {
+    var basePresentedViewController: UIViewController?
+    var rootView: UIView?
+
     static let safeAreaViewId = "safeAreaView"
     static let backgroundView = "tabBarBackgroundView"
 
@@ -23,6 +26,8 @@ final class MainTabBarController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        rootView = view
+        basePresentedViewController = presentedViewController
 
         safeAreaView?.accessibilityIdentifier = Self.safeAreaViewId
         backgroundView.accessibilityIdentifier = Self.backgroundView
