@@ -10,6 +10,7 @@ import Foundation
 
 final class SettingsViewModel {
     private(set) var reloadTimerDuration: Int = SettingsConstants.defaultTimerDuration
+    private(set) var appTheme: AppTheme = UserDefaults.standard.currentTheme
 
     private var model: SettingsModel
     private let imageCache: ImageCache
@@ -48,7 +49,7 @@ final class SettingsViewModel {
         let initialNewsResources: [NewsResource] = newsStorage.allNewsResources
         model = SettingsModel(
             resources: initialNewsResources,
-            appTheme: .system,
+            appTheme: UserDefaults.standard.currentTheme,
             refreshInterval: initialTimerValue
         )
         self.imageCache = imageCache
@@ -111,7 +112,13 @@ final class SettingsViewModel {
 
     func changeRefreshTimerDuration(_ duration: Int) {
         reloadTimerDuration = duration
-        model.refreshInterval = duration
+        model.changeRefreshInterval(duration)
         UserDefaults.standard.refreshNewsTimerDuration = duration
+    }
+
+    func changeAppTheme(_ theme: AppTheme) {
+        appTheme = theme
+        model.changeTheme(theme)
+        UserDefaults.standard.currentTheme = theme
     }
 }

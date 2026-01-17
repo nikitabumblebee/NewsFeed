@@ -69,4 +69,13 @@ extension UserDefaults {
             try? setObject(newValue, forKey: "newsResources")
         }
     }
+
+    var currentTheme: AppTheme {
+        get {
+            AppTheme(rawValue: string(forKey: "currentTheme") ?? "System") ?? .system
+        }
+        set {
+            set(newValue.rawValue, forKey: "currentTheme")
+        }
+    }
 }

@@ -55,7 +55,7 @@ class ImageTabBarItem: TabBarItem {
         }
     }
 
-    var selectedTintColor: UIColor = .gray1
+    var selectedTintColor: UIColor = .accent
     var unselectedTintColor: UIColor = .gray4
 
     override func setSelected(_ selected: Bool) {

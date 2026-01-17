@@ -68,12 +68,17 @@ final class SettingsViewController: BaseViewController {
         navigator.present(viewController: controller, presentingViewController: topNavigationController)
     }
 
+    @IBAction func onChangeTheme(_ sender: UISegmentedControl) {
+        let theme = AppTheme.allCases[sender.selectedSegmentIndex]
+        ThemeManager.shared.applyTheme(theme)
+    }
+
     private func setupUI() {
         themeSegmentedControl.removeAllSegments()
-        for theme in AppTheme.Theme.allCases.enumerated() {
+        for theme in AppTheme.allCases.enumerated() {
             themeSegmentedControl.insertSegment(withTitle: theme.element.rawValue, at: theme.offset, animated: false)
         }
-        themeSegmentedControl.selectedSegmentIndex = 0
+        themeSegmentedControl.selectedSegmentIndex = AppTheme.allCases.firstIndex(where: { $0 == viewModel.appTheme }) ?? 0
         refreshSlider.value = Float(viewModel.reloadTimerDuration)
         refreshLabel.text = "Refresh Interval (minutes): \(viewModel.reloadTimerDuration)"
     }

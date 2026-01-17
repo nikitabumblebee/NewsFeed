@@ -109,6 +109,9 @@
                                                 <segment title="First"/>
                                                 <segment title="Second"/>
                                             </segments>
+                                            <connections>
+                                                <action selector="onChangeTheme:" destination="-1" eventType="valueChanged" id="M0i-uh-bhW"/>
+                                            </connections>
                                         </segmentedControl>
                                     </subviews>
                                     <constraints>

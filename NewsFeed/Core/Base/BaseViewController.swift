@@ -38,10 +38,6 @@ class BaseViewController: UIViewController {
         scrollView?.indicatorStyle = .default
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-
     var dataCancellables = Set<AnyCancellable>()
 
     // swiftlint:disable identifier_name

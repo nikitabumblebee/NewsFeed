@@ -8,9 +8,9 @@
 import Foundation
 
 struct SettingsModel {
-    var resources: [NewsResource]
-    var appTheme: AppTheme.Theme
-    var refreshInterval: Int
+    private(set) var resources: [NewsResource]
+    private(set) var appTheme: AppTheme
+    private(set) var refreshInterval: Int
 
     mutating func addSource(_ source: NewsResource) {
         resources.append(source)
@@ -41,5 +41,13 @@ struct SettingsModel {
               let selectedSourceIndex = resources.firstIndex(of: selectedSource)
         else { return }
         resources[selectedSourceIndex] = newResource
+    }
+
+    mutating func changeRefreshInterval(_ interval: Int) {
+        refreshInterval = interval
+    }
+
+    mutating func changeTheme(_ theme: AppTheme) {
+        appTheme = theme
     }
 }
