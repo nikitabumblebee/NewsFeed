@@ -39,6 +39,11 @@ final class FeedViewModel: ObservableObject {
         applyNewsFilterSubject.eraseToAnyPublisher()
     }
 
+    private let reloadCurrentNewsSubject = PassthroughSubject<Void, Never>()
+    var reloadCurrentNewsPublisher: AnyPublisher<Void, Never> {
+        reloadCurrentNewsSubject.eraseToAnyPublisher()
+    }
+
     init(newsStorage: NewsStorage, feedParser: FeedParserService) {
         let refreshNewsTimerDuration = UserDefaults.standard.refreshNewsTimerDuration == 0
             ? FeedConstants.defaultTimerDuration
@@ -87,18 +92,25 @@ final class FeedViewModel: ObservableObject {
         newsStorage.uploadNewNewsPublisher
             .sink { [weak self] uploadedNews in
                 guard let self, !uploadedNews.isEmpty else {
-                    self?.hideRefresherSubject.send(())
+                    self?.hideRefresherSubject.send()
                     return
                 }
                 newsModels = model.insertNews(uploadedNews, at: 0)
-                hideRefresherSubject.send(())
+                hideRefresherSubject.send()
             }
             .store(in: &cancellables)
 
         newsStorage.applyFilteredNewsPublisher
             .sink { [weak self] in
                 guard let self else { return }
-                applyNewsFilterSubject.send(())
+                applyNewsFilterSubject.send()
+            }
+            .store(in: &cancellables)
+
+        newsStorage.reloadCurrentNewsPublisher
+            .sink { [weak self] in
+                guard let self else { return }
+                reloadCurrentNewsSubject.send()
             }
             .store(in: &cancellables)
     }

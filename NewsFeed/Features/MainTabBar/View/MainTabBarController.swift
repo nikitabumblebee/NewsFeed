@@ -63,7 +63,8 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
         let viewController = BaseNavigationViewController(rootViewController: FeedViewController(
             viewModel: viewModel,
             newsStorage: NewsStorage.shared,
-            navigator: Navigator.shared
+            navigator: Navigator.shared,
+            imageCache: ImageCache.shared
         ))
         tabBar.addTabItem(createTabItem, viewController: viewController)
     }

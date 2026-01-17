@@ -14,7 +14,7 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet private var sourceTitleLable: UILabel!
     @IBOutlet private var readView: UIView!
 
-    private(set) var news: (any NewsProtocol)?
+//    private(set) var news: (any NewsProtocol)?
     private var currentImageUUID: UUID?
 
     override nonisolated func awakeFromNib() {
@@ -37,7 +37,7 @@ class FeedTableViewCell: UITableViewCell {
         readView.isHiddenInStackView = true
     }
 
-    func setup(news: any NewsProtocol, state: ContentLoadState) {
+    func setup(news: any NewsProtocol, state: ContentLoadState, imageCache: ImageCache) {
         currentImageUUID = UUID()
         let thisUUID = currentImageUUID
         titleLabel.text = news.title
@@ -55,11 +55,10 @@ class FeedTableViewCell: UITableViewCell {
         }
         guard let image = news.image, let url = URL(string: image) else { return }
         Task {
-            guard let cachedImage = try? await ImageCache.shared.image(for: url), thisUUID == currentImageUUID else {
+            guard let cachedImage = try? await imageCache.image(for: url), thisUUID == currentImageUUID else {
                 newsImage.image = UIImage(systemName: "photo")
                 return
             }
-            print("🔵 \(image)")
             newsImage.contentMode = .scaleAspectFill
             newsImage.image = cachedImage
         }

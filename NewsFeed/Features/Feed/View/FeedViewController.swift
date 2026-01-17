@@ -33,17 +33,20 @@ final class FeedViewController: BaseViewController {
 
     private let newsStorage: NewsStorage
     private let navigator: Navigator
+    private let imageCache: ImageCache
 
     let viewModel: FeedViewModel
 
     init(
         viewModel: FeedViewModel,
         newsStorage: NewsStorage,
-        navigator: Navigator
+        navigator: Navigator,
+        imageCache: ImageCache
     ) {
         self.viewModel = viewModel
         self.newsStorage = newsStorage
         self.navigator = navigator
+        self.imageCache = imageCache
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -117,6 +120,14 @@ final class FeedViewController: BaseViewController {
                 self?.loadPagedData(fromBeginning: true)
             }
             .store(in: &cancellables)
+
+        viewModel.reloadCurrentNewsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self else { return }
+                applySnapshot(viewModel.newsModels)
+            }
+            .store(in: &cancellables)
     }
 
     @objc override func updateData() {
@@ -158,7 +169,7 @@ extension FeedViewController {
         DataSource(tableView: tableView) { [weak self] tableView, _, viewModelItem -> UITableViewCell? in
             guard let self else { return nil }
             let cell = FeedTableViewCell.dequeue(tableView)
-            cell.setup(news: viewModelItem, state: viewModel.contentLoadState)
+            cell.setup(news: viewModelItem, state: viewModel.contentLoadState, imageCache: imageCache)
             return cell
         }
     }

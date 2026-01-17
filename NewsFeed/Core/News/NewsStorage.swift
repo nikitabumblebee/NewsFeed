@@ -39,6 +39,11 @@ final class NewsStorage {
         applyFilteredNewsSubject.eraseToAnyPublisher()
     }
 
+    private let reloadCurrentNewsSubject = PassthroughSubject<Void, Never>()
+    var reloadCurrentNewsPublisher: AnyPublisher<Void, Never> {
+        reloadCurrentNewsSubject.eraseToAnyPublisher()
+    }
+
     private init() {
         database = NewsDatabaseService.shared
         let resourcesFromStorage = UserDefaults.standard.newsResources
@@ -50,6 +55,10 @@ final class NewsStorage {
             newsResourcesFiltered = NewsConstants.defaultNewsResources
         }
         loadSavedNews()
+    }
+
+    func reloadCurrentNews() {
+        reloadCurrentNewsSubject.send()
     }
 
     func applyResourcesFilter(_ sources: [NewsResource]) {

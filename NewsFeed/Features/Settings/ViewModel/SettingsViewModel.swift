@@ -63,6 +63,7 @@ final class SettingsViewModel {
     func resetImagesCache() {
         imageCache.clearCache()
         cacheResetSuccessSubject.send(())
+        newsStorage.reloadCurrentNews()
     }
 
     func addResource(_ resource: NewsResource) {
