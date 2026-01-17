@@ -10,22 +10,14 @@ import Foundation
 
 final class FeedViewModel: ObservableObject {
     private let newsStorage: NewsStorage
+    private let feedParser: FeedParserService
+    private var model: FeedModel
     private var cancellables = Set<AnyCancellable>()
 
-    @Published private(set) var newsModels: [any NewsProtocol] = [
-        BaseNews(id: "123", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "234", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "345", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "456", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "567", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "678", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "789", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "890", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "901", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-        BaseNews(id: "012", title: "Some title", description: "", link: nil, image: nil, date: Date(), source: "Some source", resource: nil, isViewed: false),
-    ]
+    @Published private(set) var newsModels: [any NewsProtocol] = []
 
     private(set) var contentLoadState: ContentLoadState = .loading
+    private var refreshTimer: Timer?
 
     private let initialNewsLoadedSubject = CurrentValueSubject<Bool, Never>(false)
     var initialNewsLoadedPublisher: AnyPublisher<Bool, Never> {
@@ -37,23 +29,46 @@ final class FeedViewModel: ObservableObject {
         hideRefresherSubject.eraseToAnyPublisher()
     }
 
-    init(newsStorage: NewsStorage) {
+    private let refreshTimerSignalSubject = PassthroughSubject<Void, Never>()
+    var refreshTimerSignalPublisher: AnyPublisher<Void, Never> {
+        refreshTimerSignalSubject.eraseToAnyPublisher()
+    }
+
+    private let applyNewsFilterSubject = PassthroughSubject<Void, Never>()
+    var applyNewsFilterPublisher: AnyPublisher<Void, Never> {
+        applyNewsFilterSubject.eraseToAnyPublisher()
+    }
+
+    private let reloadCurrentNewsSubject = PassthroughSubject<Void, Never>()
+    var reloadCurrentNewsPublisher: AnyPublisher<Void, Never> {
+        reloadCurrentNewsSubject.eraseToAnyPublisher()
+    }
+
+    init(newsStorage: NewsStorage, feedParser: FeedParserService) {
+        if UserDefaults.standard.refreshNewsTimerDuration == 0 {
+            UserDefaults.standard.refreshNewsTimerDuration = FeedConstants.defaultTimerDuration
+        }
+        let refreshNewsTimerDuration = UserDefaults.standard.refreshNewsTimerDuration
+        model = .init(news: FeedConstants.initialNewsForLoad, refreshNewsTimerDuration: refreshNewsTimerDuration * 60)
         self.newsStorage = newsStorage
+        self.feedParser = feedParser
+        newsModels = model.news
         subscribeToNews()
     }
 
     func clearModels() {
-        newsModels.removeAll()
+        model.clearNews()
     }
 
     func buildViewModels(from newNews: [any NewsProtocol]) {
         guard contentLoadState != .loading else { return }
-        newsModels.append(contentsOf: newNews)
+        newsModels = model.addNews(newNews)
     }
 
     func parseNewNews() {
+        handleRefreshTimer()
         Task {
-            await FeedParserService.shared.parseNewNews()
+            await feedParser.parseNewNews()
         }
     }
 
@@ -62,39 +77,59 @@ final class FeedViewModel: ObservableObject {
             .removeDuplicates()
             .sink { [weak self] in
                 guard let self, $0 else { return }
-                changeViewState(to: newsStorage.news.isEmpty ? .noData : .loaded)
+                handleRefreshTimer()
+                changeViewState(to: newsStorage.filteredNews.isEmpty ? .noData : .loaded)
                 initialNewsLoadedSubject.send($0)
-            }
-            .store(in: &cancellables)
-
-        newsStorage.currentNewsPublisher
-            .sink { [weak self] news in
-                guard let self, let news else { return }
-                changeViewState(to: news.isEmpty ? .noData : .loaded)
-                newsModels = news
             }
             .store(in: &cancellables)
 
         newsStorage.updateNewsPublisher
             .sink { [weak self] updatedNews in
                 guard let self, let changedNewsIndex = newsModels.firstIndex(where: { $0.id == updatedNews.id }) else { return }
-                newsModels[changedNewsIndex] = updatedNews
+                newsModels = model.changeNews(updatedNews, at: Int(changedNewsIndex))
             }
             .store(in: &cancellables)
 
         newsStorage.uploadNewNewsPublisher
             .sink { [weak self] uploadedNews in
                 guard let self, !uploadedNews.isEmpty else {
-                    self?.hideRefresherSubject.send(())
+                    self?.hideRefresherSubject.send()
                     return
                 }
-                newsModels.insert(contentsOf: uploadedNews, at: 0)
-                hideRefresherSubject.send(())
+                newsModels = model.insertNews(uploadedNews, at: 0)
+                hideRefresherSubject.send()
+            }
+            .store(in: &cancellables)
+
+        newsStorage.applyFilteredNewsPublisher
+            .sink { [weak self] in
+                guard let self else { return }
+                applyNewsFilterSubject.send()
+            }
+            .store(in: &cancellables)
+
+        newsStorage.reloadCurrentNewsPublisher
+            .sink { [weak self] in
+                guard let self else { return }
+                reloadCurrentNewsSubject.send()
             }
             .store(in: &cancellables)
     }
 
     private func changeViewState(to newState: ContentLoadState) {
         contentLoadState = newState
+    }
+
+    func handleRefreshTimer() {
+        refreshTimer?.invalidate()
+        model.changeRefreshNewsTimerDuration(UserDefaults.standard.refreshNewsTimerDuration * 60)
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: Double(model.refreshNewsTimerDuration), repeats: false, block: { [weak self] _ in
+            guard let self else { return }
+            Task {
+                await MainActor.run {
+                    self.refreshTimerSignalSubject.send(())
+                }
+            }
+        })
     }
 }

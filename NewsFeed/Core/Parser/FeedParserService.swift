@@ -29,6 +29,7 @@ class FeedParserService {
 
     private init() {
         dataBase = NewsDatabaseService.shared
+
         Task {
             await loadNewsFromDifferentSources()
         }
@@ -38,12 +39,22 @@ class FeedParserService {
         await loadNewsFromDifferentSources()
     }
 
+    func addNewsSourceToParse(_: NewsResource) {}
+
     private func loadNewsFromDifferentSources() async {
         let news = await withTaskGroup(of: [any NewsProtocol].self, returning: [any NewsProtocol].self) { [weak self] group in
             guard let self else { return [] }
-            for item in NewsSources.allCases {
+            let newsResourcesFromUserDefaults: [NewsResource]? = UserDefaults.standard.newsResources
+            let urls: [String] = if let newsResourcesFromUserDefaults {
+                newsResourcesFromUserDefaults.compactMap(\.url).isEmpty
+                    ? newsStorage.allNewsResources.compactMap(\.url)
+                    : newsResourcesFromUserDefaults.compactMap(\.url)
+            } else {
+                newsStorage.allNewsResources.compactMap(\.url)
+            }
+            for item in urls {
                 group.addTask {
-                    let news = await self.parceFeed(from: item.rawValue)
+                    let news = await self.parceFeed(from: item)
                     return news
                 }
             }
@@ -91,7 +102,7 @@ class FeedParserService {
                             link: URL(string: link),
                             image: item.enclosure?.attributes?.url,
                             date: date,
-                            source: item.author,
+                            author: item.author ?? feed.channel?.description,
                             resource: urlString,
                             isViewed: false
                         )
@@ -126,8 +137,8 @@ class FeedParserService {
         if existedObject.date != newObject.date {
             updateParameters.append(.date(newObject.date))
         }
-        if existedObject.source != newObject.source {
-            updateParameters.append(.source(newObject.source))
+        if existedObject.author != newObject.author {
+            updateParameters.append(.source(newObject.author))
         }
         if existedObject.resource != newObject.resource {
             updateParameters.append(.resource(newObject.resource))
@@ -147,7 +158,7 @@ class FeedParserService {
                 case let .date(date):
                     newsDB.date = date
                 case let .source(source):
-                    newsDB.source = source
+                    newsDB.author = source
                 case let .resource(resource):
                     newsDB.resource = resource
                 }

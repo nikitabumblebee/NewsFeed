@@ -1,5 +1,5 @@
 //
-//  NewsViewModel.swift
+//  NewsDetailViewModel.swift
 //  NewsFeed
 //
 //  Created by Nikita Shmelev on 14.01.2026.
@@ -7,13 +7,13 @@
 
 import Foundation
 
-class NewsViewModel: Sendable {
-    private let databaseService = NewsDatabaseService.shared
-    private let newsStorage = NewsStorage.shared
+class NewsDetailViewModel: Sendable {
+    private let newsStorage: NewsStorage
     let news: any NewsProtocol
 
-    init(news: any NewsProtocol) {
+    init(news: any NewsProtocol, newsStorage: NewsStorage) {
         self.news = news
+        self.newsStorage = newsStorage
     }
 
     func setNewsAsViewedIfNeeded() {
@@ -21,12 +21,12 @@ class NewsViewModel: Sendable {
     }
 }
 
-extension NewsViewModel: Hashable {
+extension NewsDetailViewModel: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(news.id)
     }
 
-    static func == (lhs: NewsViewModel, rhs: NewsViewModel) -> Bool {
+    static func == (lhs: NewsDetailViewModel, rhs: NewsDetailViewModel) -> Bool {
         lhs.news.id == rhs.news.id
     }
 }

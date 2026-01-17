@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-class FeedViewController: BaseViewController {
+final class FeedViewController: BaseViewController {
     enum State {
         case none
         case fetching
@@ -32,12 +32,21 @@ class FeedViewController: BaseViewController {
     private var currentStateSubject = CurrentValueSubject<State, Never>(.none)
 
     private let newsStorage: NewsStorage
+    private let navigator: Navigator
+    private let imageCache: ImageCache
 
     let viewModel: FeedViewModel
 
-    init(viewModel: FeedViewModel, newsStorage: NewsStorage) {
+    init(
+        viewModel: FeedViewModel,
+        newsStorage: NewsStorage,
+        navigator: Navigator,
+        imageCache: ImageCache
+    ) {
         self.viewModel = viewModel
         self.newsStorage = newsStorage
+        self.navigator = navigator
+        self.imageCache = imageCache
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -54,17 +63,22 @@ class FeedViewController: BaseViewController {
         setupSubscriptions()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        viewModel.handleRefreshTimer()
+    }
+
     private func setupTableView() {
         tableView.dataSource = dataSource
         tableView.delegate = self
         tableView.backgroundColor = .backgroundPrimary
-        tableView.refreshControl = refreshControl // refresher
+        tableView.refreshControl = refreshControl
         FeedTableViewCell.registerNib(for: tableView)
 
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
 
-    func scrollToTop() {
+    override func scrollToTop() {
         guard !viewModel.newsModels.isEmpty else { return }
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }
@@ -74,6 +88,7 @@ class FeedViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newsModels in
                 self?.applySnapshot(newsModels)
+                self?.tableView.isHidden = newsModels.isEmpty
             }
             .store(in: &cancellables)
 
@@ -89,6 +104,29 @@ class FeedViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.refreshControl.endRefreshing()
+            }
+            .store(in: &cancellables)
+
+        viewModel.refreshTimerSignalPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.refreshControl.beginRefreshing()
+                self?.viewModel.parseNewNews()
+            }
+            .store(in: &cancellables)
+
+        viewModel.applyNewsFilterPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.loadPagedData(fromBeginning: true)
+            }
+            .store(in: &cancellables)
+
+        viewModel.reloadCurrentNewsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self else { return }
+                applySnapshot(viewModel.newsModels)
             }
             .store(in: &cancellables)
     }
@@ -111,8 +149,6 @@ extension FeedViewController {
         loadData(newsStorage.fetchNews(fromBeginning: fromBeginning, limit: pagingLimit)) { [weak self] result in
             guard let self else { return }
 
-//            hideRefresher()
-
             if result.isEmpty, !fromBeginning {
                 currentStateSubject.value = .fetchedAll
                 return
@@ -134,7 +170,7 @@ extension FeedViewController {
         DataSource(tableView: tableView) { [weak self] tableView, _, viewModelItem -> UITableViewCell? in
             guard let self else { return nil }
             let cell = FeedTableViewCell.dequeue(tableView)
-            cell.setup(viewModel: NewsViewModel(news: viewModelItem), state: viewModel.contentLoadState)
+            cell.setup(news: viewModelItem, state: viewModel.contentLoadState, imageCache: imageCache)
             return cell
         }
     }
@@ -155,8 +191,8 @@ extension FeedViewController {
 extension FeedViewController: UITableViewDelegate {
     func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let viewModel = viewModel.newsModels[indexPath.row]
-        let viewController = NewsDetailViewController(viewModel: NewsViewModel(news: viewModel))
-        Navigator.shared.push(viewController: viewController)
+        let viewController = NewsDetailViewController(viewModel: NewsDetailViewModel(news: viewModel, newsStorage: newsStorage))
+        navigator.push(viewController: viewController)
     }
 
     func tableView(_: UITableView, willDisplay _: UITableViewCell, forRowAt indexPath: IndexPath) {

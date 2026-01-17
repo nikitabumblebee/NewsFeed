@@ -7,7 +7,10 @@
 
 import UIKit
 
-final class MainTabBarController: BaseViewController {
+final class MainTabBarController: BaseViewController, BaseTabBar {
+    var basePresentedViewController: UIViewController?
+    var rootView: UIView?
+
     static let safeAreaViewId = "safeAreaView"
     static let backgroundView = "tabBarBackgroundView"
 
@@ -23,6 +26,8 @@ final class MainTabBarController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        rootView = view
+        basePresentedViewController = presentedViewController
 
         safeAreaView?.accessibilityIdentifier = Self.safeAreaViewId
         backgroundView.accessibilityIdentifier = Self.backgroundView
@@ -54,8 +59,13 @@ final class MainTabBarController: BaseViewController {
         createTabItem.iconName = "newspaper"
         createTabItem.title = "Feed"
 
-        let viewModel = FeedViewModel(newsStorage: NewsStorage.shared)
-        let viewController = BaseNavigationViewController(rootViewController: FeedViewController(viewModel: viewModel, newsStorage: NewsStorage.shared))
+        let viewModel = FeedViewModel(newsStorage: NewsStorage.shared, feedParser: FeedParserService.shared)
+        let viewController = BaseNavigationViewController(rootViewController: FeedViewController(
+            viewModel: viewModel,
+            newsStorage: NewsStorage.shared,
+            navigator: Navigator.shared,
+            imageCache: ImageCache.shared
+        ))
         tabBar.addTabItem(createTabItem, viewController: viewController)
     }
 
@@ -65,8 +75,8 @@ final class MainTabBarController: BaseViewController {
         createTabItem.iconName = "gear"
         createTabItem.title = "Settings"
 
-        let viewModel = SettingsViewModel()
-        let viewController = BaseNavigationViewController(rootViewController: SettingsViewController(viewModel: viewModel))
+        let viewModel = SettingsViewModel(imageCache: ImageCache.shared, newsStorage: NewsStorage.shared, parserService: FeedParserService.shared)
+        let viewController = BaseNavigationViewController(rootViewController: SettingsViewController(viewModel: viewModel, navigator: Navigator.shared))
         tabBar.addTabItem(createTabItem, viewController: viewController)
     }
 

@@ -14,7 +14,7 @@ protocol NewsProtocol: Sendable, Equatable {
     var link: URL? { get }
     var image: String? { get }
     var date: Date { get }
-    var source: String? { get }
+    var author: String? { get }
     var resource: String? { get }
     var isViewed: Bool { get set }
 

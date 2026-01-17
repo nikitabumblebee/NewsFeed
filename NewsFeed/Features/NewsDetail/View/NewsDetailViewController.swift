@@ -16,9 +16,9 @@ class NewsDetailViewController: BaseViewController {
 
     override var shouldShowTabBar: Bool { false }
 
-    let viewModel: NewsViewModel
+    let viewModel: NewsDetailViewModel
 
-    init(viewModel: NewsViewModel) {
+    init(viewModel: NewsDetailViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

@@ -39,20 +39,18 @@ final class Navigator: NSObject {
         return nil
     }
 
-    var tabBarController: MainTabBarController? {
+    var tabBarController: (any BaseTabBar)? {
         let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
         guard var topController = keyWindow?.rootViewController else { return nil }
-        if let navigation = topController as? UINavigationController,
-           let tabBarController = navigation.viewControllers.first as? MainTabBarController
-        {
+        if let navigation = topController as? UINavigationController, let tabBarController = navigation.viewControllers.first as? (any BaseTabBar) {
             return tabBarController
         }
-        if let tabBarController = topController as? MainTabBarController {
+        if let tabBarController = topController as? (any BaseTabBar) {
             return tabBarController
         }
         while let presentedViewController = topController.presentedViewController {
             topController = presentedViewController
-            if let tabBarController = topController as? MainTabBarController {
+            if let tabBarController = topController as? (any BaseTabBar) {
                 return tabBarController
             }
         }
@@ -63,16 +61,16 @@ final class Navigator: NSObject {
         let viewController = topViewController
         if let navigationController = viewController as? UINavigationController {
             return navigationController
-        } else if let tabBarController = viewController as? MainTabBarController {
+        } else if let tabBarController = viewController as? (any BaseTabBar) {
             return tabBarController.getCurrentViewController()
         }
         return viewController?.navigationController
     }
 
     var presentedController: UIViewController? {
-        Navigator.shared.navigationController?.presentedViewController ??
-            Navigator.shared.tabBarController?.presentedViewController ??
-            Navigator.shared.navigationController?.topViewController?.presentedViewController
+        navigationController?.presentedViewController ??
+            tabBarController?.basePresentedViewController ??
+            navigationController?.topViewController?.presentedViewController
     }
 
     var hasPresentedController: Bool {
@@ -87,7 +85,7 @@ final class Navigator: NSObject {
     }
 
     var isMainTabBarControllerVisible: Bool {
-        Navigator.shared.tabBarController?.view.window != nil
+        tabBarController?.rootView?.window != nil
     }
 }
 
@@ -114,12 +112,7 @@ extension Navigator {
         completion: @escaping () -> Void = {}
     ) {
         viewController.modalPresentationStyle = modalPresentationStyle
-
-//        if modalPresentationStyle == .custom, viewController is ActionSheetController {
-//            viewController.transitioningDelegate = self
-//        } else {
         viewController.modalTransitionStyle = modalTransitionStyle
-//        }
 
         let presenterVC = presentingViewController ?? navigationController
 

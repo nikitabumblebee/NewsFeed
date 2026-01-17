@@ -14,7 +14,7 @@ final nonisolated class BaseNews: NewsProtocol, Hashable {
     let link: URL?
     let image: String?
     let date: Date
-    let source: String?
+    let author: String?
     let resource: String?
     var isViewed: Bool
 
@@ -25,7 +25,7 @@ final nonisolated class BaseNews: NewsProtocol, Hashable {
         link: URL?,
         image: String?,
         date: Date,
-        source: String?,
+        author: String?,
         resource: String?,
         isViewed: Bool
     ) {
@@ -35,7 +35,7 @@ final nonisolated class BaseNews: NewsProtocol, Hashable {
         self.link = link
         self.image = image
         self.date = date
-        self.source = source
+        self.author = author
         self.resource = resource
         self.isViewed = isViewed
     }
@@ -48,7 +48,7 @@ final nonisolated class BaseNews: NewsProtocol, Hashable {
         newsDB.linkString = link?.absoluteString
         newsDB.image = image
         newsDB.date = date
-        newsDB.source = source
+        newsDB.author = author
         newsDB.resource = resource
         newsDB.isViewed = isViewed
         return newsDB
@@ -61,7 +61,7 @@ final nonisolated class BaseNews: NewsProtocol, Hashable {
             lhs.link == rhs.link &&
             lhs.image == rhs.image &&
             lhs.date == rhs.date &&
-            lhs.source == rhs.source &&
+            lhs.author == rhs.author &&
             lhs.resource == rhs.resource
     }
 

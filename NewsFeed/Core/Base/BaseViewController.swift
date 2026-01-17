@@ -38,10 +38,6 @@ class BaseViewController: UIViewController {
         scrollView?.indicatorStyle = .default
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-
     var dataCancellables = Set<AnyCancellable>()
 
     // swiftlint:disable identifier_name
@@ -82,6 +78,10 @@ class BaseViewController: UIViewController {
     func addRefresher(view: UIView) {
         guard let refresher else { return }
         view.addSubview(refresher)
+    }
+
+    func scrollToTop() {
+        scrollView?.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
     }
 
     @objc func updateData() {

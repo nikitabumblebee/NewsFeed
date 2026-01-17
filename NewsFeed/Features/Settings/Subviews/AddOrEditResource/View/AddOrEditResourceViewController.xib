@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AddOrEditResourceViewController" customModule="NewsFeed" customModuleProvider="target">
+            <connections>
+                <outlet property="nameLabel" destination="8hV-Hh-0xo" id="lMs-us-PGB"/>
+                <outlet property="nameTextField" destination="xOv-SI-Zz9" id="YBZ-ND-FtK"/>
+                <outlet property="saveButton" destination="F60-xd-Oqt" id="5vs-36-HHD"/>
+                <outlet property="urlLabel" destination="oR6-48-tmS" id="b7p-4F-apK"/>
+                <outlet property="urlTextField" destination="h7X-7g-oZE" id="rgh-oZ-F1n"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8hV-Hh-0xo">
+                    <rect key="frame" x="15.999999999999996" y="134" width="51.666666666666657" height="21"/>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                    <color key="textColor" name="TextPrimary"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xOv-SI-Zz9">
+                    <rect key="frame" x="16" y="167" width="361" height="34"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <action selector="onNameTextFieldChange:" destination="-1" eventType="editingDidEnd" id="69a-iJ-7hv"/>
+                    </connections>
+                </textField>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Url Address:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oR6-48-tmS">
+                    <rect key="frame" x="15.999999999999993" y="217" width="98.333333333333314" height="21"/>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                    <color key="textColor" name="TextPrimary"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="h7X-7g-oZE">
+                    <rect key="frame" x="16" y="250" width="361" height="34"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <action selector="onUrlTextFieldChange:" destination="-1" eventType="editingDidEnd" id="REp-Qm-jXe"/>
+                    </connections>
+                </textField>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F60-xd-Oqt">
+                    <rect key="frame" x="16" y="716" width="361" height="52"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="52" id="Aah-6F-jaX"/>
+                    </constraints>
+                    <color key="tintColor" name="Accent"/>
+                    <state key="normal" title="Button"/>
+                    <buttonConfiguration key="configuration" style="filled" title="Save">
+                        <fontDescription key="titleFontDescription" type="boldSystem" pointSize="17"/>
+                    </buttonConfiguration>
+                    <connections>
+                        <action selector="tapOnSaveButton:" destination="-1" eventType="touchUpInside" id="3KZ-R2-4PJ"/>
+                    </connections>
+                </button>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="F60-xd-Oqt" secondAttribute="trailing" constant="16" id="1L0-Hl-hWh"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="h7X-7g-oZE" secondAttribute="trailing" constant="16" id="2kj-h7-FCK"/>
+                <constraint firstItem="oR6-48-tmS" firstAttribute="top" secondItem="xOv-SI-Zz9" secondAttribute="bottom" constant="16" id="CGt-Mq-M0w"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="xOv-SI-Zz9" secondAttribute="trailing" constant="16" id="D4f-je-dGt"/>
+                <constraint firstItem="8hV-Hh-0xo" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="Ilp-3U-Sto"/>
+                <constraint firstItem="h7X-7g-oZE" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="Lgj-M6-1yA"/>
+                <constraint firstItem="F60-xd-Oqt" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="MPV-L6-DwE"/>
+                <constraint firstItem="8hV-Hh-0xo" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="16" id="Ncf-ga-MXK"/>
+                <constraint firstItem="h7X-7g-oZE" firstAttribute="top" secondItem="oR6-48-tmS" secondAttribute="bottom" constant="12" id="Nd4-Fa-oPV"/>
+                <constraint firstItem="oR6-48-tmS" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="cJd-9B-rKT"/>
+                <constraint firstItem="xOv-SI-Zz9" firstAttribute="top" secondItem="8hV-Hh-0xo" secondAttribute="bottom" constant="12" id="jO5-ao-rOj"/>
+                <constraint firstItem="xOv-SI-Zz9" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="oeR-JO-E9U"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="F60-xd-Oqt" secondAttribute="bottom" constant="16" id="pBa-RQ-wpR"/>
+            </constraints>
+            <point key="canvasLocation" x="94" y="101"/>
+        </view>
+    </objects>
+    <resources>
+        <namedColor name="Accent">
+            <color red="0.60784316062927246" green="0.80392158031463623" blue="0.60784316062927246" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="TextPrimary">
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -50,6 +50,7 @@ class ImageCache {
     func clearCache() {
         memoryCache.removeAllObjects()
         try? FileManager.default.removeItem(at: diskURL)
+        try? FileManager.default.createDirectory(at: diskURL, withIntermediateDirectories: true)
     }
 
     private func saveToDisk(image: UIImage, key: String) throws {
