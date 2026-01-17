@@ -56,7 +56,7 @@ final class FeedViewModel: ObservableObject {
     }
 
     func clearModels() {
-        newsModels = model.clearNews()
+        model.clearNews()
     }
 
     func buildViewModels(from newNews: [any NewsProtocol]) {

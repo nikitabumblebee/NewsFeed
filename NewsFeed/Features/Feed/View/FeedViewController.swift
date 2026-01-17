@@ -88,6 +88,7 @@ final class FeedViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newsModels in
                 self?.applySnapshot(newsModels)
+                self?.tableView.isHidden = newsModels.isEmpty
             }
             .store(in: &cancellables)
 

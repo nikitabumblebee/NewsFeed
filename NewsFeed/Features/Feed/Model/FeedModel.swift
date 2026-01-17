@@ -16,9 +16,8 @@ struct FeedModel {
         return self.news
     }
 
-    mutating func clearNews() -> [any NewsProtocol] {
+    mutating func clearNews() {
         news.removeAll()
-        return news
     }
 
     mutating func changeNews(_ news: any NewsProtocol, at index: Int) -> [any NewsProtocol] {
