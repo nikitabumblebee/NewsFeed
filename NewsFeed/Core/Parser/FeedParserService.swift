@@ -102,7 +102,7 @@ class FeedParserService {
                             link: URL(string: link),
                             image: item.enclosure?.attributes?.url,
                             date: date,
-                            source: item.author,
+                            source: item.author ?? feed.channel?.description,
                             resource: urlString,
                             isViewed: false
                         )

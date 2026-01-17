@@ -33,7 +33,7 @@
                         <color key="textColor" name="TextPrimary"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FWq-z1-nhB">
+                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="754" verticalHuggingPriority="750" horizontalCompressionResistancePriority="754" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FWq-z1-nhB">
                         <rect key="frame" x="251" y="8" width="63" height="28"/>
                         <connections>
                             <action selector="onSwitchChange:" destination="KGk-i7-Jjw" eventType="valueChanged" id="w2X-py-8x3"/>
