@@ -8,31 +8,38 @@
 import Foundation
 
 struct SettingsModel {
-    var sources: [NewsResource]
+    var resources: [NewsResource]
     var appTheme: AppTheme.Theme
     var refreshInterval: Int
 
     mutating func addSource(_ source: NewsResource) {
-        sources.append(source)
+        resources.append(source)
     }
 
     mutating func deleteSource(_ source: NewsResource) {
-        sources.removeAll(where: { $0.name == source.name })
+        resources.removeAll(where: { $0.name == source.name })
     }
 
     mutating func disableSource(_ source: NewsResource) {
-        guard var selectedSource = sources.first(where: { $0.name == source.name }),
-              let selectedSourceIndex = sources.firstIndex(of: selectedSource)
+        guard var selectedSource = resources.first(where: { $0.name == source.name }),
+              let selectedSourceIndex = resources.firstIndex(of: selectedSource)
         else { return }
         selectedSource.disableSource()
-        sources[selectedSourceIndex] = selectedSource
+        resources[selectedSourceIndex] = selectedSource
     }
 
     mutating func enableSource(_ source: NewsResource) {
-        guard var selectedSource = sources.first(where: { $0.name == source.name }),
-              let selectedSourceIndex = sources.firstIndex(of: selectedSource)
+        guard var selectedSource = resources.first(where: { $0.name == source.name }),
+              let selectedSourceIndex = resources.firstIndex(of: selectedSource)
         else { return }
         selectedSource.enableSource()
-        sources[selectedSourceIndex] = selectedSource
+        resources[selectedSourceIndex] = selectedSource
+    }
+
+    mutating func editResource(originalResource: NewsResource, newResource: NewsResource) {
+        guard let selectedSource = resources.first(where: { $0.name == originalResource.name }),
+              let selectedSourceIndex = resources.firstIndex(of: selectedSource)
+        else { return }
+        resources[selectedSourceIndex] = newResource
     }
 }

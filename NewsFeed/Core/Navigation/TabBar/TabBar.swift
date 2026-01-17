@@ -180,6 +180,6 @@ private extension TabBar {
         guard let navigationController = getViewController(at: TabBarItemType.settings.rawValue) as? BaseNavigationViewController,
               let settingsViewController = navigationController.visibleViewController as? SettingsViewController
         else { return }
-//        settingsViewController.scrollToTop()
+        settingsViewController.scrollToTop()
     }
 }

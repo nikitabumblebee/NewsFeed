@@ -13,10 +13,10 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SettingsViewController" customModule="NewsFeed" customModuleProvider="target">
             <connections>
                 <outlet property="addSourceButton" destination="0Ta-k6-34g" id="AeO-xI-agi"/>
-                <outlet property="deleteSourceButton" destination="IU9-M7-U0J" id="VQB-5Q-uSX"/>
                 <outlet property="refreshLabel" destination="oQW-td-A2L" id="rpP-Ln-Zl1"/>
                 <outlet property="refreshSlider" destination="6la-QX-3OQ" id="tOR-DW-hgA"/>
                 <outlet property="resetCacheButton" destination="LFc-tW-wHE" id="0jy-0e-tb3"/>
+                <outlet property="scrollView" destination="LKz-Ah-heD" id="LA6-Zz-daK"/>
                 <outlet property="tableView" destination="C8D-ZY-NWo" id="M4Y-ut-TwP"/>
                 <outlet property="themeSegmentedControl" destination="wwy-0X-Of8" id="tmc-fP-eJa"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -129,8 +129,8 @@
                                             <color key="textColor" name="TextPrimary"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="beo-z2-uRW">
-                                            <rect key="frame" x="267" y="-7" width="94" height="34.333333333333336"/>
+                                        <stackView opaque="NO" contentMode="scaleToFill" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="beo-z2-uRW">
+                                            <rect key="frame" x="314" y="-7" width="47" height="34.333333333333336"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Ta-k6-34g">
                                                     <rect key="frame" x="0.0" y="0.0" width="47" height="34.333333333333336"/>
@@ -140,16 +140,6 @@
                                                     </buttonConfiguration>
                                                     <connections>
                                                         <action selector="onAddNewSource:" destination="-1" eventType="touchUpInside" id="fTa-Dj-q9E"/>
-                                                    </connections>
-                                                </button>
-                                                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IU9-M7-U0J">
-                                                    <rect key="frame" x="47" y="0.0" width="47" height="34.333333333333336"/>
-                                                    <state key="normal" title="Button"/>
-                                                    <buttonConfiguration key="configuration" style="gray" image="minus" catalog="system">
-                                                        <color key="baseForegroundColor" name="Accent"/>
-                                                    </buttonConfiguration>
-                                                    <connections>
-                                                        <action selector="onDeleteSource:" destination="-1" eventType="touchUpInside" id="eW2-EF-Mci"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -198,7 +188,6 @@
         </view>
     </objects>
     <resources>
-        <image name="minus" catalog="system" width="128" height="26"/>
         <image name="plus" catalog="system" width="128" height="113"/>
         <namedColor name="Accent">
             <color red="0.60784316062927246" green="0.80392158031463623" blue="0.60784316062927246" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

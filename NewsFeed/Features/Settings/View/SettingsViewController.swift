@@ -15,11 +15,8 @@ class SettingsViewController: BaseViewController {
     @IBOutlet private var resetCacheButton: UIButton!
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var addSourceButton: UIButton!
-    @IBOutlet private var deleteSourceButton: UIButton!
 
     let viewModel: SettingsViewModel
-
-    private var isSelectedSource: Bool = false
 
     typealias DataSource = UITableViewDiffableDataSource<Int, NewsResource>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Int, NewsResource>
@@ -45,17 +42,23 @@ class SettingsViewController: BaseViewController {
         setupSubscriptions()
     }
 
+    func scrollToTop() {
+        scrollView?.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+    }
+
     @IBAction private func onChangeSliderValue(_ sender: UISlider) {
         refreshLabel.text = "Refresh Interval (minutes): \(Int(sender.value))"
         viewModel.changeRefreshTimerDuration(Int(sender.value))
     }
 
     @IBAction private func onAddNewSource(_: Any) {
-        print("🟢")
-    }
-
-    @IBAction private func onDeleteSource(_: Any) {
-        print("🔴")
+        let addOrEditViewModel = AddOrEditResourceViewModel(resource: nil)
+        let viewController = AddOrEditResourceViewController(viewModel: addOrEditViewModel)
+        viewController.onSave = { [weak self] resource in
+            guard let self, let resource else { return }
+            viewModel.addResource(resource)
+        }
+        Navigator.shared.push(viewController: viewController, navigationController: nil)
     }
 
     @IBAction private func onResetImagesCache(_: Any) {
@@ -77,11 +80,11 @@ class SettingsViewController: BaseViewController {
     }
 
     private func setupTableView() {
-        tableView.allowsMultipleSelection = false
         tableView.dataSource = dataSource
         tableView.delegate = self
         tableView.sectionIndexBackgroundColor = .accent
-        NewsSourceTableViewCell.registerNib(for: tableView)
+        tableView.allowsSelection = false
+        NewsResourceTableViewCell.registerNib(for: tableView)
     }
 
     private func setupSubscriptions() {
@@ -107,23 +110,23 @@ class SettingsViewController: BaseViewController {
 extension SettingsViewController {
     private func makeDataSource() -> DataSource {
         DataSource(tableView: tableView) { tableView, _, viewModelItem -> UITableViewCell? in
-            let cell = NewsSourceTableViewCell.dequeue(tableView)
-            cell.setup(newsSource: viewModelItem)
+            let cell = NewsResourceTableViewCell.dequeue(tableView)
+            cell.setup(newsResource: viewModelItem)
             cell.onResourceSwitchChange = { [weak self] isOn in
                 if isOn {
-                    self?.viewModel.enableSource(viewModelItem)
+                    self?.viewModel.enableResource(viewModelItem)
                 } else {
-                    self?.viewModel.disableSource(viewModelItem)
+                    self?.viewModel.disableResource(viewModelItem)
                 }
             }
             return cell
         }
     }
 
-    private func applySnapshot(_ newsSources: [NewsResource]) {
+    private func applySnapshot(_ newsResources: [NewsResource]) {
         var snapshot = Snapshot()
         snapshot.appendSections([0])
-        snapshot.appendItems(newsSources, toSection: 0)
+        snapshot.appendItems(newsResources, toSection: 0)
 
         dataSource.applySnapshotUsingReloadData(snapshot)
     }
@@ -132,23 +135,32 @@ extension SettingsViewController {
 // MARK: UITableViewDelegate
 
 extension SettingsViewController: UITableViewDelegate {
-    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedSource = viewModel.sources[indexPath.row]
-        if selectedSource == viewModel.selectedSource {
-            isSelectedSource = false
-            deleteSourceButton.isEnabled = false
-            viewModel.deselectSource()
-            if let cell = tableView.cellForRow(at: indexPath) {
-                cell.isSelected = false
+    func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let edit = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, completion in
+            guard let self else { return }
+            let addOrEditResourceViewModel = AddOrEditResourceViewModel(resource: viewModel.resources[indexPath.row])
+            let viewController = AddOrEditResourceViewController(viewModel: addOrEditResourceViewModel)
+            viewController.onSave = { [weak self] updateResource in
+                guard let self, let updateResource else { return }
+                viewModel.editResource(resource: viewModel.resources[indexPath.row], to: updateResource)
             }
-        } else {
-            isSelectedSource = true
-            deleteSourceButton.isEnabled = true
-            viewModel.selectSource(selectedSource)
+            Navigator.shared.push(viewController: viewController, navigationController: nil)
+            completion(true)
         }
-    }
+        edit.backgroundColor = .accent
+        edit.image = UIImage(systemName: "pencil")
 
-    func tableView(_: UITableView, heightForRowAt _: IndexPath) -> CGFloat {
-        52
+        let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completion in
+            guard let self else { return }
+            let alertController = UIAlertController.confirmationAlert(title: "Are you sure you want to delete this resource?", message: "This action cannot be undone.", actionConfirm: { [weak self] in
+                guard let self else { return }
+                viewModel.deleteResource(viewModel.resources[indexPath.row])
+            })
+            let topNavigationController = Navigator.shared.topNavigationController
+            Navigator.shared.present(viewController: alertController, presentingViewController: topNavigationController)
+            completion(true)
+        }
+
+        return UISwipeActionsConfiguration(actions: [delete, edit])
     }
 }

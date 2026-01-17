@@ -10,11 +10,11 @@ import Foundation
 
 final class SettingsViewModel {
     private(set) var reloadTimerDuration: Int = AppConstants.defaultTimerDuration
-    private(set) var selectedSource: NewsResource?
 
     private var model: SettingsModel
     private let imageCache: ImageCache
     private let newsStorage: NewsStorage
+    private let parserService: FeedParserService
     private let initialTimerValue: Int = UserDefaults.standard.refreshNewsTimerDuration == 0
         ? AppConstants.defaultTimerDuration
         : UserDefaults.standard.refreshNewsTimerDuration
@@ -38,20 +38,25 @@ final class SettingsViewModel {
         sliderValueSubject.eraseToAnyPublisher()
     }
 
-    private(set) var sources: [NewsResource] = []
+    private(set) var resources: [NewsResource] = []
 
-    init(imageCache: ImageCache, newsStorage: NewsStorage) {
+    init(
+        imageCache: ImageCache,
+        newsStorage: NewsStorage,
+        parserService: FeedParserService
+    ) {
         let initialNewsResources: [NewsResource] = UserDefaults.standard.newsResources ?? AppConstants.defaultNewsResources
         model = SettingsModel(
-            sources: initialNewsResources,
+            resources: initialNewsResources,
             appTheme: .system,
             refreshInterval: initialTimerValue
         )
         self.imageCache = imageCache
         self.newsStorage = newsStorage
+        self.parserService = parserService
         reloadTimerDuration = initialTimerValue
-        sources = model.sources
-        sourcesListSubject.send(model.sources)
+        resources = model.resources
+        sourcesListSubject.send(model.resources)
     }
 
     func resetImagesCache() {
@@ -59,41 +64,54 @@ final class SettingsViewModel {
         cacheResetSuccessSubject.send(())
     }
 
-    func addSource(_ source: NewsResource) {
-        model.addSource(source)
-        sources = model.sources
-        sourcesListSubject.send(model.sources)
+    func addResource(_ resource: NewsResource) {
+        model.addSource(resource)
+        resources = model.resources
+        UserDefaults.standard.newsResources = model.resources
+        sourcesListSubject.send(model.resources)
+        newsStorage.applyResourcesFilter(model.resources)
+        Task {
+            await self.parserService.parseNewNews()
+        }
     }
 
-    func deleteSource(_ source: NewsResource) {
-        model.deleteSource(source)
-        sources = model.sources
-        sourcesListSubject.send(model.sources)
+    func deleteResource(_ resource: NewsResource) {
+        model.deleteSource(resource)
+        resources = model.resources
+        UserDefaults.standard.newsResources = model.resources
+        sourcesListSubject.send(model.resources)
+        newsStorage.applyResourcesFilter(model.resources)
+        Task {
+            await self.parserService.parseNewNews()
+        }
     }
 
-    func disableSource(_ source: NewsResource) {
-        model.disableSource(source)
-        UserDefaults.standard.newsResources = model.sources
-        newsStorage.applyResourcesFilter(model.sources)
+    func editResource(resource: NewsResource, to newResource: NewsResource) {
+        model.editResource(originalResource: resource, newResource: newResource)
+        resources = model.resources
+        UserDefaults.standard.newsResources = model.resources
+        sourcesListSubject.send(model.resources)
+        newsStorage.applyResourcesFilter(model.resources)
+        Task {
+            await self.parserService.parseNewNews()
+        }
     }
 
-    func enableSource(_ source: NewsResource) {
-        model.enableSource(source)
-        UserDefaults.standard.newsResources = model.sources
-        newsStorage.applyResourcesFilter(model.sources)
+    func disableResource(_ resource: NewsResource) {
+        model.disableSource(resource)
+        UserDefaults.standard.newsResources = model.resources
+        newsStorage.applyResourcesFilter(model.resources)
+    }
+
+    func enableResource(_ resource: NewsResource) {
+        model.enableSource(resource)
+        UserDefaults.standard.newsResources = model.resources
+        newsStorage.applyResourcesFilter(model.resources)
     }
 
     func changeRefreshTimerDuration(_ duration: Int) {
         reloadTimerDuration = duration
         model.refreshInterval = duration
         UserDefaults.standard.refreshNewsTimerDuration = duration
-    }
-
-    func selectSource(_ source: NewsResource?) {
-        selectedSource = source
-    }
-
-    func deselectSource() {
-        selectedSource = nil
     }
 }

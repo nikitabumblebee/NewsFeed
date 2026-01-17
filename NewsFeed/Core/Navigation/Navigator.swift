@@ -114,12 +114,7 @@ extension Navigator {
         completion: @escaping () -> Void = {}
     ) {
         viewController.modalPresentationStyle = modalPresentationStyle
-
-//        if modalPresentationStyle == .custom, viewController is ActionSheetController {
-//            viewController.transitioningDelegate = self
-//        } else {
         viewController.modalTransitionStyle = modalTransitionStyle
-//        }
 
         let presenterVC = presentingViewController ?? navigationController
 
