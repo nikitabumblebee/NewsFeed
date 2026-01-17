@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-class SettingsViewController: BaseViewController {
+final class SettingsViewController: BaseViewController {
     @IBOutlet private var refreshLabel: UILabel!
     @IBOutlet private var refreshSlider: UISlider!
     @IBOutlet private var themeSegmentedControl: UISegmentedControl!
@@ -40,10 +40,6 @@ class SettingsViewController: BaseViewController {
         setupUI()
         setupTableView()
         setupSubscriptions()
-    }
-
-    func scrollToTop() {
-        scrollView?.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
     }
 
     @IBAction private func onChangeSliderValue(_ sender: UISlider) {

@@ -84,6 +84,10 @@ class BaseViewController: UIViewController {
         view.addSubview(refresher)
     }
 
+    func scrollToTop() {
+        scrollView?.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+    }
+
     @objc func updateData() {
         // clean up all data cancellables
         dataCancellables = Set<AnyCancellable>()

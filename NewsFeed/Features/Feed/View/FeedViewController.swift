@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-class FeedViewController: BaseViewController {
+final class FeedViewController: BaseViewController {
     enum State {
         case none
         case fetching
@@ -69,7 +69,7 @@ class FeedViewController: BaseViewController {
         refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
 
-    func scrollToTop() {
+    override func scrollToTop() {
         guard !viewModel.newsModels.isEmpty else { return }
         tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }

@@ -83,16 +83,13 @@ class TabBar: UIStackView {
     }
 
     func selectItem(at index: Int, skipRootReturn: Bool = false, from _: String? = nil) {
-        guard let tabBarItem = TabBarItemType(rawValue: index) else { return }
+        guard let _ = TabBarItemType(rawValue: index) else { return }
         guard index != currentItemIndex else {
             // first we do actions with the current screen, for example, if we were on the home page and pressed home
-            switch tabBarItem {
-            case .feed:
-                handleFeedTabBarItemRepeatedTap()
-            case .settings:
-                handleSettingsTabBarRepeatedTap()
-            default:
-                break
+            if let navigationViewController = viewControllers[index] as? BaseNavigationViewController {
+                (navigationViewController.topViewController as? BaseViewController)?.scrollToTop()
+            } else if let viewController = viewControllers[index] as? BaseViewController {
+                viewController.scrollToTop()
             }
 
             // and after that we do navigation to the root screen if necessary, if necessary
@@ -164,22 +161,4 @@ extension TabBarDelegate {
     func shouldReplaceSelection(at _: Int, tabBarItem _: TabBarItem) -> Bool { false }
 
     func replaceSelection(at _: Int, viewController _: UIViewController) {}
-}
-
-// MARK: - Private methods
-
-private extension TabBar {
-    func handleFeedTabBarItemRepeatedTap() {
-        guard let navigationController = getViewController(at: TabBarItemType.feed.rawValue) as? BaseNavigationViewController,
-              let feedViewController = navigationController.visibleViewController as? FeedViewController
-        else { return }
-        feedViewController.scrollToTop()
-    }
-
-    func handleSettingsTabBarRepeatedTap() {
-        guard let navigationController = getViewController(at: TabBarItemType.settings.rawValue) as? BaseNavigationViewController,
-              let settingsViewController = navigationController.visibleViewController as? SettingsViewController
-        else { return }
-        settingsViewController.scrollToTop()
-    }
 }
