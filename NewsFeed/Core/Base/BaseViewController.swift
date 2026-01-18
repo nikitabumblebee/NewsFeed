@@ -12,9 +12,7 @@ class BaseViewController: UIViewController {
     @IBOutlet var scrollView: UIScrollView?
     var refresher: UIRefreshControl?
     var cancellables = Set<AnyCancellable>()
-    var ignoreScrollView: Bool = false
 
-    var shouldShowTabBar: Bool { true }
     var navigationBarStyle: NavigationBarAppearance.Style {
         (navigationController as? BaseNavigationViewController)?.currentStyle ?? .opaque
     }

@@ -9,20 +9,14 @@ import Combine
 import UIKit
 
 final class FeedViewController: BaseViewController {
-    enum State {
+    private enum State {
         case none
         case fetching
         case fetchedAll
-        case navigating
     }
 
     @IBOutlet private var tableView: UITableView!
-
-    private lazy var refreshControl = UIRefreshControl()
-
-    override var shouldShowTabBar: Bool { true }
-
-    private let pagingLimit: Int = 50
+    @IBOutlet private var noNewsLabel: UILabel!
 
     typealias DataSource = UITableViewDiffableDataSource<Int, BaseNews>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Int, BaseNews>
@@ -58,7 +52,8 @@ final class FeedViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.title = "Feed"
+        navigationItem.title = "Лента"
+        setupRefresher()
         setupTableView()
         setupSubscriptions()
     }
@@ -68,14 +63,20 @@ final class FeedViewController: BaseViewController {
         viewModel.handleRefreshTimer()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if Connectivity.isConnectedToInternet {
+            noNewsLabel.text = "Нет новостей\nВключите ресурсы"
+        } else {
+            noNewsLabel.text = "Нет новостей\nПроверьте соединение с итернетом"
+        }
+    }
+
     private func setupTableView() {
         tableView.dataSource = dataSource
         tableView.delegate = self
-        tableView.backgroundColor = .backgroundPrimary
-        tableView.refreshControl = refreshControl
+        tableView.refreshControl = refresher
         FeedTableViewCell.registerNib(for: tableView)
-
-        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
     }
 
     override func scrollToTop() {
@@ -88,7 +89,6 @@ final class FeedViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newsModels in
                 self?.applySnapshot(newsModels)
-                self?.tableView.isHidden = newsModels.isEmpty
             }
             .store(in: &cancellables)
 
@@ -103,14 +103,14 @@ final class FeedViewController: BaseViewController {
         viewModel.hideRefresherPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.refreshControl.endRefreshing()
+                self?.hideRefresher()
             }
             .store(in: &cancellables)
 
         viewModel.refreshTimerSignalPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.refreshControl.beginRefreshing()
+                self?.refresher?.beginRefreshing()
                 self?.viewModel.parseNewNews()
             }
             .store(in: &cancellables)
@@ -129,14 +129,23 @@ final class FeedViewController: BaseViewController {
                 applySnapshot(viewModel.newsModels)
             }
             .store(in: &cancellables)
+
+        Connectivity.internetConnectionFailedSubject
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self else { return }
+                let alertViewController = UIAlertController.informationAlert(title: "Нет соединения с интернетом!", message: "Проверьте соединение и обновите стрницу") { [weak self] in
+                    self?.hideRefresher()
+                }
+                let topViewController = navigator.topNavigationController
+                navigator.present(viewController: alertViewController, presentingViewController: topViewController)
+            }
+            .store(in: &cancellables)
     }
 
     @objc override func updateData() {
         guard viewModel.contentLoadState != .loading else { return }
-        loadPagedData(fromBeginning: true)
-    }
-
-    @objc private func refreshData(_: UIRefreshControl) {
         viewModel.parseNewNews()
     }
 }
@@ -146,7 +155,7 @@ final class FeedViewController: BaseViewController {
 extension FeedViewController {
     private func loadPagedData(fromBeginning: Bool) {
         currentStateSubject.value = .fetching
-        loadData(newsStorage.fetchNews(fromBeginning: fromBeginning, limit: pagingLimit)) { [weak self] result in
+        loadData(newsStorage.fetchNews(fromBeginning: fromBeginning, limit: FeedConstants.pagingLimit)) { [weak self] result in
             guard let self else { return }
 
             if result.isEmpty, !fromBeginning {

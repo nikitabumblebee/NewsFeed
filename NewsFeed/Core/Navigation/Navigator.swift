@@ -16,14 +16,6 @@ final class Navigator: NSObject {
 
     static let shared = Navigator()
 
-    // MARK: - A workaround for overCurrentContext and overFullScreen modal transitions
-
-    typealias ModalTransitionEvent = (
-        type: UIViewController.Type,
-        event: ViewLifeCycleEvent
-    )
-    var modalTransitionEvent: PassthroughSubject<ModalTransitionEvent, Never> = .init()
-
     var navigationController: UINavigationController? {
         UIApplication.shared.windows.filter(\.isKeyWindow).first?.rootViewController as? UINavigationController
     }
@@ -66,27 +58,6 @@ final class Navigator: NSObject {
         }
         return viewController?.navigationController
     }
-
-    var presentedController: UIViewController? {
-        navigationController?.presentedViewController ??
-            tabBarController?.basePresentedViewController ??
-            navigationController?.topViewController?.presentedViewController
-    }
-
-    var hasPresentedController: Bool {
-        presentedController != nil
-    }
-
-    var hasPresentedAlertController: Bool {
-        guard let presentedController = (presentedController?.presentedViewController ?? presentedController) as? UIAlertController else {
-            return false
-        }
-        return true
-    }
-
-    var isMainTabBarControllerVisible: Bool {
-        tabBarController?.rootView?.window != nil
-    }
 }
 
 // MARK: - MVC navigation
@@ -117,14 +88,6 @@ extension Navigator {
         let presenterVC = presentingViewController ?? navigationController
 
         presenterVC?.present(viewController, animated: animated, completion: completion)
-    }
-
-    func presentFullscreen(viewController: UIViewController, presentingViewController: UIViewController? = nil) {
-        if presentingViewController == nil {
-            navigationController?.navigationBar.isHidden = false
-        }
-        let presenterVC = presentingViewController ?? navigationController
-        present(viewController: viewController, presentingViewController: presenterVC, modalPresentationStyle: .fullScreen)
     }
 
     func popViewController(navigationController: UINavigationController? = nil, animated: Bool = true, completion: @escaping () -> Void = {}) {

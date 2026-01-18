@@ -36,7 +36,7 @@
                                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TWq-3m-STQ">
                                     <rect key="frame" x="0.0" y="0.0" width="361" height="74.333333333333329"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Refresh Interval (minutes):" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oQW-td-A2L">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Интервал обновления (минуты):" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oQW-td-A2L">
                                             <rect key="frame" x="0.0" y="0.0" width="361" height="20.333333333333332"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                             <color key="textColor" name="TextPrimary"/>
@@ -45,18 +45,35 @@
                                         <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="5" minValue="1" maxValue="30" translatesAutoresizingMaskIntoConstraints="NO" id="6la-QX-3OQ">
                                             <rect key="frame" x="0.0" y="32.333333333333343" width="361" height="34"/>
                                             <color key="tintColor" name="Accent"/>
+                                            <color key="maximumTrackTintColor" name="Gray4"/>
                                             <connections>
                                                 <action selector="onChangeSliderValue:" destination="-1" eventType="valueChanged" id="HNr-i6-H4P"/>
                                             </connections>
                                         </slider>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KiG-WX-DrU">
+                                            <rect key="frame" x="0.0" y="57.333333333333343" width="6.666666666666667" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" name="TextPrimary"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="30" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SZC-6b-8xZ">
+                                            <rect key="frame" x="343.66666666666669" y="57.333333333333343" width="17.333333333333314" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" name="TextPrimary"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="6la-QX-3OQ" firstAttribute="top" secondItem="oQW-td-A2L" secondAttribute="bottom" constant="12" id="5Zm-ta-RFH"/>
+                                        <constraint firstAttribute="trailing" secondItem="SZC-6b-8xZ" secondAttribute="trailing" id="7JA-DB-wOk"/>
                                         <constraint firstItem="oQW-td-A2L" firstAttribute="leading" secondItem="TWq-3m-STQ" secondAttribute="leading" id="7ht-qY-LQ6"/>
                                         <constraint firstAttribute="trailing" secondItem="6la-QX-3OQ" secondAttribute="trailing" id="K0o-Aw-sJ6"/>
+                                        <constraint firstAttribute="bottom" secondItem="SZC-6b-8xZ" secondAttribute="bottom" id="KVS-iW-kr0"/>
                                         <constraint firstAttribute="trailing" secondItem="oQW-td-A2L" secondAttribute="trailing" id="W8E-qm-s2f"/>
+                                        <constraint firstItem="KiG-WX-DrU" firstAttribute="leading" secondItem="TWq-3m-STQ" secondAttribute="leading" id="jr7-aI-wDF"/>
                                         <constraint firstItem="oQW-td-A2L" firstAttribute="top" secondItem="TWq-3m-STQ" secondAttribute="top" id="m4K-G6-sG7"/>
                                         <constraint firstItem="6la-QX-3OQ" firstAttribute="leading" secondItem="TWq-3m-STQ" secondAttribute="leading" id="w1n-v5-oh5"/>
+                                        <constraint firstAttribute="bottom" secondItem="KiG-WX-DrU" secondAttribute="bottom" id="wPq-KN-v9L"/>
                                         <constraint firstAttribute="bottom" secondItem="6la-QX-3OQ" secondAttribute="bottom" constant="8" id="wxC-82-4eu"/>
                                     </constraints>
                                 </view>
@@ -66,20 +83,20 @@
                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="yF6-KZ-I3l">
                                             <rect key="frame" x="0.0" y="12" width="361" height="35"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reset Images Cache:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rvj-E1-UVx">
-                                                    <rect key="frame" x="0.0" y="0.0" width="167" height="35"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Сброс кэша изображений:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rvj-E1-UVx">
+                                                    <rect key="frame" x="0.0" y="0.0" width="222" height="35"/>
                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                     <color key="textColor" name="TextPrimary"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LFc-tW-wHE">
-                                                    <rect key="frame" x="293.66666666666669" y="0.0" width="67.333333333333314" height="35"/>
+                                                    <rect key="frame" x="286" y="0.0" width="75" height="35"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="35" id="PsO-xy-Dg3"/>
                                                     </constraints>
                                                     <color key="tintColor" systemColor="systemGreenColor"/>
                                                     <state key="normal" title="Button"/>
-                                                    <buttonConfiguration key="configuration" style="filled" title="Reset"/>
+                                                    <buttonConfiguration key="configuration" style="filled" title="Сброс"/>
                                                     <connections>
                                                         <action selector="onResetImagesCache:" destination="-1" eventType="touchUpInside" id="bXD-AO-Ucf"/>
                                                     </connections>
@@ -97,7 +114,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FKZ-SE-bd2">
                                     <rect key="frame" x="0.0" y="157.33333333333331" width="361" height="71.333333333333314"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="App Theme:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FDB-RI-ohp">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Тема приложения:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FDB-RI-ohp">
                                             <rect key="frame" x="0.0" y="0.0" width="361" height="20.333333333333332"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                             <color key="textColor" name="TextPrimary"/>
@@ -126,8 +143,8 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GTr-xF-auX">
                                     <rect key="frame" x="0.0" y="240.66666666666671" width="361" height="432.33333333333326"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sources:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RdR-dQ-Jx0">
-                                            <rect key="frame" x="0.0" y="0.0" width="70.333333333333329" height="20.333333333333332"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ресурсы:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RdR-dQ-Jx0">
+                                            <rect key="frame" x="0.0" y="0.0" width="77.666666666666671" height="20.333333333333332"/>
                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                             <color key="textColor" name="TextPrimary"/>
                                             <nil key="highlightedColor"/>
@@ -197,6 +214,9 @@
         </namedColor>
         <namedColor name="BackgroundPrimary">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="Gray4">
+            <color red="0.74117648601531982" green="0.74117648601531982" blue="0.74117648601531982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="TextPrimary">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

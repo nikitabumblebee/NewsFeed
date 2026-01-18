@@ -8,12 +8,6 @@
 import Combine
 import UIKit
 
-enum TabBarItemType: Int {
-    case unknown = -1
-    case feed
-    case settings
-}
-
 // MARK: - TabBarItem
 
 class TabBarItem: UIButton {
@@ -22,7 +16,7 @@ class TabBarItem: UIButton {
         case overCurrent
     }
 
-    var type: TabBarItemType = .unknown
+    var type: TabBarItemType = .init(index: -1, name: "Unknown")
     var presentationContext: PresentationContext = .current
 
     func setSelected(_: Bool) {}

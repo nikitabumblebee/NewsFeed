@@ -16,8 +16,8 @@ extension UIAlertController {
     static func confirmationAlert(
         title: String,
         message: String? = nil,
-        actionTitleConfirm: String = "Yes",
-        actionTitleCancel: String = "No",
+        actionTitleConfirm: String = "Да",
+        actionTitleCancel: String = "Нет",
         reversedOrder: Bool = false,
         cancelTextForeground: UIColor = .gray3,
         confirmTextForeground: UIColor = .textPrimary,
@@ -38,7 +38,7 @@ extension UIAlertController {
     }
 
     static func informationAlert(title: String, message: String?, customActionTitle: String? = nil, actionInfo: @escaping () -> Void) -> UIAlertController {
-        let actionOk = UIAlertAction(title: customActionTitle ?? "Ok", style: .default, handler: { _ in
+        let actionOk = UIAlertAction(title: customActionTitle ?? "Ок", style: .default, handler: { _ in
             actionInfo()
         })
         actionOk.setValue(UIColor.textPrimary, forKey: titleTextColor)
@@ -71,7 +71,7 @@ extension UIAlertController {
     private static func singleChoiceAlertController(
         title: String,
         message: String? = nil,
-        actionTitleConfirm: String = "Yes",
+        actionTitleConfirm: String = "Да",
         actionConfirm: @escaping () -> Void
     )
         -> UIAlertController
@@ -86,8 +86,8 @@ extension UIAlertController {
     static func textFieldAlert(
         title: String,
         message: String? = nil,
-        actionTitleConfirm: String = "Yes",
-        actionTitleCancel: String = "No",
+        actionTitleConfirm: String = "Да",
+        actionTitleCancel: String = "Нет",
         placeholder: String = "",
         keyboardType: UIKeyboardType = .default,
         reversedOrder: Bool = false,

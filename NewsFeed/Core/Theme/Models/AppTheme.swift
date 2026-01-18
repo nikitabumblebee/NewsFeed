@@ -13,6 +13,14 @@ enum AppTheme: String, CaseIterable {
     case dark = "Dark"
     case system = "System"
 
+    var title: String {
+        switch self {
+        case .light: "Светлая"
+        case .dark: "Темная"
+        case .system: "Системная"
+        }
+    }
+
     var uiInterfaceStyle: UIUserInterfaceStyle {
         switch self {
         case .light: .light

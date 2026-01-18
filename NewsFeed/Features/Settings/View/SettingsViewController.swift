@@ -39,14 +39,14 @@ final class SettingsViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.title = "Settings"
+        navigationItem.title = "Настройки"
         setupUI()
         setupTableView()
         setupSubscriptions()
     }
 
     @IBAction private func onChangeSliderValue(_ sender: UISlider) {
-        refreshLabel.text = "Refresh Interval (minutes): \(Int(sender.value))"
+        refreshLabel.text = "Интервал обновления (минуты): \(Int(sender.value))"
         viewModel.changeRefreshTimerDuration(Int(sender.value))
     }
 
@@ -61,7 +61,7 @@ final class SettingsViewController: BaseViewController {
     }
 
     @IBAction private func onResetImagesCache(_: Any) {
-        let controller = UIAlertController.confirmationAlert(title: "Are you sure to clear images cache?") { [weak self] in
+        let controller = UIAlertController.confirmationAlert(title: "Вы уверены, что хотите очистить кэш изображений?") { [weak self] in
             self?.viewModel.resetImagesCache()
         }
         let topNavigationController = navigator.topNavigationController
@@ -76,11 +76,11 @@ final class SettingsViewController: BaseViewController {
     private func setupUI() {
         themeSegmentedControl.removeAllSegments()
         for theme in AppTheme.allCases.enumerated() {
-            themeSegmentedControl.insertSegment(withTitle: theme.element.rawValue, at: theme.offset, animated: false)
+            themeSegmentedControl.insertSegment(withTitle: theme.element.title, at: theme.offset, animated: false)
         }
         themeSegmentedControl.selectedSegmentIndex = AppTheme.allCases.firstIndex(where: { $0 == viewModel.appTheme }) ?? 0
         refreshSlider.value = Float(viewModel.reloadTimerDuration)
-        refreshLabel.text = "Refresh Interval (minutes): \(viewModel.reloadTimerDuration)"
+        refreshLabel.text = "Интервал обновления (минуты): \(viewModel.reloadTimerDuration)"
     }
 
     private func setupTableView() {
@@ -102,7 +102,7 @@ final class SettingsViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 guard let self else { return }
-                let controller = UIAlertController.informationAlert(title: "Images cache was successfully reset!", message: "", actionInfo: {})
+                let controller = UIAlertController.informationAlert(title: "Кэш изображений успешно сброшен!", message: "", actionInfo: {})
                 let topNavigationController = navigator.topNavigationController
                 navigator.present(viewController: controller, presentingViewController: topNavigationController)
             }
@@ -141,7 +141,7 @@ extension SettingsViewController {
 
 extension SettingsViewController: UITableViewDelegate {
     func tableView(_: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let edit = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, completion in
+        let edit = UIContextualAction(style: .normal, title: "Изменить") { [weak self] _, _, completion in
             guard let self else { return }
             let addOrEditResourceViewModel = AddOrEditResourceViewModel(resource: viewModel.resources[indexPath.row])
             let viewController = AddOrEditResourceViewController(viewModel: addOrEditResourceViewModel, navigator: navigator)
@@ -155,12 +155,16 @@ extension SettingsViewController: UITableViewDelegate {
         edit.backgroundColor = .accent
         edit.image = UIImage(systemName: "pencil")
 
-        let delete = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completion in
+        let delete = UIContextualAction(style: .destructive, title: "Удалить") { [weak self] _, _, completion in
             guard let self else { return }
-            let alertController = UIAlertController.confirmationAlert(title: "Are you sure you want to delete this resource?", message: "This action cannot be undone.", actionConfirm: { [weak self] in
-                guard let self else { return }
-                viewModel.deleteResource(viewModel.resources[indexPath.row])
-            })
+            let alertController = UIAlertController.confirmationAlert(
+                title: "Вы уверены, что хотите удалить этот ресурс?",
+                message: "Это действие не может быть отменено.",
+                actionConfirm: { [weak self] in
+                    guard let self else { return }
+                    viewModel.deleteResource(viewModel.resources[indexPath.row])
+                }
+            )
             let topNavigationController = navigator.topNavigationController
             navigator.present(viewController: alertController, presentingViewController: topNavigationController)
             completion(true)

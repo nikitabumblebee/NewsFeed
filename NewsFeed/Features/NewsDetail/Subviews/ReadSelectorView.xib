@@ -14,10 +14,10 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="MuB-PL-G6Y">
-                    <rect key="frame" x="5.6666666666666714" y="3" width="128" height="32"/>
+                    <rect key="frame" x="-40.666666666666671" y="3" width="220.33333333333337" height="32"/>
                     <segments>
-                        <segment title="Short"/>
-                        <segment title="Expand"/>
+                        <segment title="Обычный"/>
+                        <segment title="Расширенный"/>
                     </segments>
                     <connections>
                         <action selector="onValueChange:" destination="iN0-l3-epB" eventType="valueChanged" id="l0X-Y3-VZG"/>

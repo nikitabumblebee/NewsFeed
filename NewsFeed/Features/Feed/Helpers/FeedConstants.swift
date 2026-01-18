@@ -8,7 +8,9 @@
 import Foundation
 
 enum FeedConstants {
+    static let pagingLimit: Int = 50
     static let defaultTimerDuration: Int = 5
+    static let secondsConstant: Int = 60
     static let initialNewsForLoad: [any NewsProtocol] = [
         BaseNews(id: "123", title: "Some title", description: "", link: nil, image: nil, date: Date(), author: "Some source", resource: nil, isViewed: false),
         BaseNews(id: "234", title: "Some title", description: "", link: nil, image: nil, date: Date(), author: "Some source", resource: nil, isViewed: false),

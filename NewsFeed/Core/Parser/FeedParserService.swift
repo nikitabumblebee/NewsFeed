@@ -39,9 +39,12 @@ class FeedParserService {
         await loadNewsFromDifferentSources()
     }
 
-    func addNewsSourceToParse(_: NewsResource) {}
-
     private func loadNewsFromDifferentSources() async {
+        guard Connectivity.isConnectedToInternet else {
+            newsStorage.addNews([])
+            Connectivity.internetConnectionFailedSubject.send()
+            return
+        }
         let news = await withTaskGroup(of: [any NewsProtocol].self, returning: [any NewsProtocol].self) { [weak self] group in
             guard let self else { return [] }
             let newsResourcesFromUserDefaults: [NewsResource]? = UserDefaults.standard.newsResources
@@ -90,7 +93,7 @@ class FeedParserService {
             var news: [any NewsProtocol] = []
             let feed = try await Feed(url: url)
             switch feed {
-            case let .atom(feed):
+            case .atom:
                 break
             case let .rss(feed):
                 feed.channel?.items?.forEach { item in
@@ -102,14 +105,14 @@ class FeedParserService {
                             link: URL(string: link),
                             image: item.enclosure?.attributes?.url,
                             date: date,
-                            author: item.author ?? feed.channel?.description,
+                            author: item.author ?? feed.channel?.description ?? "неизвестно",
                             resource: urlString,
                             isViewed: false
                         )
                         news.append(rssNews)
                     }
                 }
-            case let .json(feed):
+            case .json:
                 break
             }
             return news

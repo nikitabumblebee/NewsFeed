@@ -19,22 +19,9 @@ final class ThemeManager {
         UserDefaults.standard.currentTheme = theme
 
         UIView.animate(withDuration: 0.3) {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first
-            {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first {
                 window.overrideUserInterfaceStyle = theme.uiInterfaceStyle
             }
         }
     }
-
-    @objc private func themeChanged() {
-        // Auto-update если system
-        if UserDefaults.standard.currentTheme == .system {
-            applyTheme(.system)
-        }
-    }
-}
-
-extension Notification.Name {
-    static let themeDidChange = Notification.Name("themeDidChange")
 }

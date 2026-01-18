@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E1FEA5A2F1CEC2100F8DE2B /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5E1FEA592F1CEC2100F8DE2B /* Alamofire */; };
 		5E4FE1BC2F167EBE0074E816 /* FeedKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4FE1BB2F167EBE0074E816 /* FeedKit */; };
 		5E4FE1BE2F167EBE0074E816 /* XMLKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4FE1BD2F167EBE0074E816 /* XMLKit */; };
 		5E4FE4B92F18F8080074E816 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5E4FE4B82F18F8080074E816 /* RealmSwift */; };
@@ -58,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E1FEA5A2F1CEC2100F8DE2B /* Alamofire in Frameworks */,
 				5E4FE4C22F1903240074E816 /* SkeletonView in Frameworks */,
 				5E4FE4B92F18F8080074E816 /* RealmSwift in Frameworks */,
 				5E4FE1BC2F167EBE0074E816 /* FeedKit in Frameworks */,
@@ -118,6 +120,7 @@
 				5E4FE1BD2F167EBE0074E816 /* XMLKit */,
 				5E4FE4B82F18F8080074E816 /* RealmSwift */,
 				5E4FE4C12F1903240074E816 /* SkeletonView */,
+				5E1FEA592F1CEC2100F8DE2B /* Alamofire */,
 			);
 			productName = NewsFeed;
 			productReference = 5E4FE19D2F1676040074E816 /* NewsFeed.app */;
@@ -153,6 +156,7 @@
 				5E4FE4A92F18D91B0074E816 /* XCRemoteSwiftPackageReference "SwiftFormat" */,
 				5E4FE4B22F18F7630074E816 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				5E4FE4C02F1903240074E816 /* XCRemoteSwiftPackageReference "SkeletonView" */,
+				5E1FEA582F1CEC2100F8DE2B /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5E4FE19E2F1676040074E816 /* Products */;
@@ -430,6 +434,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5E1FEA582F1CEC2100F8DE2B /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = exactVersion;
+				version = 5.11.0;
+			};
+		};
 		5E4FE1BA2F167EBE0074E816 /* XCRemoteSwiftPackageReference "FeedKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nmdias/FeedKit.git";
@@ -473,6 +485,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5E1FEA592F1CEC2100F8DE2B /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E1FEA582F1CEC2100F8DE2B /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
 		5E4FE1BB2F167EBE0074E816 /* FeedKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5E4FE1BA2F167EBE0074E816 /* XCRemoteSwiftPackageReference "FeedKit" */;

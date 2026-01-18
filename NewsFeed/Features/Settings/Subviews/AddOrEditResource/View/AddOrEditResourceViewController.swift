@@ -44,9 +44,15 @@ class AddOrEditResourceViewController: BaseViewController {
     }
 
     private func setupUI() {
-        navigationItem.title = viewModel.resource == nil ? "New Resource" : "Edit Resource"
+        navigationItem.title = viewModel.resource == nil ? "Новый ресурс" : "Редактировать ресурс"
         nameTextField.text = viewModel.name
+        nameTextField.layer.borderWidth = 1.0
+        nameTextField.layer.borderColor = UIColor.gray1.cgColor
+        nameTextField.layer.cornerRadius = 8
         urlTextField.text = viewModel.url
+        urlTextField.layer.borderWidth = 1.0
+        urlTextField.layer.borderColor = UIColor.gray1.cgColor
+        urlTextField.layer.cornerRadius = 8
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapOnView(_:)))
         view.addGestureRecognizer(tapGestureRecognizer)
     }
