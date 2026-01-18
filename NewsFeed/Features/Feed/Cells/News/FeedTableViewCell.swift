@@ -14,7 +14,6 @@ class FeedTableViewCell: UITableViewCell {
     @IBOutlet private var sourceTitleLable: UILabel!
     @IBOutlet private var readView: UIView!
 
-//    private(set) var news: (any NewsProtocol)?
     private var currentImageUUID: UUID?
 
     override nonisolated func awakeFromNib() {
@@ -41,7 +40,7 @@ class FeedTableViewCell: UITableViewCell {
         currentImageUUID = UUID()
         let thisUUID = currentImageUUID
         titleLabel.text = news.title
-        sourceTitleLable.text = "Source: \(news.author ?? ""). Date: \(news.date.getLongDateTime())"
+        sourceTitleLable.text = "Источник: \(news.author ?? ""). Дата: \(news.date.getLongDateTime(locale: Locale(identifier: "ru-RU")))"
         if state == .loading {
             contentView.showAnimatedGradientSkeleton()
         } else if contentView.sk.isSkeletonActive {

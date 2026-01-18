@@ -28,7 +28,6 @@ class NewsDetailViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "News"
         setupUI()
         setupTitleView()
     }

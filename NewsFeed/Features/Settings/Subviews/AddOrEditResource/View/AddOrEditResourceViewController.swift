@@ -44,7 +44,7 @@ class AddOrEditResourceViewController: BaseViewController {
     }
 
     private func setupUI() {
-        navigationItem.title = viewModel.resource == nil ? "New Resource" : "Edit Resource"
+        navigationItem.title = viewModel.resource == nil ? "Новый ресурс" : "Редактировать ресурс"
         nameTextField.text = viewModel.name
         nameTextField.layer.borderWidth = 1.0
         nameTextField.layer.borderColor = UIColor.gray1.cgColor

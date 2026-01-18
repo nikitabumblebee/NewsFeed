@@ -29,7 +29,7 @@ extension Date {
         return Calendar.current.date(byAdding: .nanosecond, value: -1, to: zeroNanoseconds) ?? Date()
     }
 
-    nonisolated func getLongDateTime() -> String {
-        DateFormatter.string(from: self, format: .dateFormat("d MMM yy 'at' HH:mm"))
+    nonisolated func getLongDateTime(locale: Locale = Locale.current) -> String {
+        DateFormatter.string(from: self, with: locale, format: .dateFormat("d MMM yy 'в' HH:mm"))
     }
 }

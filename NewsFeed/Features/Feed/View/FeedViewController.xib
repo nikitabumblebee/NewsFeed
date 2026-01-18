@@ -12,6 +12,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FeedViewController" customModule="NewsFeed" customModuleProvider="target">
             <connections>
+                <outlet property="noNewsLabel" destination="91v-Ey-XDB" id="Vfs-Xg-zz0"/>
                 <outlet property="tableView" destination="fT0-fT-6Gb" id="jjX-xy-AmO"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -22,18 +23,18 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aD4-Ke-fHM">
-                    <rect key="frame" x="115.33333333333333" y="405" width="162.33333333333337" height="92.333333333333314"/>
+                    <rect key="frame" x="175" y="405" width="43.333333333333343" height="92.333333333333314"/>
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="newspaper" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="SqT-2p-ypp">
-                            <rect key="frame" x="51.333333333333329" y="0.33333333333333215" width="60" height="59.666666666666671"/>
+                            <rect key="frame" x="-8.3333333333333428" y="0.33333333333333215" width="60" height="59.666666666666671"/>
                             <color key="tintColor" name="Accent"/>
                             <constraints>
                                 <constraint firstAttribute="width" secondItem="SqT-2p-ypp" secondAttribute="height" id="5lx-3l-y77"/>
                                 <constraint firstAttribute="width" constant="60" id="9zz-JH-96V"/>
                             </constraints>
                         </imageView>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="There is no news yet" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="91v-Ey-XDB">
-                            <rect key="frame" x="0.0" y="72" width="162.33333333333334" height="20.333333333333329"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="91v-Ey-XDB">
+                            <rect key="frame" x="0.0" y="72" width="43.333333333333336" height="20.333333333333329"/>
                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                             <color key="textColor" name="TextPrimary"/>
                             <nil key="highlightedColor"/>

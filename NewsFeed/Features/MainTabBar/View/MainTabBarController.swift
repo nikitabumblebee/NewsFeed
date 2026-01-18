@@ -57,7 +57,7 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
         let createTabItem = ImageTabBarItem.loadFromNib()
         createTabItem.type = .feed
         createTabItem.iconName = "newspaper"
-        createTabItem.title = "Feed"
+        createTabItem.title = "Лента"
 
         let viewModel = FeedViewModel(newsStorage: NewsStorage.shared, feedParser: FeedParserService.shared)
         let viewController = BaseNavigationViewController(rootViewController: FeedViewController(
@@ -73,7 +73,7 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
         let createTabItem = ImageTabBarItem.loadFromNib()
         createTabItem.type = .settings
         createTabItem.iconName = "gear"
-        createTabItem.title = "Settings"
+        createTabItem.title = "Настройки"
 
         let viewModel = SettingsViewModel(imageCache: ImageCache.shared, newsStorage: NewsStorage.shared, parserService: FeedParserService.shared)
         let viewController = BaseNavigationViewController(rootViewController: SettingsViewController(viewModel: viewModel, navigator: Navigator.shared))

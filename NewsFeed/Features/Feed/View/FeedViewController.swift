@@ -16,6 +16,7 @@ final class FeedViewController: BaseViewController {
     }
 
     @IBOutlet private var tableView: UITableView!
+    @IBOutlet private var noNewsLabel: UILabel!
 
     typealias DataSource = UITableViewDiffableDataSource<Int, BaseNews>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Int, BaseNews>
@@ -51,7 +52,8 @@ final class FeedViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.title = "Feed"
+        navigationItem.title = "Лента"
+        noNewsLabel.text = "Нет новостей\nВключите ресурсы или проверьте соединение с итернетом"
         setupRefresher()
         setupTableView()
         setupSubscriptions()
