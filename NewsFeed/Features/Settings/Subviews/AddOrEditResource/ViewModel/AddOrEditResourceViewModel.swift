@@ -34,17 +34,17 @@ class AddOrEditResourceViewModel: Observable {
     }
 
     func updateName(_ name: String) {
-        self.name = name
+        self.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         validationSubject.send(validation)
     }
 
     func updateUrl(_ url: String) {
-        self.url = url
+        self.url = url.trimmingCharacters(in: .whitespacesAndNewlines)
         validationSubject.send(validation)
     }
 
     func save() {
         print("Saving resource with name: \(name) and url: \(url)")
-        resource = NewsResource(name: name.trimmingCharacters(in: .whitespacesAndNewlines), url: url.trimmingCharacters(in: .whitespacesAndNewlines), show: enableResource)
+        resource = NewsResource(name: name, url: url, show: enableResource)
     }
 }
