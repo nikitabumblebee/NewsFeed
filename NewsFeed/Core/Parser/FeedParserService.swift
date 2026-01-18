@@ -88,7 +88,7 @@ class FeedParserService {
             var news: [any NewsProtocol] = []
             let feed = try await Feed(url: url)
             switch feed {
-            case let .atom(feed):
+            case .atom:
                 break
             case let .rss(feed):
                 feed.channel?.items?.forEach { item in
@@ -107,7 +107,7 @@ class FeedParserService {
                         news.append(rssNews)
                     }
                 }
-            case let .json(feed):
+            case .json:
                 break
             }
             return news
