@@ -45,7 +45,7 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
         configureTabs()
 
         tabBar.delegate = self
-        tabBar.reloadTabs(TabBarItemType.feed.rawValue)
+        tabBar.reloadTabs(0)
     }
 
     private func configureTabs() {
@@ -55,7 +55,7 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
 
     private func configureFeedTabItem() {
         let createTabItem = ImageTabBarItem.loadFromNib()
-        createTabItem.type = .feed
+        createTabItem.type = TabBarItemType(index: 0, name: "Feed")
         createTabItem.iconName = "newspaper"
         createTabItem.title = "Лента"
 
@@ -71,7 +71,7 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
 
     private func configureSettingsTabItem() {
         let createTabItem = ImageTabBarItem.loadFromNib()
-        createTabItem.type = .settings
+        createTabItem.type = TabBarItemType(index: 1, name: "Settings")
         createTabItem.iconName = "gear"
         createTabItem.title = "Настройки"
 
@@ -85,7 +85,7 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
     }
 
     func goToSettings() {
-        tabBar.selectItem(at: TabBarItemType.settings.rawValue)
+        tabBar.selectItem(at: 1)
     }
 
     func getCurrentViewController() -> UINavigationController? {
@@ -93,7 +93,7 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
     }
 
     func getViewController(at tabItem: TabBarItemType) -> UIViewController? {
-        tabBar.getViewController(at: tabItem.rawValue)
+        tabBar.getViewController(at: tabItem.index)
     }
 }
 

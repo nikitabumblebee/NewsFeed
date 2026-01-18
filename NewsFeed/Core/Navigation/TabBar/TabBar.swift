@@ -56,7 +56,7 @@ class TabBar: UIStackView {
 
     func getTabItem(for type: TabBarItemType) -> TabBarItem? {
         guard !tabItems.isEmpty else { return .none }
-        return tabItems.filter { $0.type == type }.first
+        return tabItems.filter { $0.type.index == type.index }.first
     }
 
     func getViewController(for type: TabBarItemType) -> UIViewController? {
@@ -84,7 +84,6 @@ class TabBar: UIStackView {
     }
 
     func selectItem(at index: Int, skipRootReturn: Bool = false, from _: String? = nil) {
-        guard TabBarItemType(rawValue: index) != nil else { return }
         guard index != currentItemIndex else {
             // first we do actions with the current screen, for example, if we were on the home page and pressed home
             if let navigationViewController = viewControllers[index] as? BaseNavigationViewController {
