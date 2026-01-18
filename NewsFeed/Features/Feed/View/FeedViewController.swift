@@ -53,7 +53,6 @@ final class FeedViewController: BaseViewController {
         super.viewDidLoad()
 
         navigationItem.title = "Лента"
-        noNewsLabel.text = "Нет новостей\nВключите ресурсы или проверьте соединение с итернетом"
         setupRefresher()
         setupTableView()
         setupSubscriptions()
@@ -64,10 +63,18 @@ final class FeedViewController: BaseViewController {
         viewModel.handleRefreshTimer()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if Connectivity.isConnectedToInternet {
+            noNewsLabel.text = "Нет новостей\nВключите ресурсы"
+        } else {
+            noNewsLabel.text = "Нет новостей\nПроверьте соединение с итернетом"
+        }
+    }
+
     private func setupTableView() {
         tableView.dataSource = dataSource
         tableView.delegate = self
-        tableView.backgroundColor = .backgroundPrimary
         tableView.refreshControl = refresher
         FeedTableViewCell.registerNib(for: tableView)
     }
@@ -82,7 +89,6 @@ final class FeedViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newsModels in
                 self?.applySnapshot(newsModels)
-                self?.tableView.isHidden = newsModels.isEmpty
             }
             .store(in: &cancellables)
 
@@ -121,6 +127,19 @@ final class FeedViewController: BaseViewController {
             .sink { [weak self] in
                 guard let self else { return }
                 applySnapshot(viewModel.newsModels)
+            }
+            .store(in: &cancellables)
+
+        Connectivity.internetConnectionFailedSubject
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self else { return }
+                let alertViewController = UIAlertController.informationAlert(title: "Нет соединения с интернетом!", message: "Проверьте соединение и обновите стрницу") { [weak self] in
+                    self?.hideRefresher()
+                }
+                let topViewController = navigator.topNavigationController
+                navigator.present(viewController: alertViewController, presentingViewController: topViewController)
             }
             .store(in: &cancellables)
     }

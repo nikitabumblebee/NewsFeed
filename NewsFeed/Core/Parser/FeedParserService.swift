@@ -40,6 +40,11 @@ class FeedParserService {
     }
 
     private func loadNewsFromDifferentSources() async {
+        guard Connectivity.isConnectedToInternet else {
+            newsStorage.addNews([])
+            Connectivity.internetConnectionFailedSubject.send()
+            return
+        }
         let news = await withTaskGroup(of: [any NewsProtocol].self, returning: [any NewsProtocol].self) { [weak self] group in
             guard let self else { return [] }
             let newsResourcesFromUserDefaults: [NewsResource]? = UserDefaults.standard.newsResources
