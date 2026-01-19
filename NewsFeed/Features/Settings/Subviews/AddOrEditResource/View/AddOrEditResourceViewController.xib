@@ -36,7 +36,7 @@
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits"/>
                     <connections>
-                        <action selector="onNameTextFieldChange:" destination="-1" eventType="editingDidEnd" id="69a-iJ-7hv"/>
+                        <action selector="onNameTextFieldChange:" destination="-1" eventType="editingChanged" id="8nr-Fk-yfF"/>
                     </connections>
                 </textField>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="URL-адрес ресурса:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oR6-48-tmS">
@@ -50,7 +50,7 @@
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits"/>
                     <connections>
-                        <action selector="onUrlTextFieldChange:" destination="-1" eventType="editingDidEnd" id="REp-Qm-jXe"/>
+                        <action selector="onUrlTextFieldChange:" destination="-1" eventType="editingChanged" id="jbz-Ro-Tpm"/>
                     </connections>
                 </textField>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F60-xd-Oqt">
@@ -69,6 +69,7 @@
                 </button>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <keyboardLayoutGuide key="keyboard" id="BSL-62-9tn"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="F60-xd-Oqt" secondAttribute="trailing" constant="16" id="1L0-Hl-hWh"/>
@@ -83,7 +84,7 @@
                 <constraint firstItem="oR6-48-tmS" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="cJd-9B-rKT"/>
                 <constraint firstItem="xOv-SI-Zz9" firstAttribute="top" secondItem="8hV-Hh-0xo" secondAttribute="bottom" constant="12" id="jO5-ao-rOj"/>
                 <constraint firstItem="xOv-SI-Zz9" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="oeR-JO-E9U"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="F60-xd-Oqt" secondAttribute="bottom" constant="16" id="pBa-RQ-wpR"/>
+                <constraint firstItem="BSL-62-9tn" firstAttribute="top" secondItem="F60-xd-Oqt" secondAttribute="bottom" constant="16" id="pBa-RQ-wpR"/>
             </constraints>
             <point key="canvasLocation" x="94" y="101"/>
         </view>
