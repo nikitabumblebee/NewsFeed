@@ -24,8 +24,7 @@ extension UIAlertController {
         onCancel: (() -> Void)? = nil,
         actionConfirm: @escaping () -> Void
     )
-        -> UIAlertController
-    {
+        -> UIAlertController {
         let actionCancel = UIAlertAction(title: actionTitleCancel, style: .destructive, handler: { _ in onCancel?() })
         actionCancel.setValue(cancelTextForeground, forKey: titleTextColor)
 
@@ -74,8 +73,7 @@ extension UIAlertController {
         actionTitleConfirm: String = "Да",
         actionConfirm: @escaping () -> Void
     )
-        -> UIAlertController
-    {
+        -> UIAlertController {
         let actionConfirm = UIAlertAction(title: actionTitleConfirm, style: .default, handler: { _ in
             actionConfirm()
         })
@@ -95,8 +93,7 @@ extension UIAlertController {
         onCancel: (() -> Void)? = nil,
         actionConfirm: @escaping (String) -> Void
     )
-        -> UIAlertController
-    {
+        -> UIAlertController {
         let alertController = makeAlertController(title: title, message: message, alertActions: [])
         alertController.addTextField { textField in
             textField.placeholder = placeholder

@@ -7,6 +7,8 @@
 
 import UIKit
 
+// MARK: - BaseNavigationViewController
+
 final class BaseNavigationViewController: UINavigationController {
     var currentStyle: NavigationBarAppearance.Style?
 

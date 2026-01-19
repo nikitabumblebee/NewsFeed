@@ -8,6 +8,8 @@
 import Combine
 import UIKit
 
+// MARK: - ReadSelectorView
+
 class ReadSelectorView: UIView {
     @IBOutlet private var segmentedControl: UISegmentedControl!
 
@@ -28,6 +30,8 @@ class ReadSelectorView: UIView {
         readSelectionChangeSubject.send(readSelectorViewType)
     }
 }
+
+// MARK: - ReadSelectorViewType
 
 enum ReadSelectorViewType: Int {
     case short = 0

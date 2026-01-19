@@ -152,11 +152,11 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				5E4FE1BA2F167EBE0074E816 /* XCRemoteSwiftPackageReference "FeedKit" */,
-				5E4FE4A82F18D9070074E816 /* XCRemoteSwiftPackageReference "SwiftLint" */,
-				5E4FE4A92F18D91B0074E816 /* XCRemoteSwiftPackageReference "SwiftFormat" */,
 				5E4FE4B22F18F7630074E816 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				5E4FE4C02F1903240074E816 /* XCRemoteSwiftPackageReference "SkeletonView" */,
 				5E1FEA582F1CEC2100F8DE2B /* XCRemoteSwiftPackageReference "Alamofire" */,
+				5E1FEB302F1DDCFF00F8DE2B /* XCRemoteSwiftPackageReference "SwiftLint" */,
+				5E1FEB312F1DDD1200F8DE2B /* XCRemoteSwiftPackageReference "SwiftFormat" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5E4FE19E2F1676040074E816 /* Products */;
@@ -196,7 +196,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export PATH=\"$HOME/.mint/bin:/opt/homebrew/bin:/usr/local/bin:$PATH\"\n\necho \"🚀 Starting code quality tools...\"\n\n# SwiftFormat\necho \"📝 Running SwiftFormat...\"\nmint run swiftformat \"$SRCROOT/NewsFeed\" --swiftversion 6.0\n\n# SwiftLint\necho \"🔍 Running SwiftLint...\"\nmint run swiftlint lint \"$SRCROOT/NewsFeed\"\n\necho \"✅ All tools completed successfully!\"\n\n";
+			shellScript = "#!/bin/zsh\n\nSOURCE_DIR=\"$SRCROOT/NewsFeed\"\n\necho \"🚀 Code quality tools for $SOURCE_DIR\"\n\n# SwiftFormat (checkouts)\nSWIFTFORMAT=\"${BUILD_DIR%Build/*}SourcePackages/checkouts/swiftformat/CommandLineTool/SwiftFormat\"\necho \"📝 SwiftFormat: $SWIFTFORMAT\"\n\nif [[ -f \"$SWIFTFORMAT\" ]]; then\n    \"$SWIFTFORMAT\" \"$SOURCE_DIR\" --swiftversion 6.0 --config \"$SRCROOT/.swiftformat\"\n    echo \"✅ SwiftFormat OK\"\nelse\n    echo \"⚠️ SwiftFormat not executable\"\n    ls -la \"${BUILD_DIR%Build/*}SourcePackages/checkouts/swiftformat\" || true\nfi\n\n# SwiftLint (artifacts macOS)\nSWIFTLINT=\"${BUILD_DIR%Build/*}SourcePackages/artifacts/swiftlint/SwiftLintBinary/SwiftLintBinary.artifactbundle/macos/swiftlint\"\necho \"🔍 SwiftLint: $SWIFTLINT\"\n\nif [[ -f \"$SWIFTLINT\" ]]; then\n    \"$SWIFTLINT\" lint \"$SOURCE_DIR\" --config \"$SRCROOT/.swiftlint.yml\"\n    echo \"✅ SwiftLint OK\"\nelse\n    echo \"⚠️ SwiftLint not found\"\n    ls -la \"${BUILD_DIR%Build/*}SourcePackages/artifacts/swiftlint\" || true\nfi\n\necho \"✅ Quality check completed!\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -442,28 +442,28 @@
 				version = 5.11.0;
 			};
 		};
+		5E1FEB302F1DDCFF00F8DE2B /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/SwiftLint";
+			requirement = {
+				kind = exactVersion;
+				version = 0.63.1;
+			};
+		};
+		5E1FEB312F1DDD1200F8DE2B /* XCRemoteSwiftPackageReference "SwiftFormat" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nicklockwood/SwiftFormat.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.58.7;
+			};
+		};
 		5E4FE1BA2F167EBE0074E816 /* XCRemoteSwiftPackageReference "FeedKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/nmdias/FeedKit.git";
 			requirement = {
 				kind = exactVersion;
 				version = 10.1.3;
-			};
-		};
-		5E4FE4A82F18D9070074E816 /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/SwiftLint";
-			requirement = {
-				kind = exactVersion;
-				version = 0.63.0;
-			};
-		};
-		5E4FE4A92F18D91B0074E816 /* XCRemoteSwiftPackageReference "SwiftFormat" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nicklockwood/SwiftFormat.git";
-			requirement = {
-				kind = exactVersion;
-				version = 0.58.7;
 			};
 		};
 		5E4FE4B22F18F7630074E816 /* XCRemoteSwiftPackageReference "realm-swift" */ = {

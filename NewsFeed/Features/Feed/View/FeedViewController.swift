@@ -8,6 +8,8 @@
 import Combine
 import UIKit
 
+// MARK: - FeedViewController
+
 final class FeedViewController: BaseViewController {
     private enum State {
         case none

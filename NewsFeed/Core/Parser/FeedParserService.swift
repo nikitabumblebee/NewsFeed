@@ -28,7 +28,7 @@ class FeedParserService {
     private var cancellables: Set<AnyCancellable> = []
 
     private init() {
-        dataBase = NewsDatabaseService.shared
+        self.dataBase = NewsDatabaseService.shared
 
         Task {
             await loadNewsFromDifferentSources()
@@ -48,13 +48,14 @@ class FeedParserService {
         let news = await withTaskGroup(of: [any NewsProtocol].self, returning: [any NewsProtocol].self) { [weak self] group in
             guard let self else { return [] }
             let newsResourcesFromUserDefaults: [NewsResource]? = UserDefaults.standard.newsResources
-            let urls: [String] = if let newsResourcesFromUserDefaults {
-                newsResourcesFromUserDefaults.compactMap(\.url).isEmpty
-                    ? newsStorage.allNewsResources.compactMap(\.url)
-                    : newsResourcesFromUserDefaults.compactMap(\.url)
-            } else {
-                newsStorage.allNewsResources.compactMap(\.url)
-            }
+            let urls: [String] =
+                if let newsResourcesFromUserDefaults {
+                    newsResourcesFromUserDefaults.compactMap(\.url).isEmpty
+                        ? newsStorage.allNewsResources.compactMap(\.url)
+                        : newsResourcesFromUserDefaults.compactMap(\.url)
+                } else {
+                    newsStorage.allNewsResources.compactMap(\.url)
+                }
             for item in urls {
                 group.addTask {
                     let news = await self.parceFeed(from: item)
@@ -95,7 +96,7 @@ class FeedParserService {
             switch feed {
             case .atom:
                 break
-            case let .rss(feed):
+            case .rss(let feed):
                 feed.channel?.items?.forEach { item in
                     if let link = item.link, let date = item.pubDate {
                         let rssNews = BaseNews(
@@ -117,7 +118,7 @@ class FeedParserService {
             }
             return news
         } catch {
-            print("Error")
+            print("Error: \(error.localizedDescription)")
             return []
         }
     }
@@ -150,19 +151,19 @@ class FeedParserService {
         try? realmDataBase.update(by: existedObject.id) { newsDB in
             for parameter in updateParameters {
                 switch parameter {
-                case let .title(title):
+                case .title(let title):
                     newsDB.title = title
-                case let .description(description):
+                case .description(let description):
                     newsDB.newsDescription = description
-                case let .link(link):
+                case .link(let link):
                     newsDB.linkString = link
-                case let .image(image):
+                case .image(let image):
                     newsDB.image = image
-                case let .date(date):
+                case .date(let date):
                     newsDB.date = date
-                case let .source(source):
+                case .source(let source):
                     newsDB.author = source
-                case let .resource(resource):
+                case .resource(let resource):
                     newsDB.resource = resource
                 }
             }

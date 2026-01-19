@@ -9,6 +9,8 @@ import CommonCrypto
 import Foundation
 import UIKit
 
+// MARK: - ImageCache
+
 class ImageCache {
     static let shared = ImageCache()
 
@@ -20,7 +22,7 @@ class ImageCache {
         memoryCache.totalCostLimit = 100 * 1024 * 1024 // 100MB
 
         let cachesDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-        diskURL = cachesDir.appendingPathComponent("ImageCache")
+        self.diskURL = cachesDir.appendingPathComponent("ImageCache")
         try? FileManager.default.createDirectory(at: diskURL, withIntermediateDirectories: true)
     }
 
@@ -66,6 +68,8 @@ class ImageCache {
         return image
     }
 }
+
+// MARK: - ImageCacheError
 
 enum ImageCacheError: Error {
     case invalidImage

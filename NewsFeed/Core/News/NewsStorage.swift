@@ -45,14 +45,14 @@ final class NewsStorage {
     }
 
     private init() {
-        database = NewsDatabaseService.shared
+        self.database = NewsDatabaseService.shared
         let resourcesFromStorage = UserDefaults.standard.newsResources
         if let resourcesFromStorage {
-            allNewsResources = resourcesFromStorage
-            newsResourcesFiltered = resourcesFromStorage.filter(\.show)
+            self.allNewsResources = resourcesFromStorage
+            self.newsResourcesFiltered = resourcesFromStorage.filter(\.show)
         } else {
-            allNewsResources = NewsConstants.defaultNewsResources
-            newsResourcesFiltered = NewsConstants.defaultNewsResources
+            self.allNewsResources = NewsConstants.defaultNewsResources
+            self.newsResourcesFiltered = NewsConstants.defaultNewsResources
         }
         loadSavedNews()
     }
@@ -100,11 +100,12 @@ final class NewsStorage {
                 lastNews = loadedNews.last
             } else if let lastNewsIndex = filteredNews.firstIndex(where: { $0.id == lastNews?.id }), filteredNews.count - 1 > Int(lastNewsIndex) {
                 let intLastIndex = Int(lastNewsIndex) + 1
-                let newsSlice: ArraySlice<any NewsProtocol> = if filteredNews.count > intLastIndex + limit {
-                    filteredNews[intLastIndex ... (intLastIndex + limit)]
-                } else {
-                    filteredNews[intLastIndex ... filteredNews.count - 1]
-                }
+                let newsSlice: ArraySlice<any NewsProtocol> =
+                    if filteredNews.count > intLastIndex + limit {
+                        filteredNews[intLastIndex...(intLastIndex + limit)]
+                    } else {
+                        filteredNews[intLastIndex...filteredNews.count - 1]
+                    }
                 loadedNews = Array(newsSlice)
                 lastNews = loadedNews.last
             }
@@ -139,7 +140,7 @@ final class NewsStorage {
         if let firstNews {
             if let arrayFirst, firstNews.date < arrayFirst.date {
                 if let indexForCurrentFirstNews = news.firstIndex(where: { $0.id == firstNews.id }) {
-                    let newsSlice: ArraySlice<any NewsProtocol> = news[0 ... (indexForCurrentFirstNews - 1)]
+                    let newsSlice: ArraySlice<any NewsProtocol> = news[0...(indexForCurrentFirstNews - 1)]
                     let newsArray: [any NewsProtocol] = Array(newsSlice)
                     uploadNewNewsSubject.send(newsArray)
                 }

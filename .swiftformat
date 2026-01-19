@@ -1,0 +1,120 @@
+--exclude **/Pods, **/Generated
+
+--disable all
+
+--enable andOperator
+--enable anyObjectProtocol
+--enable applicationMain
+--enable assertionFailures
+--enable blankLineAfterImports
+--enable blankLinesAroundMark
+--enable blankLinesAtEndOfScope
+--enable blankLinesAtStartOfScope
+--enable blankLinesBetweenChainedFunctions
+--enable blankLinesBetweenImports
+--enable blankLinesBetweenScopes
+--enable blockComments
+--enable braces
+--enable consecutiveBlankLines
+--enable consecutiveSpaces
+--enable docComments
+--enable duplicateImports
+
+--enable elseOnSameLine
+--guardelse next-line
+
+--enable emptyBraces
+--enable enumNamespaces
+--enable genericExtensions
+--enable headerFileName
+--enable hoistAwait
+
+--enable hoistPatternLet
+--patternlet inline
+
+--enable hoistTry
+
+--enable indent
+--indent 4
+--ifdef no-indent
+
+--enable initCoderUnavailable
+--enable isEmpty
+--enable leadingDelimiters
+--enable linebreakAtEndOfFile
+--enable markTypes
+--enable modifierOrder
+--enable noExplicitOwnership
+--enable numberFormatting
+--enable opaqueGenericParameters
+--enable redundantBackticks
+--enable redundantBreak
+--enable redundantClosure
+--enable redundantExtensionACL
+--enable redundantFileprivate
+--enable redundantGet
+--enable redundantInit
+--enable redundantInternal
+--enable redundantLet
+--enable redundantLetError
+--enable redundantNilInit
+--enable redundantObjc
+--enable redundantOptionalBinding
+--enable redundantParens
+--enable redundantPattern
+--enable redundantRawValues
+--enable redundantReturn
+
+--enable redundantSelf
+--self init-only
+
+--enable redundantStaticSelf
+
+--enable redundantVoidReturnType
+--enable semicolons
+--enable sortDeclarations
+--enable sortImports
+--enable spaceAroundBraces
+--enable spaceAroundBrackets
+--enable spaceAroundComments
+--enable spaceAroundGenerics
+
+--enable spaceAroundOperators
+--ranges no-space
+
+--enable spaceAroundParens
+--enable spaceInsideBraces
+--enable spaceInsideBrackets
+--enable spaceInsideComments
+--enable spaceInsideGenerics
+--enable spaceInsideParens
+--enable strongOutlets
+--enable strongifiedSelf
+--enable todos
+--enable trailingClosures
+--enable trailingSpace
+--enable typeSugar
+
+--enable unusedArguments
+--stripunusedargs closure-only
+
+--enable void
+
+--enable wrapArguments
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--wrapreturntype if-multiline
+--wrapconditions after-first
+--wraptypealiases before-first
+--wrapeffects if-multiline
+
+--enable wrapAttributes
+--funcattributes preserve
+--typeattributes same-line
+--varattributes same-line
+
+--enable wrapEnumCases
+--enable wrapLoopBodies
+--enable wrapMultilineConditionalAssignment
+--enable yodaConditions

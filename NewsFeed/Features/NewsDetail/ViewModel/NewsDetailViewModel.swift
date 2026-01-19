@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - NewsDetailViewModel
+
 class NewsDetailViewModel: Sendable {
     private let newsStorage: NewsStorage
     let news: any NewsProtocol
@@ -20,6 +22,8 @@ class NewsDetailViewModel: Sendable {
         newsStorage.markNewsAsRead(news)
     }
 }
+
+// MARK: Hashable
 
 extension NewsDetailViewModel: Hashable {
     func hash(into hasher: inout Hasher) {

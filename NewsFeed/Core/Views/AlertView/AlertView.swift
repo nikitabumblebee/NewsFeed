@@ -39,7 +39,8 @@ class AlertView: XibView {
         blurredBackground: Bool = false,
         buttonTitle: String? = nil,
         action: (() -> Void)? = nil
-    ) -> AlertView {
+    )
+        -> AlertView {
         showAlert(
             title: title ?? "",
             message: message,
@@ -77,8 +78,7 @@ class AlertView: XibView {
         duration: TimeInterval? = 2,
         withHapticFeedback: Bool = true
     )
-        -> AlertView
-    {
+        -> AlertView {
         let alert = AlertView(title: title, message: message, buttonTitle: buttonTitle, action: action, duration: duration)
         alert.show(blurredBackground)
         if withHapticFeedback { HapticFeedbackGenerator.playResultFeedback(.error) }
@@ -99,8 +99,8 @@ class AlertView: XibView {
         self.title = title
         self.message = message
         self.buttonTitle = buttonTitle
-        buttonAction = action
-        timerDuration = duration
+        self.buttonAction = action
+        self.timerDuration = duration
 
         super.init(frame: frame)
 

@@ -7,8 +7,7 @@
 
 import UIKit
 
-@main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+@main class AppDelegate: UIResponder, UIApplicationDelegate {
     let parser: FeedParserService = .shared
 
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

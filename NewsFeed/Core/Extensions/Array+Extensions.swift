@@ -10,7 +10,7 @@ import Foundation
 extension Array {
     subscript(safe range: Range<Index>) -> ArraySlice<Element>? {
         if range.endIndex > endIndex {
-            if range.startIndex >= endIndex { nil } else { self[range.startIndex ..< endIndex] }
+            if range.startIndex >= endIndex { nil } else { self[range.startIndex..<endIndex] }
         } else {
             self[range]
         }
@@ -29,7 +29,7 @@ extension Array {
 
     func chunked(into size: Int) -> [[Element]] {
         stride(from: 0, to: count, by: size).map {
-            Array(self[$0 ..< Swift.min($0 + size, count)])
+            Array(self[$0..<Swift.min($0 + size, count)])
         }
     }
 }

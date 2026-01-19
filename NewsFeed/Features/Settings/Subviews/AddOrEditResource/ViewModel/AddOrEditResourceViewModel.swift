@@ -27,9 +27,9 @@ class AddOrEditResourceViewModel: Observable {
 
     init(resource: NewsResource?) {
         self.resource = resource
-        name = resource?.name ?? ""
-        url = resource?.url ?? ""
-        enableResource = resource?.show ?? true
+        self.name = resource?.name ?? ""
+        self.url = resource?.url ?? ""
+        self.enableResource = resource?.show ?? true
         validationSubject.send(validation)
     }
 

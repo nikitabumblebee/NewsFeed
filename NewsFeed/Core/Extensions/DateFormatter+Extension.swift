@@ -19,15 +19,16 @@ extension DateFormatter {
         dateStyle: Style = .none,
         timeStyle: Style = .none,
         format: DateFormat
-    ) -> DateFormatter {
+    )
+        -> DateFormatter {
         dateFormatter.locale = locale
         dateFormatter.timeZone = timeZone
         dateFormatter.dateStyle = dateStyle
         dateFormatter.timeStyle = timeStyle
         switch format {
-        case let .localizedFromTemplate(template):
+        case .localizedFromTemplate(let template):
             dateFormatter.setLocalizedDateFormatFromTemplate(template)
-        case let .dateFormat(template):
+        case .dateFormat(let template):
             dateFormatter.dateFormat = template
         }
         return dateFormatter
@@ -40,10 +41,13 @@ extension DateFormatter {
         dateStyle: Style = .none,
         timeStyle: Style = .none,
         format: DateFormat
-    ) -> String {
+    )
+        -> String {
         get(with: locale, timeZone: timeZone, dateStyle: dateStyle, timeStyle: timeStyle, format: format).string(from: date)
     }
 }
+
+// MARK: - DateFormat
 
 enum DateFormat {
     case localizedFromTemplate(String)

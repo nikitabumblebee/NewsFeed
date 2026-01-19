@@ -49,10 +49,10 @@ final class FeedViewModel: ObservableObject {
             UserDefaults.standard.refreshNewsTimerDuration = FeedConstants.defaultTimerDuration
         }
         let refreshNewsTimerDuration = UserDefaults.standard.refreshNewsTimerDuration
-        model = .init(news: FeedConstants.initialNewsForLoad, refreshNewsTimerDuration: refreshNewsTimerDuration * FeedConstants.secondsConstant)
+        self.model = .init(news: FeedConstants.initialNewsForLoad, refreshNewsTimerDuration: refreshNewsTimerDuration * FeedConstants.secondsConstant)
         self.newsStorage = newsStorage
         self.feedParser = feedParser
-        newsModels = model.news
+        self.newsModels = model.news
         subscribeToNews()
     }
 

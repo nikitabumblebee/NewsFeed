@@ -7,6 +7,8 @@
 
 import UIKit
 
+// MARK: - MainTabBarController
+
 final class MainTabBarController: BaseViewController, BaseTabBar {
     var basePresentedViewController: UIViewController?
     var rootView: UIView?
@@ -96,6 +98,8 @@ final class MainTabBarController: BaseViewController, BaseTabBar {
         tabBar.getViewController(at: tabItem.index)
     }
 }
+
+// MARK: TabBarDelegate
 
 extension MainTabBarController: TabBarDelegate {
     func tabBar(tabBarItem: TabBarItem, didSelectTabAtIndex index: Int, viewController: UIViewController) {

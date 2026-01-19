@@ -49,7 +49,7 @@ class BaseViewController: UIViewController {
         f.receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { state in
                 switch state {
-                case let .failure(error):
+                case .failure(let error):
                     AlertView.showError(with: error.localizedDescription)
                 default:
                     break

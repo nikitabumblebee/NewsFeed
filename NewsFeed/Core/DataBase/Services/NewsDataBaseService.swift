@@ -12,7 +12,7 @@ class NewsDatabaseService: DatabaseRepository {
     private let repo: RealmDatabaseRepository<NewsDB>
 
     private init() {
-        repo = RealmDatabaseRepository<NewsDB>()
+        self.repo = RealmDatabaseRepository<NewsDB>()
     }
 
     func save(_ newsDB: NewsDB) async throws {

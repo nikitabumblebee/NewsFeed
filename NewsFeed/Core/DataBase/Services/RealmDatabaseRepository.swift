@@ -15,7 +15,7 @@ class RealmDatabaseRepository<EntityType: Object>: DatabaseRepository {
 
     init(configuration: Realm.Configuration = .defaultConfiguration) {
         do {
-            realm = try Realm(configuration: configuration)
+            self.realm = try Realm(configuration: configuration)
         } catch {
             fatalError("Realm failed: \(error)")
         }

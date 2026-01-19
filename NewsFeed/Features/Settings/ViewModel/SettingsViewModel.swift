@@ -47,7 +47,7 @@ final class SettingsViewModel {
         parserService: FeedParserService
     ) {
         let initialNewsResources: [NewsResource] = newsStorage.allNewsResources
-        model = SettingsModel(
+        self.model = SettingsModel(
             resources: initialNewsResources,
             appTheme: UserDefaults.standard.currentTheme,
             refreshInterval: initialTimerValue
@@ -55,8 +55,8 @@ final class SettingsViewModel {
         self.imageCache = imageCache
         self.newsStorage = newsStorage
         self.parserService = parserService
-        reloadTimerDuration = initialTimerValue
-        resources = model.resources
+        self.reloadTimerDuration = initialTimerValue
+        self.resources = model.resources
         sourcesListSubject.send(model.resources)
     }
 

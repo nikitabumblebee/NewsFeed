@@ -8,6 +8,8 @@
 import Combine
 import UIKit
 
+// MARK: - SettingsViewController
+
 final class SettingsViewController: BaseViewController {
     @IBOutlet private var refreshLabel: UILabel!
     @IBOutlet private var refreshSlider: UISlider!

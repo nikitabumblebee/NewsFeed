@@ -7,6 +7,8 @@
 
 import UIKit
 
+// MARK: - TabBar
+
 class TabBar: UIStackView {
     private var tabItems = [TabBarItem]()
     private var viewControllers = [UIViewController]()
